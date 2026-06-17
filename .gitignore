@@ -14,6 +14,9 @@ node_modules/
 .env.production
 .env.*.local
 
+# local-only Claude Code settings (keep launch.json shared, ignore the rest)
+.claude/settings.local.json
+
 # os / editor
 .DS_Store
 Thumbs.db
