@@ -1,0 +1,117 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PostCard from '../../components/PostCard.astro';
+import CTASection from '../../components/CTASection.astro';
+import { SERIES_META } from '../../content.config';
+import { resolveImage } from '../../lib/images';
+import { formatFullDate } from '../../lib/format';
+import { articleSchema, breadcrumbSchema } from '../../lib/schema';
+import { absoluteUrl } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('journal');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const d = post.data;
+const meta = SERIES_META[d.series];
+const { Content } = await render(post);
+
+const url = `/journal/${post.id}`;
+const cover = resolveImage(d.coverImage);
+const ogImg = resolveImage(d.ogImage) ?? cover;
+
+const crumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Journal', url: '/journal' },
+  { name: meta.label, url: `/journal/${meta.slug}` },
+  { name: d.title, url },
+];
+
+// up to 3 more posts from the same series
+const more = (await getCollection('journal'))
+  .filter((p) => p.data.series === d.series && p.id !== post.id)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+
+const schemas = [
+  articleSchema({
+    headline: d.title,
+    description: d.metaDescription || d.excerpt,
+    url,
+    image: ogImg ? ogImg.src : '/og/revvia-og.png',
+    datePublished: d.date.toISOString().slice(0, 10),
+    author: 'Revvia',
+  }),
+  breadcrumbSchema(crumbs),
+];
+---
+<BaseLayout
+  title={d.metaTitle || d.title}
+  description={d.metaDescription || d.excerpt}
+  path={url}
+  ogType="article"
+  ogImage={ogImg ? absoluteUrl(ogImg.src) : undefined}
+  publishedTime={d.date.toISOString()}
+  schemas={schemas}
+>
+  <article>
+    <header class="page-hero">
+      <div class="page-hero-in post-hero">
+        <Breadcrumbs crumbs={crumbs} class="hero-crumbs" />
+        <div class="bar" style={`background:${meta.barBg}`}></div>
+        <a class="series-tag" href={`/journal/${meta.slug}`} style={`color:${meta.accent}`}>{meta.label}</a>
+        <h1>{d.title}</h1>
+        <div class="post-meta">
+          <time datetime={d.date.toISOString().slice(0, 10)}>{formatFullDate(d.date)}</time>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap post-body">
+      {cover && (
+        <figure class="post-cover">
+          <Image src={cover} alt={d.title} widths={[480, 800, 1080]} sizes="(max-width: 760px) 100vw, 720px" />
+        </figure>
+      )}
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+
+  {more.length > 0 && (
+    <section class="psec more">
+      <div class="wrap">
+        <h2 class="more-h">More from {meta.label}</h2>
+        <div class="posts">{more.map((p) => <PostCard post={p} />)}</div>
+      </div>
+    </section>
+  )}
+
+  <CTASection
+    heading="Ready to put this into practice?"
+    lead="Start with a growth audit — we'll show you exactly where your brand is leaking revenue, no commitment."
+  />
+</BaseLayout>
+
+<style>
+  .hero-crumbs { margin-bottom: 16px; }
+  .post-hero { padding-bottom: 36px; max-width: 800px; }
+  .post-hero .bar { width: 42px; height: 5px; border-radius: 3px; margin-bottom: 16px; }
+  .series-tag { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; display: inline-block; margin-bottom: 12px; }
+  .post-hero h1 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(34px, 5.2vw, 56px); letter-spacing: -0.02em; line-height: 1.05; margin-bottom: 16px; }
+  .post-meta { color: var(--muted-2); font-size: 14px; }
+
+  .post-body { padding: 44px 0 8px; }
+  .post-cover { margin: 0 0 32px; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); max-width: 900px; }
+  .post-cover :global(img) { width: 100%; height: auto; display: block; }
+
+  .more-h { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; margin-bottom: 22px; }
+  .posts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  @media (max-width: 820px) { .posts { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,65 @@
+---
+import '../styles/global.css';
+import SEO from '../components/SEO.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import Analytics from '../components/Analytics.astro';
+import SchemaJsonLd from '../components/SchemaJsonLd.astro';
+import { organizationSchema, websiteSchema } from '../lib/schema';
+
+interface Props {
+  title: string;
+  description?: string;
+  path?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  publishedTime?: string;
+  modifiedTime?: string;
+  /** Page-specific JSON-LD nodes (LocalBusiness, Service, Article, …). */
+  schemas?: Record<string, unknown>[];
+  /** Extra <head> markup (e.g. per-page preloads). */
+  bodyClass?: string;
+}
+
+const {
+  title,
+  description,
+  path,
+  ogImage,
+  ogType,
+  noindex,
+  publishedTime,
+  modifiedTime,
+  schemas = [],
+  bodyClass,
+} = Astro.props;
+
+// Sitewide structured data lives on every page.
+const baseSchemas = [organizationSchema(), websiteSchema()];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <SEO
+      title={title}
+      description={description}
+      path={path}
+      ogImage={ogImage}
+      ogType={ogType}
+      noindex={noindex}
+      publishedTime={publishedTime}
+      modifiedTime={modifiedTime}
+    />
+    <SchemaJsonLd schemas={[...baseSchemas, ...schemas]} />
+    <Analytics />
+  </head>
+  <body class={bodyClass}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

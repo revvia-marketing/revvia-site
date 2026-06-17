@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# CMS admin + serverless API are not for crawlers
+Disallow: /keystatic
+Disallow: /api/
+
+Sitemap: https://www.revvia.com/sitemap-index.xml

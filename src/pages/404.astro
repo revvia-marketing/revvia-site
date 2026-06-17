@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="Page not found"
+  description="The page you're looking for has moved or never existed. Find your way back to Revvia."
+  path="/404"
+  noindex
+>
+  <section class="nf">
+    <div class="nf-in">
+      <div class="eyebrow">404</div>
+      <h1 class="display">This page took a <span class="grad-text">wrong turn.</span></h1>
+      <p>The page you're looking for moved or never existed. Let's get you back to something useful.</p>
+      <div class="nf-links">
+        <a href="/" class="btn btn-lg">Back to Home</a>
+        <a href="/work" class="btn btn-lg btn-ghost">See the Work</a>
+        <a href="/contact" class="btn btn-lg btn-ghost">Get a Growth Audit</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf { position: relative; overflow: hidden; min-height: 64vh; display: flex; align-items: center; }
+  .nf::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(760px 460px at 80% -6%, rgba(254, 156, 28, 0.16), transparent 58%),
+      radial-gradient(900px 600px at 6% 104%, rgba(138, 15, 173, 0.22), transparent 56%);
+  }
+  .nf-in { position: relative; max-width: 720px; margin: 0 auto; padding: 80px 28px; text-align: center; }
+  .nf-in h1 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(40px, 6vw, 68px); letter-spacing: -0.02em; margin: 18px 0 16px; }
+  .nf-in p { color: var(--muted); font-size: 18px; max-width: 480px; margin: 0 auto 32px; }
+  .nf-links { display: flex; gap: 13px; justify-content: center; flex-wrap: wrap; }
+</style>

@@ -1,0 +1,36 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import { SERIES_META } from '../content.config';
+import { resolveImage } from '../lib/images';
+import { formatMonthYear } from '../lib/format';
+
+interface Props { post: CollectionEntry<'journal'>; }
+const { post } = Astro.props;
+const meta = SERIES_META[post.data.series];
+const cover = resolveImage(post.data.coverImage);
+---
+<a class="post" href={`/journal/${post.id}`}>
+  <div class="media" style={`background:${meta.cardBg}`}>
+    {cover && <Image src={cover} alt={post.data.title} width={420} height={150} />}
+  </div>
+  <div class="pb">
+    <div class="tag" style={`color:${meta.accent}`}>{meta.label}</div>
+    <h3>{post.data.title}</h3>
+    <p>{post.data.excerpt}</p>
+    <div class="date">{formatMonthYear(post.data.date)}</div>
+  </div>
+</a>
+
+<style>
+  .post { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--card); transition: transform 0.18s, border-color 0.18s; display: flex; flex-direction: column; }
+  .post:hover { transform: translateY(-4px); border-color: var(--line-2); }
+  .post .media { height: 150px; position: relative; }
+  .post .media :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .post .media::after { content: ""; position: absolute; inset: 0; background: radial-gradient(200px 130px at 76% 20%, rgba(255, 255, 255, 0.1), transparent 60%); }
+  .post .pb { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+  .post .tag { font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; margin-bottom: 10px; }
+  .post h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #fff; line-height: 1.22; margin-bottom: 8px; }
+  .post p { color: var(--muted); font-size: 14px; flex: 1; }
+  .post .date { color: var(--muted-2); font-size: 12.5px; margin-top: 14px; }
+</style>

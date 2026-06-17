@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import GrowthAuditForm from '../components/GrowthAuditForm.astro';
+import { NAP } from '../lib/site';
+import {
+  localBusinessSchema,
+  contactPageSchema,
+  breadcrumbSchema,
+} from '../lib/schema';
+
+const crumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Get a Growth Audit', url: '/contact' },
+];
+
+const steps = [
+  { n: '1', t: 'We dig in', d: 'We review your store, ads, tracking, and email — usually within two business days.' },
+  { n: '2', t: 'You get the audit', d: 'A clear teardown of where your brand is leaking revenue, ranked by what matters most.' },
+  { n: '3', t: 'We talk it through', d: 'A no-pressure call to walk it through and figure out the right next move — if there is one.' },
+];
+
+const schemas = [
+  localBusinessSchema(),
+  contactPageSchema({
+    url: '/contact',
+    description:
+      "Start with a free growth audit — we'll show you exactly where your brand is leaking revenue, no commitment.",
+  }),
+  breadcrumbSchema(crumbs),
+];
+---
+<BaseLayout
+  title="Get a Growth Audit | Revvia — DTC Growth Studio, Carlsbad CA"
+  description="Start with a free growth audit. We'll show you exactly where your brand is leaking revenue — tracking, paid, retention, and creative. Revvia, Carlsbad CA. Call or text (760) 782-2875."
+  path="/contact"
+  schemas={schemas}
+>
+  <header class="page-hero">
+    <div class="page-hero-in" style="padding-bottom:40px">
+      <Breadcrumbs crumbs={crumbs} class="hero-crumbs" />
+      <div class="eyebrow">Get a Growth Audit</div>
+      <h1>Find your brand's <span class="grad-text">missing revenue.</span></h1>
+      <p class="sub">Tell us a little about your brand and we'll come back with a growth audit — exactly where you're leaking revenue, ranked, with no commitment.</p>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="wrap">
+      <div class="grid">
+        <div class="infocol">
+          <h2 class="blk">What happens next</h2>
+          {steps.map((s) => (
+            <div class="step">
+              <div class="n" aria-hidden="true">{s.n}</div>
+              <div><h3>{s.t}</h3><p>{s.d}</p></div>
+            </div>
+          ))}
+
+          <div class="promise">
+            <p><b>Our promise:</b> if we're not the right team for your brand, we'll tell you on that first call. No hard sell, no wasted time.</p>
+          </div>
+
+          <div class="contactinfo">
+            <div class="ci">
+              <div class="ic" aria-hidden="true">📞</div>
+              <div><div class="lab">Call or text</div><div class="val"><a href={`tel:${NAP.telephone}`}>{NAP.telephoneDisplay}</a></div></div>
+            </div>
+            <div class="ci">
+              <div class="ic" aria-hidden="true">✉️</div>
+              <div><div class="lab">Email</div><div class="val"><a href={`mailto:${NAP.email}`}>{NAP.email}</a></div></div>
+            </div>
+            <div class="ci">
+              <div class="ic" aria-hidden="true">📍</div>
+              <div><div class="lab">Studio</div><div class="val">{NAP.address.streetAddress}<br />{NAP.address.addressLocality}, {NAP.address.addressRegion} {NAP.address.postalCode}</div></div>
+            </div>
+            <div class="ci">
+              <div class="ic" aria-hidden="true">🕘</div>
+              <div><div class="lab">Hours</div><div class="val">Mon–Fri, 9am–5pm PT</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="formcol" id="form">
+          <GrowthAuditForm
+            id="contact-growth-audit"
+            heading="Start your growth audit"
+            subheading="Takes about a minute. No commitment."
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .hero-crumbs { margin-bottom: 16px; }
+  .main { padding: 56px 0 64px; }
+  .grid { display: grid; grid-template-columns: 1fr 1.05fr; gap: 42px; align-items: start; }
+  @media (max-width: 880px) { .grid { grid-template-columns: 1fr; gap: 34px; } .formcol { order: -1; } }
+
+  h2.blk { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; margin: 0 0 20px; }
+  .step { display: grid; grid-template-columns: auto 1fr; gap: 16px; padding: 18px 0; border-top: 1px solid var(--line); align-items: start; }
+  .step:first-of-type { border-top: none; padding-top: 0; }
+  .step .n { width: 30px; height: 30px; border-radius: 8px; background: var(--grad); display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 14px; color: #fff; flex-shrink: 0; }
+  .step h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px; color: #fff; margin-bottom: 3px; }
+  .step p { color: var(--muted); font-size: 15px; }
+
+  .promise { margin-top: 26px; padding: 20px 22px; border-radius: 14px; background: var(--bg-2); border: 1px solid var(--line); border-left: 3px solid var(--m); }
+  .promise b { color: #fff; }
+  .promise p { color: var(--muted); font-size: 15px; }
+
+  .contactinfo { margin-top: 28px; display: grid; gap: 14px; }
+  .ci { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; }
+  .ci .ic { width: 34px; height: 34px; border-radius: 9px; background: var(--card); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 15px; }
+  .ci .lab { font-size: 12px; color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.08em; }
+  .ci .val { font-size: 15.5px; color: #fff; font-weight: 500; }
+  .ci .val a:hover { color: var(--m); }
+</style>

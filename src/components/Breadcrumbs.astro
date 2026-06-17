@@ -1,0 +1,36 @@
+---
+/** Visible breadcrumb trail. Pair with breadcrumbSchema(crumbs) for JSON-LD. */
+import type { Crumb } from '../lib/schema';
+interface Props { crumbs: Crumb[]; class?: string; }
+const { crumbs, class: className = '' } = Astro.props;
+---
+<nav class:list={['crumbs', className]} aria-label="Breadcrumb">
+  <ol>
+    {
+      crumbs.map((c, i) => (
+        <li>
+          {i < crumbs.length - 1 ? (
+            <a href={c.url}>{c.name}</a>
+          ) : (
+            <span aria-current="page">{c.name}</span>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style>
+  .crumbs ol {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted-2);
+  }
+  .crumbs li { display: flex; align-items: center; gap: 8px; }
+  .crumbs li:not(:last-child)::after { content: "/"; color: var(--line-2); }
+  .crumbs a:hover { color: #fff; }
+  .crumbs span { color: var(--muted); }
+</style>

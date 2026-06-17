@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Gallery from '../../components/Gallery.astro';
+import CTASection from '../../components/CTASection.astro';
+import Faq from '../../components/Faq.astro';
+import {
+  serviceSchema,
+  faqPageSchema,
+  breadcrumbSchema,
+  type FaqItem,
+} from '../../lib/schema';
+
+const description =
+  'The complete growth engine built once: tracking, paid, retention, and measurement. The Peter Grimm playbook, productized by Revvia.';
+
+const crumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Services', url: '/services' },
+  { name: 'Growth Foundation', url: '/services/growth-foundation' },
+];
+
+const included = [
+  { t: 'Tracking rebuild', d: 'Pixels, conversions, and GA4 — fixed and verified, so every dollar is measured.' },
+  { t: 'Paid media structure', d: 'Campaigns rebuilt on clean data — brand defense, search, and prospecting.' },
+  { t: 'Retention flows', d: 'Five core Klaviyo flows: welcome, cart, browse, post-purchase, and winback.' },
+  { t: 'Measurement & handoff', d: 'A blended-MER dashboard and a clear picture of what’s working.' },
+];
+
+const steps = [
+  { n: '1', t: 'Audit', d: 'We find every leak — broken pixels, phantom conversions, missing flows.' },
+  { n: '2', t: 'Build', d: 'Tracking, campaigns, and retention rebuilt on a clean foundation.' },
+  { n: '3', t: 'Launch', d: 'Everything goes live together, verified end to end.' },
+  { n: '4', t: 'Handoff', d: 'A dashboard and a walkthrough, so you own and understand the engine.' },
+];
+
+const tiles = [
+  { label: 'Tracking', span: 'big' as const },
+  { label: 'Paid structure' },
+  { label: 'Email flows' },
+  { label: 'Dashboard' },
+  { label: 'Attribution' },
+  { label: 'Clean handoff', span: 'wide' as const },
+];
+
+const faqs: FaqItem[] = [
+  { question: 'What exactly does the Growth Foundation build?', answer: 'The complete growth engine, built once: a verified tracking layer (pixels, conversions, GA4), a paid media structure rebuilt on clean data, five core Klaviyo retention flows, and a blended-MER measurement dashboard — handed off so you own it.' },
+  { question: 'How is this different from hiring an agency on retainer?', answer: 'A retainer rents you ongoing effort. The Foundation builds the engine once, end to end, and hands it back. It’s the Peter Grimm playbook, productized — a defined scope with a clean handoff, not an open-ended monthly fee.' },
+  { question: 'Why fix tracking before scaling paid spend?', answer: 'Ad platforms can only optimize toward data they can see. Broken pixels and phantom conversions mean you’re scaling blind and burning budget. We rebuild and verify tracking first so every dollar is measured and your campaigns can actually optimize.' },
+  { question: 'What results should I expect?', answer: 'Clean data, ads that optimize, and retention that compounds. It’s the same foundation that grew Peter Grimm 3.2× in monthly revenue over six months — though your numbers depend on your store, margins, and starting point.' },
+];
+
+const schemas = [
+  serviceSchema({
+    name: 'Growth Foundation',
+    description,
+    url: '/services/growth-foundation',
+    serviceType: 'Growth engine build',
+  }),
+  faqPageSchema(faqs),
+  breadcrumbSchema(crumbs),
+];
+---
+<BaseLayout
+  title="Growth Foundation"
+  description={description}
+  path="/services/growth-foundation"
+  schemas={schemas}
+>
+  <header class="page-hero">
+    <div class="page-hero-in">
+      <Breadcrumbs crumbs={crumbs} class="hero-crumbs" />
+      <div class="eyebrow">Build Once · Growth System</div>
+      <h1>Growth <span class="grad-text">Foundation.</span></h1>
+      <p class="sub">The complete growth engine, built once: tracking, paid, retention, and measurement. The Peter Grimm playbook, productized.</p>
+      <div class="hero-cta">
+        <a href="/contact" class="btn btn-lg">Get a Growth Audit</a>
+        <a href="/services" class="btn btn-lg btn-ghost">All services</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">What it is</div>
+      <h2 class="sec">Fix the leaks, then build the engine.</h2>
+      <p class="lead">Most brands are losing growth to broken tracking, half-built flows, and ad accounts running blind. The Growth Foundation fixes all of it in one engagement — we rebuild the full stack so your data is clean, your ads can optimize, and your retention runs itself. It’s exactly what we did for Peter Grimm, turned into a repeatable build.</p>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">What's included</div>
+      <h2 class="sec">The whole stack, rebuilt.</h2>
+      <div class="inc">
+        {included.map((c) => (
+          <div class="c"><div class="ck" aria-hidden="true">✓</div><div><h3>{c.t}</h3><p>{c.d}</p></div></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">The work</div>
+      <h2 class="sec">What gets built.</h2>
+      <p class="lead mut">The systems behind the growth — tracking, campaign structure, flows, and reporting.</p>
+      <Gallery tiles={tiles} note="Illustrative — every Foundation is built to your store and stack." />
+    </div>
+  </section>
+
+  <section class="psec proc">
+    <div class="wrap">
+      <div class="eyebrow blk">How it works</div>
+      <h2 class="sec">Audit, build, launch, hand off.</h2>
+      <div class="steps">
+        {steps.map((s) => (
+          <div class="s"><span class="sn">{s.n}</span><h3>{s.t}</h3><p>{s.d}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="outcome">
+        <div class="eyebrow blk">Why it matters</div>
+        <div class="big">The engine, built once — and it keeps running.</div>
+        <p>Clean data, optimizing ads, and retention that compounds. The same foundation that grew Peter Grimm 3.2× in six months.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="related">
+      <div class="relcard">
+        <div>
+          <div class="t">See the Foundation in action</div>
+          <div class="d">Peter Grimm — 3.2× monthly revenue in six months.</div>
+        </div>
+        <a class="btn btn-ghost" href="/work/peter-grimm">Read the case study</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">FAQ</div>
+      <h2 class="sec">Questions about the Growth Foundation.</h2>
+      <Faq items={faqs} />
+    </div>
+  </section>
+
+  <CTASection
+    heading="Want the engine that grew Peter Grimm 3.2×?"
+    lead="Start with a growth audit — we’ll show you exactly which leaks the Foundation would close."
+  />
+</BaseLayout>
+
+<style>
+  .hero-crumbs { margin-bottom: 16px; }
+</style>

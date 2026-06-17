@@ -1,0 +1,150 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Gallery from '../../components/Gallery.astro';
+import CTASection from '../../components/CTASection.astro';
+import Faq from '../../components/Faq.astro';
+import {
+  serviceSchema,
+  faqPageSchema,
+  breadcrumbSchema,
+  type FaqItem,
+} from '../../lib/schema';
+
+const crumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Services', url: '/services' },
+  { name: 'Flagship Brand Film', url: '/services/flagship-brand-film' },
+];
+
+const included = [
+  { t: 'Concept & script', d: 'We build the story with you — what your brand stands for, in a film that feels like you.' },
+  { t: 'In-house shoot', d: 'A full production day with our own crew, gear, and direction.' },
+  { t: 'Edit, color & sound', d: 'A finished hero cut — color-graded, scored, and sound-designed.' },
+  { t: 'Ad cutdowns', d: '15s, 30s, and vertical cuts engineered to perform as paid creative.' },
+];
+
+const steps = [
+  { n: '1', t: 'Discovery', d: 'We dig into your brand, audience, and the feeling the film needs to land.' },
+  { n: '2', t: 'Pre-production', d: 'Script, shot list, locations, and casting — locked before we roll.' },
+  { n: '3', t: 'Shoot day', d: 'A full in-house production day with our crew and direction.' },
+  { n: '4', t: 'Post & delivery', d: 'Edit, color, sound, and every cutdown, delivered ready to run.' },
+];
+
+const tiles = [
+  { label: 'Hero film', span: 'big' as const, video: true },
+  { label: 'Behind the scenes' },
+  { label: 'Color & grade' },
+  { label: 'Product detail' },
+  { label: 'On location' },
+  { label: 'Vertical cut', span: 'wide' as const, video: true },
+  { label: 'Lighting' },
+  { label: 'Story frame' },
+];
+
+const faqs: FaqItem[] = [
+  { question: 'How long is a flagship brand film?', answer: 'Typically a 60–90 second hero cut, plus 15s, 30s, and vertical cutdowns engineered to run as paid creative.' },
+  { question: 'Do you write the concept, or do we?', answer: 'We build it with you. We dig into what your brand stands for and shape the story, then handle script, shot list, casting, and direction.' },
+  { question: 'Where do you shoot?', answer: 'With our own crew and gear — on location or in-studio, in America. Not outsourced and not art-directed over Slack.' },
+  { question: 'Can the film actually perform as an ad?', answer: 'That’s the point. We deliver cutdowns built to stop the scroll, so the same asset anchors your homepage and runs as top-of-funnel paid creative.' },
+];
+
+const schemas = [
+  serviceSchema({
+    name: 'Flagship Brand Film',
+    description:
+      'A cinematic anthem film that becomes the centerpiece of your brand and your best-performing ad. Produced in-house by Revvia.',
+    url: '/services/flagship-brand-film',
+    serviceType: 'Brand film production',
+  }),
+  faqPageSchema(faqs),
+  breadcrumbSchema(crumbs),
+];
+---
+<BaseLayout
+  title="Flagship Brand Film"
+  description="A cinematic anthem film that becomes the centerpiece of your brand and your best-performing ad. Produced in-house by Revvia."
+  path="/services/flagship-brand-film"
+  schemas={schemas}
+>
+  <header class="page-hero">
+    <div class="page-hero-in">
+      <Breadcrumbs crumbs={crumbs} class="hero-crumbs" />
+      <div class="eyebrow">Production · Brand Film</div>
+      <h1>Flagship Brand <span class="grad-text">Film.</span></h1>
+      <p class="sub">A cinematic anthem film that becomes the centerpiece of your brand — and quietly, your best-performing ad.</p>
+      <div class="hero-cta">
+        <a href="/contact" class="btn btn-lg">Get a Growth Audit</a>
+        <a href="/services" class="btn btn-lg btn-ghost">All services</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">What it is</div>
+      <h2 class="sec">The one asset that does the most work.</h2>
+      <p class="lead">A brand film tells your story in 60 to 90 seconds, anchors your homepage and socials, and — cut down — becomes the top-of-funnel ad that actually stops the scroll. We concept it, shoot it with our own crew, and deliver it ready to run everywhere.</p>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">What's included</div>
+      <h2 class="sec">From concept to cutdowns.</h2>
+      <div class="inc">
+        {included.map((c) => (
+          <div class="c"><div class="ck" aria-hidden="true">✓</div><div><h3>{c.t}</h3><p>{c.d}</p></div></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">The work</div>
+      <h2 class="sec">A look at the craft.</h2>
+      <p class="lead mut">Frames from brand films and the productions behind them. Your finished gallery lives here.</p>
+      <Gallery tiles={tiles} note="Placeholder gallery — real frames drop in once your shoot is in the can." />
+    </div>
+  </section>
+
+  <section class="psec proc">
+    <div class="wrap">
+      <div class="eyebrow blk">How it works</div>
+      <h2 class="sec">Four steps, one finished film.</h2>
+      <div class="steps">
+        {steps.map((s) => (
+          <div class="s"><span class="sn">{s.n}</span><h3>{s.t}</h3><p>{s.d}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="outcome">
+        <div class="eyebrow blk">Why it matters</div>
+        <div class="big">One film. Everywhere.</div>
+        <p>Homepage, reel, ads, email, retail. The asset that earns its cost for years — not a one-off video.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">FAQ</div>
+      <h2 class="sec">Questions about brand films.</h2>
+      <Faq items={faqs} />
+    </div>
+  </section>
+
+  <CTASection
+    heading="Want a brand film that doubles as your best ad?"
+    lead="Start with a growth audit and we'll tell you whether a flagship film is the right next move for your brand."
+  />
+</BaseLayout>
+
+<style>
+  .hero-crumbs { margin-bottom: 16px; }
+</style>

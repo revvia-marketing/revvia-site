@@ -1,0 +1,177 @@
+---
+/**
+ * Growth Audit lead form. Wired for Netlify Forms (build-time detection via
+ * data-netlify + the hidden form-name input) with a honeypot. JS enhances the
+ * submit: AJAX POST → in-page success state + GA4 `generate_lead` + Meta `Lead`.
+ * With JS off it still posts to Netlify and lands on Netlify's confirmation.
+ */
+interface Props {
+  id?: string;
+  formName?: string;
+  heading?: string;
+  subheading?: string;
+}
+const {
+  id = 'growth-audit-form',
+  formName = 'growth-audit',
+  heading,
+  subheading,
+} = Astro.props;
+---
+<div class="form-shell" data-form-shell>
+  <form
+    id={id}
+    class="form-card"
+    name={formName}
+    method="POST"
+    data-netlify="true"
+    netlify-honeypot="bot-field"
+    action="/contact?submitted=true"
+  >
+    <!-- Netlify needs the form name echoed as a hidden field -->
+    <input type="hidden" name="form-name" value={formName} />
+
+    {heading && <div class="ft">{heading}</div>}
+    {subheading && <div class="fsub">{subheading}</div>}
+
+    <div class="form-row">
+      <div class="field">
+        <label for={`${id}-name`}>Your name</label>
+        <input id={`${id}-name`} name="name" type="text" placeholder="First & last" autocomplete="name" required />
+      </div>
+      <div class="field">
+        <label for={`${id}-business`}>Business name</label>
+        <input id={`${id}-business`} name="business" type="text" placeholder="Your brand" autocomplete="organization" required />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="field">
+        <label for={`${id}-email`}>Email</label>
+        <input id={`${id}-email`} name="email" type="email" placeholder="you@brand.com" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for={`${id}-store`}>Store URL</label>
+        <input id={`${id}-store`} name="store_url" type="text" placeholder="yourbrand.com" autocomplete="url" inputmode="url" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="field">
+        <label for={`${id}-budget`}>Monthly marketing budget (ads + services)</label>
+        <select id={`${id}-budget`} name="budget" required>
+          <option value="">Select a range</option>
+          <option>Under $3,000</option>
+          <option>$3,000 – $7,000</option>
+          <option>$7,000 – $15,000</option>
+          <option>$15,000+</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for={`${id}-contact`}>Preferred contact method</label>
+        <select id={`${id}-contact`} name="preferred_contact">
+          <option>Email</option>
+          <option>Phone call</option>
+          <option>Text message</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field full">
+      <label for={`${id}-message`}>Anything we should know?</label>
+      <textarea id={`${id}-message`} name="message" placeholder="Where you're stuck, what you've tried, what good would look like…"></textarea>
+    </div>
+
+    <!-- honeypot: hidden from people, catnip for bots -->
+    <p class="hp" aria-hidden="true">
+      <label>Don’t fill this out if you’re human: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+    </p>
+
+    <button type="submit" class="btn btn-lg">Get my Growth Audit</button>
+    <div class="form-note">Or start with one thing — a tracking audit, a Klaviyo build, or a content day.</div>
+  </form>
+
+  <div class="form-success" data-form-success hidden role="status">
+    <div class="fs-mark grad-text" aria-hidden="true">✓</div>
+    <h3 class="display">Thanks — we’ll be in touch.</h3>
+    <p>
+      Your growth audit request is in. We’ll review your brand and come back
+      within one business day with exactly where the revenue leaks are — no
+      commitment.
+    </p>
+  </div>
+</div>
+
+<style>
+  .form-success {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 44px 32px;
+    text-align: center;
+  }
+  .form-success .fs-mark {
+    font-size: 46px;
+    font-weight: 800;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+  .form-success h3 { font-size: 26px; margin-bottom: 10px; }
+  .form-success p { color: var(--muted); max-width: 460px; margin: 0 auto; font-size: 16px; }
+  .ft { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 21px; margin-bottom: 6px; }
+  .fsub { color: var(--muted); font-size: 14.5px; margin-bottom: 22px; }
+</style>
+
+<script is:inline>
+  (() => {
+    document.querySelectorAll('[data-form-shell]').forEach((shell) => {
+      const form = shell.querySelector('form');
+      const success = shell.querySelector('[data-form-success]');
+      if (!form || !success) return;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        // Bot filled the honeypot → silently drop.
+        if (form.querySelector('[name="bot-field"]')?.value) return;
+
+        const btn = form.querySelector('button[type="submit"]');
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = 'Sending…';
+        }
+
+        const data = new FormData(form);
+        try {
+          await fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(data).toString(),
+          });
+        } catch (err) {
+          /* Network hiccup: still show success so the lead can follow up. */
+        }
+
+        // Conversion events (no-ops if GA4 / Pixel aren't configured).
+        try {
+          if (typeof window.gtag === 'function') {
+            window.gtag('event', 'generate_lead', {
+              currency: 'USD',
+              value: 1,
+              form_name: form.getAttribute('name') || 'growth-audit',
+            });
+          }
+          if (typeof window.fbq === 'function') {
+            window.fbq('track', 'Lead', { content_name: 'Growth Audit' });
+          }
+        } catch (err) {
+          /* analytics must never block the success state */
+        }
+
+        form.hidden = true;
+        success.hidden = false;
+        success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    });
+  })();
+</script>

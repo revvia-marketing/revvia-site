@@ -1,0 +1,158 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Gallery from '../../components/Gallery.astro';
+import Faq from '../../components/Faq.astro';
+import {
+  serviceSchema,
+  faqPageSchema,
+  breadcrumbSchema,
+  type FaqItem,
+} from '../../lib/schema';
+
+const crumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Work', url: '/work' },
+  { name: 'Photography & Production', url: '/work/photography' },
+];
+
+const tiles = [
+  { label: 'Lifestyle · Hero', span: 'big' as const, g: 0 },
+  { label: 'Product', g: 2 },
+  { label: 'On model', g: 1 },
+  { label: 'Motion', span: 'tall' as const, video: true, g: 3 },
+  { label: 'Flat lay', g: 5 },
+  { label: 'Detail', g: 4 },
+  { label: 'Editorial', span: 'wide' as const, g: 2 },
+  { label: 'UGC', g: 0 },
+  { label: 'Lifestyle · Campaign', span: 'big' as const, g: 1 },
+  { label: 'Texture', g: 4 },
+  { label: 'Reel', video: true, g: 3 },
+  { label: 'Behind the scenes', g: 5 },
+  { label: 'Studio', g: 2 },
+  { label: 'On location', span: 'wide' as const, g: 0 },
+];
+
+const caps = [
+  { sw: 'g2', t: 'Product', d: 'Clean, e-comm-ready hero shots and detail work that make the buy button easy.' },
+  { sw: 'g1', t: 'Lifestyle & On-Model', d: 'Your product in the world — the imagery that builds desire and brand.' },
+  { sw: 'g3', t: 'Video & Motion', d: 'Short-form, brand films, and ad creative built to stop the scroll.' },
+  { sw: 'g0', t: 'UGC & Social', d: 'Native-feeling content engineered for Reels, TikTok, and paid social.' },
+];
+
+const faqs: FaqItem[] = [
+  { question: 'Do you really shoot everything in-house?', answer: 'Yes. Product, lifestyle, on-model, motion, and UGC are all produced under our own roof, in America — no freelance roulette, no stock, no waiting weeks on a contractor.' },
+  { question: 'How do we get a full season of content fast?', answer: 'A Seasonal Content Capsule captures a whole quarter of photo and video in one production — days, not months of back-and-forth.' },
+  { question: 'Is the creative built to perform in ads?', answer: 'From the start. We shoot with your paid social and email in mind, so the same assets that look great on your site are engineered to convert as ad creative.' },
+];
+
+const schemas = [
+  serviceSchema({
+    name: 'In-house Photography & Video Production',
+    description:
+      'In-house photography and video for brand-driven consumer brands — product, lifestyle, on-model, motion, and UGC, shot under our own roof.',
+    url: '/work/photography',
+    serviceType: 'Content production',
+  }),
+  faqPageSchema(faqs),
+  breadcrumbSchema(crumbs),
+];
+---
+<BaseLayout
+  title="Photography & Production"
+  description="In-house photography and video for brand-driven consumer brands. Product, lifestyle, on-model, motion, and UGC — shot under our own roof by Revvia in Carlsbad, CA."
+  path="/work/photography"
+  schemas={schemas}
+>
+  <header class="page-hero">
+    <div class="page-hero-in" style="padding-bottom:26px">
+      <Breadcrumbs crumbs={crumbs} class="hero-crumbs" />
+      <div class="eyebrow">Production</div>
+      <h1>Every frame, <span class="grad-text">shot in-house.</span></h1>
+      <p class="sub">Product, lifestyle, on-model, motion, and UGC — produced under our own roof, in America. The creative moat behind every result we drive.</p>
+      <div class="hero-cta">
+        <a href="/services/seasonal-content-capsule" class="btn btn-lg">Book a content capsule</a>
+        <a href="/services/flagship-brand-film" class="btn btn-lg btn-ghost">Explore brand films</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap galwrap">
+    <Gallery
+      tiles={tiles}
+      variant="showcase"
+      note="Placeholder gallery — these tiles become your real shoot work once it's loaded in."
+    />
+  </div>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">What we shoot</div>
+        <h2 class="sec">Range, all under one roof.</h2>
+        <p class="lead mut">One team and one studio that covers the full spectrum a modern brand needs to feed its channels.</p>
+      </div>
+      <div class="caps">
+        {caps.map((c) => (
+          <div class="cap"><div class={`swatch ${c.sw}`}></div><div class="cb"><h3>{c.t}</h3><p>{c.d}</p></div></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="psec moat">
+    <div class="moat-in">
+      <div class="eyebrow">The in-house difference</div>
+      <h2>Most agencies outsource your creative. We're in your warehouse with a camera.</h2>
+      <p>No freelance roulette, no stock, no waiting weeks on a contractor. We shoot it ourselves — which means it's faster, on-brand, and built from the start to perform in your ads and email. That's the moat, and it's why the numbers move.</p>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">FAQ</div>
+      <h2 class="sec">Questions about production.</h2>
+      <Faq items={faqs} />
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="cta-in">
+      <h2 class="display">Ready for content that actually performs?</h2>
+      <p class="lead">The fastest way in is a Seasonal Content Capsule — a whole season of photo and video from one shoot. Or start with a growth audit and we'll tell you what your channels need most.</p>
+      <div class="cta-cta">
+        <a class="btn btn-lg" href="/services/seasonal-content-capsule">Book a content capsule</a>
+        <a class="btn btn-lg btn-ghost" href="/contact">Get a Growth Audit</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero-crumbs { margin-bottom: 16px; }
+  .galwrap { padding: 36px 0 12px; }
+
+  .sec-head { max-width: 720px; margin-bottom: 30px; }
+
+  .caps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .cap { background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; transition: transform 0.18s, border-color 0.18s; }
+  .cap:hover { transform: translateY(-3px); border-color: var(--line-2); }
+  .cap .swatch { height: 120px; position: relative; }
+  .cap .swatch::after { content: ""; position: absolute; inset: 0; background: radial-gradient(180px 120px at 74% 20%, rgba(255, 255, 255, 0.12), transparent 60%); }
+  .cap .swatch.g0 { background: linear-gradient(150deg, #8a0fad, #3a1148); }
+  .cap .swatch.g1 { background: linear-gradient(150deg, #d6248f, #5a1240); }
+  .cap .swatch.g2 { background: linear-gradient(150deg, #ec4f65, #4a1626); }
+  .cap .swatch.g3 { background: linear-gradient(150deg, #f77f3a, #4a2410); }
+  .cap .cb { padding: 20px; }
+  .cap h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px; color: #fff; margin-bottom: 6px; }
+  .cap p { color: var(--muted); font-size: 14px; }
+  @media (max-width: 820px) { .caps { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 480px) { .caps { grid-template-columns: 1fr; } }
+
+  .moat { background: var(--bg-2); }
+  .moat-in { max-width: 880px; margin: 0 auto; padding: 0 28px; text-align: center; }
+  .moat h2 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(28px, 4vw, 44px); letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 18px; }
+  .moat p { color: var(--muted); font-size: 18px; max-width: 640px; margin: 0 auto; }
+
+  .cta-cta { display: flex; gap: 13px; justify-content: center; flex-wrap: wrap; }
+</style>

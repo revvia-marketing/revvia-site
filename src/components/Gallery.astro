@@ -1,0 +1,113 @@
+---
+/**
+ * Asymmetric tile gallery (production + photography pages). Each tile is a
+ * gradient placeholder that real frames/video thumbnails drop into later via
+ * Keystatic or a props change. Supports `big` (2×2), `wide` (2 cols), `tall`
+ * (2 rows) spans and an optional video badge.
+ */
+export interface Tile {
+  label: string;
+  span?: 'big' | 'wide' | 'tall';
+  video?: boolean;
+  /** Override the placeholder gradient (0–5); defaults to cycling by index. */
+  g?: number;
+  /** Optional real image src (string path) — replaces the gradient placeholder. */
+  image?: string;
+}
+interface Props {
+  tiles: Tile[];
+  note?: string;
+  /** "showcase" = the larger photography-page grid; default = service-page grid. */
+  variant?: 'default' | 'showcase';
+  class?: string;
+}
+const { tiles, note, variant = 'default', class: className = '' } = Astro.props;
+---
+<div class:list={['gallery', variant, className]} role="list" aria-label="Production gallery">
+  {
+    tiles.map((t, i) => (
+      <div
+        class:list={['tile', `g${t.g ?? i % 6}`, t.span]}
+        role="listitem"
+        style={t.image ? `background-image:url(${t.image});background-size:cover;background-position:center;` : undefined}
+      >
+        {t.video && <div class="vid" aria-hidden="true">▶</div>}
+        <span>{t.label}</span>
+      </div>
+    ))
+  }
+</div>
+{note && <p class="gnote">{note}</p>}
+
+<style>
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 128px;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .tile {
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .tile span {
+    position: relative;
+    z-index: 1;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.72);
+  }
+  .tile::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(220px 150px at 78% 18%, rgba(255, 255, 255, 0.1), transparent 62%);
+  }
+  .tile.big { grid-column: span 2; grid-row: span 2; }
+  .tile.wide { grid-column: span 2; }
+  .tile.tall { grid-row: span 2; }
+  .tile .vid {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(10, 10, 12, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #fff;
+    z-index: 1;
+  }
+  .g0 { background: linear-gradient(150deg, #8a0fad, #3a1148); }
+  .g1 { background: linear-gradient(150deg, #d6248f, #5a1240); }
+  .g2 { background: linear-gradient(150deg, #ec4f65, #4a1626); }
+  .g3 { background: linear-gradient(150deg, #f77f3a, #4a2410); }
+  .g4 { background: linear-gradient(150deg, #fe9c1c, #5a3408); }
+  .g5 { background: linear-gradient(150deg, #b5179e, #2a1140); }
+  .gnote { font-size: 13px; color: var(--muted-2); margin-top: 16px; font-style: italic; }
+
+  /* showcase variant — the larger photography-page grid */
+  .gallery.showcase { grid-auto-rows: 150px; gap: 14px; }
+  .gallery.showcase .tile { border-radius: 16px; padding: 16px; }
+  .gallery.showcase .tile span { font-size: 11.5px; color: rgba(255, 255, 255, 0.78); }
+  .gallery.showcase .tile .vid { width: 34px; height: 34px; top: 13px; right: 13px; font-size: 12px; }
+  .gallery.showcase + .gnote { text-align: center; margin-top: 18px; }
+
+  @media (max-width: 680px) {
+    .gallery { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 120px; }
+    .gallery.showcase { grid-auto-rows: 130px; }
+    .tile.big { grid-row: span 2; }
+  }
+</style>

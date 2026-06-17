@@ -1,0 +1,20 @@
+---
+/**
+ * Accessible FAQ accordion (native <details>). Pair with faqPageSchema(items)
+ * in the page's `schemas` prop so the visible Q&A and the JSON-LD never drift.
+ */
+import type { FaqItem } from '../lib/schema';
+
+interface Props { items: FaqItem[]; openFirst?: boolean; }
+const { items, openFirst = false } = Astro.props;
+---
+<div class="faq">
+  {
+    items.map((item, i) => (
+      <details open={openFirst && i === 0}>
+        <summary>{item.question}</summary>
+        <p>{item.answer}</p>
+      </details>
+    ))
+  }
+</div>

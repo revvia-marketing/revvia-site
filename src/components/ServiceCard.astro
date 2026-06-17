@@ -1,0 +1,17 @@
+---
+/** Dark service/value card: optional gradient number, title, copy.
+ *  Renders as a link when `href` is provided. */
+interface Props {
+  number?: string;
+  title: string;
+  href?: string;
+  class?: string;
+}
+const { number, title, href, class: className = '' } = Astro.props;
+const Tag = href ? 'a' : 'div';
+---
+<Tag class:list={['pcard', className]} {...(href ? { href } : {})}>
+  {number && <span class="pn grad-text">{number}</span>}
+  <h3>{title}</h3>
+  <p><slot /></p>
+</Tag>

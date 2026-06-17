@@ -1,0 +1,45 @@
+---
+/**
+ * Closing gradient-glow CTA band. Default content is a primary button to
+ * /contact; pass children (e.g. <GrowthAuditForm/>) to override.
+ */
+import Button from './Button.astro';
+import { CTA } from '../lib/site';
+
+interface Props {
+  id?: string;
+  heading: string;
+  /** Optional <span class="grad-text"> phrase to highlight in the heading. */
+  lead?: string;
+  buttonLabel?: string;
+  buttonHref?: string;
+  class?: string;
+}
+const {
+  id,
+  heading,
+  lead,
+  buttonLabel = CTA.label,
+  buttonHref = CTA.href,
+  class: className = '',
+} = Astro.props;
+
+const hasSlot = Astro.slots.has('default');
+---
+<section id={id} class:list={['cta', className]}>
+  <div class="cta-in">
+    <h2 class="display" set:html={heading}></h2>
+    {lead && <p class="lead">{lead}</p>}
+    {
+      hasSlot ? (
+        <div class="cta-slot"><slot /></div>
+      ) : (
+        <Button href={buttonHref} size="lg">{buttonLabel}</Button>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .cta-slot { margin-top: 8px; text-align: left; }
+</style>

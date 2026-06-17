@@ -1,0 +1,145 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CTASection from '../components/CTASection.astro';
+import {
+  localBusinessSchema,
+  aboutPageSchema,
+  breadcrumbSchema,
+} from '../lib/schema';
+
+const values = [
+  { n: '01', t: 'Revenue over impressions', d: 'Likes and reach don’t pay you. We build and report to the number that does.' },
+  { n: '02', t: 'Whatever it takes', d: 'We act like owners of your growth, not a vendor running a checklist.' },
+  { n: '03', t: 'In-house & in America', d: 'Your creative is produced under our own roof — not outsourced or stock.' },
+  { n: '04', t: 'Senior-led', d: 'The people who win your account are the people who run it. No bait and switch.' },
+  { n: '05', t: 'Month-to-month', d: 'No multi-year lock-ins or hidden fees. We earn the relationship every month.' },
+  { n: '06', t: 'Honest on the first call', d: 'If we’re not the right fit, we’ll tell you — before you’ve spent a dollar.' },
+];
+
+// Team avatars are intentional placeholders (initials). Drop a real photo in
+// via the optional `image` path and it renders through Astro's pipeline.
+const team = [
+  { initials: 'TH', name: 'Tim Holt', role: 'Founder & CEO', bio: 'A SoCal native who started Revvia as a pastor — he likes to say he answers to a higher power than your checkbook. Marketing since 2014, with work that’s driven over a billion impressions. Surfs and plays guitar when he can.' },
+  { initials: 'KP', name: 'Kris Peterson', role: 'Account Executive · San Diego', bio: 'SDSU grad and lifelong brand-builder who co-founded Chuze Fitness. He’s been the small-business owner, so he gets both sides of the table.' },
+  { initials: 'PB', name: 'Paisley Bird', role: 'Marketing Executive · Production', bio: 'A local filmmaker and photographer who runs marketing and executive support — and brings the camera with her. Eight-plus years helping businesses thrive.' },
+  { initials: 'KC', name: 'Kennedi Cutliff', role: 'Social & Creative', bio: 'University of Oregon Art & Technology grad specializing in design, social, and brand development. Believes creative inspiration comes from new experiences.' },
+  { initials: 'JC', name: 'Jake Carr', role: 'Account Executive · Omaha', bio: 'A local business owner in Nebraska who knows what running a company actually takes. On the team since 2024.' },
+  { initials: 'CO', name: 'Christian Ortiz', role: 'Account Executive · San Diego', bio: 'A decade-plus in operations and team development, now helping small businesses scale. Snowboards, runs, and surfs the rest of the time.' },
+];
+
+const schemas = [
+  localBusinessSchema(),
+  aboutPageSchema({
+    url: '/about',
+    description:
+      'Revvia started as First Door Marketing, keeping churches and nonprofits alive through the pandemic. Today it is a production-led DTC growth studio in Carlsbad, CA.',
+  }),
+  breadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'About', url: '/about' },
+  ]),
+];
+---
+<BaseLayout
+  title="Our Story"
+  description="Revvia started as First Door Marketing, keeping churches and nonprofits alive through the pandemic. Today we're a production-led DTC growth studio in Carlsbad, CA. We act like your CMO — not your vendor."
+  path="/about"
+  schemas={schemas}
+>
+  <header class="page-hero">
+    <div class="page-hero-in">
+      <div class="eyebrow">Our Story</div>
+      <h1>We act like your CMO — <span class="grad-text">not your vendor.</span></h1>
+      <p class="sub">Revvia was built on one stubborn idea: do whatever it takes to grow a client's revenue, and stay honest about it.</p>
+      <div class="tag grad-text">Marketing how it should be.</div>
+    </div>
+  </header>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">How it started</div>
+      <h2 class="sec">It didn't begin as a marketing agency.</h2>
+      <div class="story">
+        <p>Revvia started in early 2020 as First Door Marketing, built to keep churches and nonprofits alive through the pandemic — when their doors were closed and their support was disappearing. The brief was simple: <strong>do whatever it takes</strong> to connect these organizations with the people looking for them. We stood up a fractional CMO function and went to work. While most struggled, our clients set records — donations and online attendance climbed.</p>
+        <p>When businesses reopened in 2022, they came to those same nonprofit clients frustrated: five figures a month on marketing, and nothing moving. We were introduced, we ran the same playbook, and it worked — big time. Inside six months, <strong>every business client had grown revenue at least 50% year over year.</strong></p>
+        <p>That's when Revvia became Revvia. And the insight that started it still runs everything: don't act like a marketing company. Be the client's Chief Marketing Officer and their whole team, and obsess over the only thing that matters — revenue.</p>
+        <div class="pull grad-text">Tim started this as a pastor. He still says he answers to a higher power than your checkbook.</div>
+        <p>That's why the work is honest, the contracts are month to month, and there are no confusing charges or hidden fees. And if we're not the right fit for your brand, <strong>you'll hear it on the first call.</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">Where we are now</div>
+      <h2 class="sec">The same conviction — pointed at consumer brands.</h2>
+      <div class="story">
+        <p>Today, that do-whatever-it-takes approach is focused on brand-driven consumer brands. We've become a <strong>production-led DTC growth studio</strong> — running paid media, email and SMS retention, and clean tracking, and shooting the creative ourselves, in-house and in America.</p>
+        <p>Same conviction, sharper focus: lifestyle, apparel, beauty, wellness, and accessories brands on Shopify across Southern California that are ready to actually grow. We don't outsource your creative or hand you to a junior. You get a senior team that's in your warehouse with a camera — and a number to answer to.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="psec vals">
+    <div class="wrap">
+      <div class="eyebrow blk">What we believe</div>
+      <h2 class="sec">Six things we won't compromise on.</h2>
+      <div class="grid3">
+        {values.map((v) => (
+          <div class="vcard"><span class="vn grad-text">{v.n}</span><h3>{v.t}</h3><p>{v.d}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">The team</div>
+      <h2 class="sec">The people who'll actually run your account.</h2>
+      <div class="tgrid">
+        {team.map((m) => (
+          <div class="tcard">
+            <div class="av" aria-hidden="true">{m.initials}</div>
+            <h3>{m.name}</h3>
+            <div class="role">{m.role}</div>
+            <p>{m.bio}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    heading="Let's see if we're a fit."
+    lead="Start with a growth audit. If we're not the right team for your brand, we'll tell you on the first call — that's the promise."
+  />
+</BaseLayout>
+
+<style>
+  .page-hero .tag { margin-top: 26px; font-family: 'Bricolage Grotesque', sans-serif; font-style: italic; font-size: 17px; }
+
+  .story { max-width: 720px; }
+  .story p { font-size: 18px; color: #cfd3db; margin-bottom: 20px; }
+  .story p strong { color: #fff; font-weight: 600; }
+  .pull {
+    font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600;
+    font-size: clamp(22px, 3vw, 30px); line-height: 1.25; letter-spacing: -0.01em;
+    margin: 34px 0; padding-left: 24px; border-left: 3px solid var(--m); max-width: 760px;
+  }
+
+  .vals { background: var(--bg-2); }
+  .vcard { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px; }
+  .vcard .vn { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 14px; margin-bottom: 12px; display: block; }
+  .vcard h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #fff; margin-bottom: 7px; }
+  .vcard p { color: var(--muted); font-size: 15px; }
+
+  .tgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 6px; }
+  .tcard { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 24px; transition: transform 0.18s, border-color 0.18s; }
+  .tcard:hover { transform: translateY(-3px); border-color: var(--line-2); }
+  .av { width: 60px; height: 60px; border-radius: 50%; background: var(--grad); display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 21px; color: #fff; margin-bottom: 16px; }
+  .tcard h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 19px; color: #fff; margin-bottom: 2px; }
+  .tcard .role { font-size: 13px; font-weight: 600; letter-spacing: 0.02em; margin-bottom: 10px; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; display: inline-block; }
+  .tcard p { color: var(--muted); font-size: 14.5px; }
+  @media (max-width: 820px) { .tgrid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .tgrid { grid-template-columns: 1fr; } }
+</style>

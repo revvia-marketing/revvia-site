@@ -1,0 +1,36 @@
+---
+/** Primary gradient button (default) or ghost variant. Renders an <a>
+ *  when `href` is set, otherwise a <button>. */
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'ghost';
+  size?: 'md' | 'lg';
+  type?: 'button' | 'submit';
+  class?: string;
+  [key: string]: unknown;
+}
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  type = 'button',
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const cls = [
+  'btn',
+  variant === 'ghost' ? 'btn-ghost' : '',
+  size === 'lg' ? 'btn-lg' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+{
+  href ? (
+    <a href={href} class={cls} {...rest}><slot /></a>
+  ) : (
+    <button type={type} class={cls} {...rest}><slot /></button>
+  )
+}

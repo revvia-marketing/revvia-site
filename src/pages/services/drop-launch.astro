@@ -1,0 +1,150 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Gallery from '../../components/Gallery.astro';
+import CTASection from '../../components/CTASection.astro';
+import Faq from '../../components/Faq.astro';
+import {
+  serviceSchema,
+  faqPageSchema,
+  breadcrumbSchema,
+  type FaqItem,
+} from '../../lib/schema';
+
+const crumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Services', url: '/services' },
+  { name: 'Drop Launch', url: '/services/drop-launch' },
+];
+
+const included = [
+  { t: 'Launch creative', d: 'Hero and teaser content — photo and video — shot for the drop.' },
+  { t: 'Email & SMS sequence', d: 'Warm-up, launch, and last-call flows that build and capture demand.' },
+  { t: 'Paid launch support', d: 'Coordinated Meta and Google pushes timed to the release.' },
+  { t: 'Landing page', d: 'A fast, on-brand drop page built to convert the traffic.' },
+];
+
+const steps = [
+  { n: '1', t: 'Strategy', d: 'We plan the offer, the timeline, and the hooks that build demand.' },
+  { n: '2', t: 'Build', d: 'Creative, emails, ads, and the drop page — produced in-house.' },
+  { n: '3', t: 'Tease', d: 'A warm-up sequence that has your list ready to buy on day one.' },
+  { n: '4', t: 'Launch', d: 'Everything fires together — and we work the spike in real time.' },
+];
+
+const tiles = [
+  { label: 'Teaser', span: 'big' as const, video: true },
+  { label: 'Hero shot' },
+  { label: 'Launch email' },
+  { label: 'Story frame' },
+  { label: 'Paid creative' },
+  { label: 'Drop page', span: 'wide' as const },
+  { label: 'Countdown' },
+  { label: 'Sold out' },
+];
+
+const faqs: FaqItem[] = [
+  { question: 'What exactly is a Drop Launch?', answer: 'It’s a full campaign engineered around a single product release. We handle the creative, the hype, and the conversion — teaser content, an email and SMS sequence, paid support, and a drop page — and run the whole launch as one coordinated moment.' },
+  { question: 'How far ahead do we need to start?', answer: 'Ideally three to four weeks before the drop. That gives us time to lock the offer, produce the creative in-house, and run a proper tease sequence so your list is primed to buy on day one.' },
+  { question: 'Do you handle the tease, launch, and carry — or just launch day?', answer: 'All three. We build demand with a warm-up before the drop, fire everything together at launch and work the spike in real time, then carry momentum with follow-up creative and flows so the release keeps converting after day one.' },
+  { question: 'What if the product sells out?', answer: 'That’s a good problem, and we plan for it. We can pivot the campaign to a waitlist and back-in-stock flow on the fly, capturing the demand you built so the next restock launches to a warm, ready audience.' },
+];
+
+const schemas = [
+  serviceSchema({
+    name: 'Drop Launch',
+    description:
+      'A full campaign engineered around your next product drop: creative, hype, and conversion, start to finish. By Revvia.',
+    url: '/services/drop-launch',
+    serviceType: 'Product launch campaign',
+  }),
+  faqPageSchema(faqs),
+  breadcrumbSchema(crumbs),
+];
+---
+<BaseLayout
+  title="Drop Launch"
+  description="A full campaign engineered around your next product drop: creative, hype, and conversion, start to finish. By Revvia."
+  path="/services/drop-launch"
+  schemas={schemas}
+>
+  <header class="page-hero">
+    <div class="page-hero-in">
+      <Breadcrumbs crumbs={crumbs} class="hero-crumbs" />
+      <div class="eyebrow">Campaign · Product Launch</div>
+      <h1>Drop <span class="grad-text">Launch.</span></h1>
+      <p class="sub">A full campaign engineered around your next product drop — creative, hype, and conversion, start to finish.</p>
+      <div class="hero-cta">
+        <a href="/contact" class="btn btn-lg">Get a Growth Audit</a>
+        <a href="/services" class="btn btn-lg btn-ghost">All services</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">What it is</div>
+      <h2 class="sec">Turn a release into a moment.</h2>
+      <p class="lead">A new product deserves more than a quiet “now available.” A Drop Launch turns your release into an event — a coordinated campaign with teaser creative, an email and SMS sequence, paid support, and a landing page built to convert the spike. We produce the creative in-house and run the whole launch.</p>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">What's included</div>
+      <h2 class="sec">Everything the drop needs.</h2>
+      <div class="inc">
+        {included.map((c) => (
+          <div class="c"><div class="ck" aria-hidden="true">✓</div><div><h3>{c.t}</h3><p>{c.d}</p></div></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">The work</div>
+      <h2 class="sec">The launch, on every channel.</h2>
+      <p class="lead mut">Teaser to hero to drop page — one coordinated look across the whole campaign.</p>
+      <Gallery tiles={tiles} note="Placeholder — your drop's real creative lives here." />
+    </div>
+  </section>
+
+  <section class="psec proc">
+    <div class="wrap">
+      <div class="eyebrow blk">How it works</div>
+      <h2 class="sec">Strategy to sold-out.</h2>
+      <div class="steps">
+        {steps.map((s) => (
+          <div class="s"><span class="sn">{s.n}</span><h3>{s.t}</h3><p>{s.d}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="outcome">
+        <div class="eyebrow blk">Why it matters</div>
+        <div class="big">Turn a release into a revenue moment.</div>
+        <p>Instead of a quiet email no one opens, your drop lands as an event — with the demand, and the page, to convert it.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">FAQ</div>
+      <h2 class="sec">Questions about drop launches.</h2>
+      <Faq items={faqs} />
+    </div>
+  </section>
+
+  <CTASection
+    heading="Got a drop worth launching properly?"
+    lead="Start with a growth audit and we'll plan the launch your next release deserves."
+  />
+</BaseLayout>
+
+<style>
+  .hero-crumbs { margin-bottom: 16px; }
+</style>

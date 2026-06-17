@@ -1,0 +1,137 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTASection from '../../components/CTASection.astro';
+import Faq from '../../components/Faq.astro';
+import {
+  serviceSchema,
+  faqPageSchema,
+  breadcrumbSchema,
+  itemListSchema,
+  type FaqItem,
+} from '../../lib/schema';
+
+const fullStack = [
+  { n: '01', t: 'Paid Media', d: 'Meta and Google, run to revenue instead of clicks — on tracking you can trust.' },
+  { n: '02', t: 'Creative & Production', d: 'Photo, video, and UGC shot in-house — not stock, not freelance roulette.' },
+  { n: '03', t: 'Email & SMS Retention', d: 'Klaviyo flows and campaigns that turn one-time buyers into repeat revenue.' },
+  { n: '04', t: 'Tracking & Measurement', d: 'Clean attribution and blended MER, so you always know what’s working.' },
+  { n: '05', t: 'SEO & GEO', d: 'Get found in Google and in AI search, with content that ranks and gets cited.' },
+  { n: '06', t: 'Website & CRO', d: 'Fast, on-brand Shopify experiences tuned to convert the traffic you earn.' },
+];
+
+const single = [
+  { t: 'Tracking & Analytics Audit', d: 'Find the leaks before you spend another dollar. Our best first step.' },
+  { t: 'Email & SMS Build', d: 'A full Klaviyo retention channel built from zero.' },
+  { t: 'Paid Media Management', d: 'Meta and Google, structured and run to revenue.' },
+  { t: 'Content & Production', d: 'A content day or capsule — photo, video, and UGC, in-house.' },
+  { t: 'SEO & GEO', d: 'Rank in Google and get cited in AI search.' },
+  { t: 'Website & CRO', d: 'Convert the traffic you already have.' },
+];
+
+const productions = [
+  { href: '/services/flagship-brand-film', f: 'f1', ribbon: 'Brand Film', ph: '▶  Showreel', t: 'Flagship Brand Film', d: 'A cinematic anthem film that becomes the centerpiece of your brand — and quietly, your best-performing ad.', go: 'Explore the brand film →' },
+  { href: '/services/seasonal-content-capsule', f: 'f2', ribbon: 'Photo + Video', ph: 'Gallery', t: 'Seasonal Content Capsule', d: 'A full season of photo and video, shot in one production. A quarter of content in days — not months of freelance back-and-forth.', go: 'Explore the capsule →' },
+  { href: '/services/growth-foundation', f: 'f3', ribbon: 'Build Once', ph: 'The playbook', t: 'Growth Foundation', d: 'The complete growth engine, built once: tracking, paid, retention, and measurement. The Peter Grimm playbook, productized.', go: 'Explore the foundation →' },
+  { href: '/services/drop-launch', f: 'f4', ribbon: 'Launch', ph: 'Campaign', t: 'Drop Launch', d: 'A full campaign engineered around your next product drop — creative, hype, and conversion, start to finish.', go: 'Explore the drop launch →' },
+];
+
+const faqs: FaqItem[] = [
+  { question: 'Do I have to buy the whole stack?', answer: 'No. Our core engagement runs the entire growth engine, but every single service is also a real entry point — many brands start with a tracking audit or a Klaviyo build and expand from there.' },
+  { question: 'How is this priced?', answer: 'Full-stack growth is a monthly base plus a small percentage of ad spend, plus a growth bonus we only earn when we beat your efficiency baseline. Single services and productions are scoped per project. Everything is month-to-month.' },
+  { question: 'What makes Revvia different from a media-buying agency?', answer: 'We shoot your creative in-house, run retention and tracking alongside paid, and report to revenue — not platform-inflated metrics. One senior-led team, one stack, working together.' },
+  { question: 'Who do you work with?', answer: 'Brand-driven consumer brands on Shopify, roughly $500K–$8M in revenue, concentrated in Southern California — lifestyle, apparel, beauty, wellness, accessories, home, and food & beverage.' },
+];
+
+const schemas = [
+  serviceSchema({
+    name: 'Full-Stack DTC Growth',
+    description:
+      'Production-led growth retainers, single-service entry points, and premium in-house productions for brand-driven consumer brands.',
+    url: '/services',
+  }),
+  faqPageSchema(faqs),
+  breadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Services', url: '/services' },
+  ]),
+  itemListSchema({
+    name: 'Revvia Productions',
+    items: productions.map((p) => ({ name: p.t, url: p.href })),
+  }),
+];
+---
+<BaseLayout
+  title="Services"
+  description="One studio for the whole growth engine. Full-stack growth retainers, single-service entry points, and premium productions for brand-driven consumer brands."
+  path="/services"
+  schemas={schemas}
+>
+  <header class="page-hero">
+    <div class="page-hero-in">
+      <div class="eyebrow">Services</div>
+      <h1>One studio for the <span class="grad-text">whole growth engine.</span></h1>
+      <p class="sub">Most brands stitch together a media buyer, a freelance designer, and an email tool no one touches. We run all of it — and make it work together. Three ways to work with us.</p>
+      <a href="/contact" class="btn btn-lg">Get a Growth Audit</a>
+    </div>
+  </header>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="shead"><span class="k grad-text">01 · Ongoing</span></div>
+      <h2 class="sec">Full-Stack Growth</h2>
+      <p class="lead mut">Our core engagement — we become your outsourced growth team and run the entire engine. Senior-led, month-to-month, built and reported to revenue.</p>
+      <div class="grid3">
+        {fullStack.map((s) => (
+          <div class="pcard"><span class="pn grad-text">{s.n}</span><h3>{s.t}</h3><p>{s.d}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="psec bg2">
+    <div class="wrap">
+      <div class="shead"><span class="k grad-text">02 · À la carte</span></div>
+      <h2 class="sec">Single Services</h2>
+      <p class="lead mut">Not ready for the full engine? Start with one thing. Each of these is a real entry point — and the fastest way to see how we work.</p>
+      <div class="srow">
+        {single.map((s) => (
+          <div class="sitem"><span class="mk"></span><div><h4>{s.t}</h4><p>{s.d}</p></div></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="shead"><span class="k grad-text">03 · Premium</span></div>
+      <h2 class="sec">Productions</h2>
+      <p class="lead mut">Big, high-craft pieces that move a brand on their own — produced in-house, built to perform. Each one has its own page and its own showcase of the work.</p>
+      <div class="prods">
+        {productions.map((p) => (
+          <a class="prod" href={p.href}>
+            <div class={`media ${p.f}`}><span class="ribbon">{p.ribbon}</span><span class="ph">{p.ph}</span></div>
+            <div class="pbody"><h3>{p.t}</h3><p>{p.d}</p><span class="go grad-text">{p.go}</span></div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="shead"><span class="k grad-text">FAQ</span></div>
+      <h2 class="sec">Common questions.</h2>
+      <Faq items={faqs} />
+    </div>
+  </section>
+
+  <CTASection
+    heading="Not sure where to start?"
+    lead="That's what the growth audit is for. We'll show you where your brand is leaking revenue and recommend the one move that matters most — no commitment."
+  />
+</BaseLayout>
+
+<style>
+  .shead { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+  .shead .k { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 15px; }
+</style>

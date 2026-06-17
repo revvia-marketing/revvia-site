@@ -1,0 +1,35 @@
+---
+/** Work card with a gradient media zone (placeholder), headline stat, link. */
+interface Props {
+  href: string;
+  /** Built-in media gradients: "pg" | "va", or pass custom inline `mediaStyle`. */
+  media?: 'pg' | 'va';
+  mediaStyle?: string;
+  tag?: string;
+  name: string;
+  stat: string;
+  label: string;
+  linkText?: string;
+}
+const {
+  href,
+  media,
+  mediaStyle,
+  tag = 'Photo + Video',
+  name,
+  stat,
+  label,
+  linkText = 'Read the case study →',
+} = Astro.props;
+---
+<a class="wcard" href={href}>
+  <div class:list={['wmedia', media]} style={mediaStyle}>
+    {tag && <span class="mtag">{tag}</span>}
+    <span class="wname">{name}</span>
+  </div>
+  <div class="wbody">
+    <div class="stat num grad-text" set:html={stat}></div>
+    <div class="slab">{label}</div>
+    <span class="link grad-text">{linkText}</span>
+  </div>
+</a>

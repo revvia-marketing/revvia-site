@@ -1,0 +1,19 @@
+---
+/**
+ * Injects one <script type="application/ld+json"> per schema object.
+ * Pass any number of JSON-LD nodes built via src/lib/schema.ts.
+ */
+interface Props {
+  schemas: Record<string, unknown>[];
+}
+const { schemas } = Astro.props;
+const valid = (schemas ?? []).filter(Boolean);
+---
+{
+  valid.map((schema) => (
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(schema)}
+    />
+  ))
+}

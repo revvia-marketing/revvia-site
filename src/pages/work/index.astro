@@ -1,0 +1,151 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTASection from '../../components/CTASection.astro';
+import { breadcrumbSchema, itemListSchema } from '../../lib/schema';
+
+const cases = [
+  {
+    href: '/work/peter-grimm',
+    media: 'pg',
+    tag: 'Heritage Headwear · Shopify',
+    name: 'Peter Grimm',
+    stat: '3.2× in six months',
+    sl: 'Rebuilt the full stack mid-migration — tracking, paid, and retention — and turned a stalled store into accelerating growth.',
+    meta: 'Tracking · Paid Media · Klaviyo · Migration',
+  },
+  {
+    href: '/work/voyage-air',
+    media: 'va',
+    tag: 'Premium Guitars · WooCommerce',
+    name: 'Voyage Air Guitar',
+    stat: 'A year, in six months',
+    sl: 'Turned on a near-dormant premium brand and earned more net revenue in H1 2026 than in all of 2025.',
+    meta: 'Tracking · Google Ads · Meta · Lookalikes',
+  },
+];
+
+const highlights = [
+  { v: '3.2×', l: 'Peter Grimm monthly revenue, six months' },
+  { v: '8×', l: 'Voyage Air first-half revenue, year over year' },
+  { v: '~30×', l: 'ROAS on brand-defense search' },
+  { v: '100%', l: 'In-house creative — shot, not stock' },
+];
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Work', url: '/work' },
+  ]),
+  itemListSchema({
+    name: 'Revvia case studies',
+    items: cases.map((c) => ({ name: c.name, url: c.href })),
+  }),
+];
+---
+<BaseLayout
+  title="Work"
+  description="The work, and what it earned. Case studies from Revvia — the production-led DTC growth studio in Carlsbad, CA. Revenue over impressions."
+  path="/work"
+  schemas={schemas}
+>
+  <header class="page-hero">
+    <div class="page-hero-in" style="padding-bottom:0">
+      <div class="eyebrow">Our Work</div>
+      <h1>The work — <span class="grad-text">and what it earned.</span></h1>
+      <p class="sub">We lead with what we've made and the revenue it moved. No vanity metrics, no rounded-up promises.</p>
+    </div>
+  </header>
+
+  <div class="hl">
+    <div class="hl-in">
+      {highlights.map((h) => (
+        <div class="h"><div class="v grad-text num">{h.v}</div><div class="l">{h.l}</div></div>
+      ))}
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Case studies</div>
+        <h2>Receipts, in detail.</h2>
+      </div>
+      <div class="cases">
+        {cases.map((c) => (
+          <a class="case" href={c.href}>
+            <div class={`media ${c.media}`}><span class="mtag">{c.tag}</span><span class="nm">{c.name}</span></div>
+            <div class="body">
+              <div class="stat num grad-text">{c.stat}</div>
+              <div class="sl">{c.sl}</div>
+              <div class="meta">{c.meta}</div>
+              <span class="link grad-text">Read the case study →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+      <div class="next">
+        <h3>Your brand could be next.</h3>
+        <p>We're taking on a small number of founding ecommerce brands. The first step is always the same — a growth audit.</p>
+        <a class="btn" href="/contact">Get a Growth Audit</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="prodband">
+    <div class="pb-in">
+      <div>
+        <div class="eyebrow">Production</div>
+        <h2>The creative behind the numbers.</h2>
+        <p>Every result above is powered by content we shot ourselves. See the photography and video work.</p>
+      </div>
+      <a class="btn btn-lg btn-ghost" href="/work/photography">See the production work →</a>
+    </div>
+  </div>
+
+  <CTASection
+    heading="Want results worth a case study?"
+    lead="Start with a growth audit — we'll show you exactly where your brand is leaking revenue, no commitment."
+  />
+</BaseLayout>
+
+<style>
+  .hl { border-bottom: 1px solid var(--line); background: var(--bg-2); }
+  .hl-in { max-width: var(--maxw); margin: 0 auto; padding: 0 28px; display: grid; grid-template-columns: repeat(4, 1fr); }
+  .hl-in .h { padding: 30px 22px; border-right: 1px solid var(--line); }
+  .hl-in .h:last-child { border-right: none; }
+  .hl-in .v { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(28px, 3.8vw, 40px); line-height: 1; }
+  .hl-in .l { font-size: 13px; color: var(--muted); margin-top: 9px; line-height: 1.35; }
+  @media (max-width: 760px) {
+    .hl-in { grid-template-columns: 1fr 1fr; }
+    .hl-in .h:nth-child(2) { border-right: none; }
+    .hl-in .h:nth-child(1), .hl-in .h:nth-child(2) { border-bottom: 1px solid var(--line); }
+  }
+
+  .sec-head { max-width: 720px; margin-bottom: 30px; }
+  .sec-head h2 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: clamp(26px, 3.6vw, 38px); letter-spacing: -0.01em; margin-top: 12px; }
+
+  .cases { display: grid; gap: 22px; }
+  .case { display: grid; grid-template-columns: 1.05fr 1fr; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; background: var(--card); transition: transform 0.18s, border-color 0.18s; }
+  .case:hover { transform: translateY(-4px); border-color: var(--m); }
+  .case .media { position: relative; overflow: hidden; min-height: 240px; display: flex; align-items: flex-end; padding: 24px; }
+  .case .media.pg { background: linear-gradient(145deg, #2a0e1f, #3a1422 70%, #160a13); }
+  .case .media.va { background: linear-gradient(145deg, #160a26, #241038 70%, #0e0918); }
+  .case .media::after { content: ""; position: absolute; inset: 0; background: radial-gradient(340px 220px at 82% 14%, rgba(254, 156, 28, 0.15), transparent 60%); }
+  .case .media .mtag { position: absolute; top: 18px; left: 22px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5); font-weight: 600; z-index: 1; }
+  .case .media .nm { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; color: #fff; z-index: 1; }
+  .case .body { padding: 30px; display: flex; flex-direction: column; justify-content: center; }
+  .case .stat { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(30px, 4vw, 42px); line-height: 1; margin-bottom: 8px; }
+  .case .sl { color: #cfd3db; font-size: 16px; margin-bottom: 18px; }
+  .case .meta { color: var(--muted-2); font-size: 12.5px; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 16px; }
+  .case .link { font-weight: 600; font-size: 14.5px; }
+  @media (max-width: 760px) { .case { grid-template-columns: 1fr; } .case .media { min-height: 180px; } }
+
+  .next { border: 1px dashed var(--line-2); border-radius: 20px; padding: 34px; text-align: center; background: var(--bg-2); margin-top: 22px; }
+  .next h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; margin-bottom: 8px; }
+  .next p { color: var(--muted); font-size: 15.5px; max-width: 460px; margin: 0 auto 20px; }
+
+  .prodband { border-top: 1px solid var(--line); background: var(--bg-2); }
+  .pb-in { max-width: var(--maxw); margin: 0 auto; padding: 56px 28px; display: flex; align-items: center; justify-content: space-between; gap: 26px; flex-wrap: wrap; }
+  .pb-in h2 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: clamp(24px, 3.2vw, 34px); letter-spacing: -0.01em; max-width: 560px; }
+  .pb-in p { color: var(--muted); font-size: 16px; margin-top: 8px; max-width: 520px; }
+</style>

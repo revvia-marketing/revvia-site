@@ -1,0 +1,7 @@
+---
+/** Gradient uppercase label. */
+interface Props { as?: 'div' | 'span' | 'p'; class?: string; }
+const { as = 'div', class: className = '' } = Astro.props;
+const Tag = as;
+---
+<Tag class:list={['eyebrow', className]}><slot /></Tag>

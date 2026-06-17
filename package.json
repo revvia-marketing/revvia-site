@@ -1,0 +1,33 @@
+{
+  "name": "revvia-site",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Revvia — production-led DTC growth studio. Astro + Keystatic + Netlify.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "prebuild": "node scripts/gen-assets.mjs",
+    "build": "astro build",
+    "preview": "astro preview",
+    "gen-assets": "node scripts/gen-assets.mjs",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/markdoc": "^0.15.0",
+    "@astrojs/mdx": "^4.3.0",
+    "@astrojs/netlify": "^6.5.0",
+    "@astrojs/react": "^4.3.0",
+    "@astrojs/sitemap": "^3.4.0",
+    "@keystatic/astro": "^5.0.5",
+    "@keystatic/core": "^0.5.47",
+    "astro": "^5.13.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sharp": "^0.34.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1"
+  }
+}

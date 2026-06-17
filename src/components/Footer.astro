@@ -1,0 +1,54 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/revvia-logo.png';
+import { FOOTER_LINKS, NAP, TAGLINE } from '../lib/site';
+---
+<footer>
+  <div class="foot-in">
+    <a class="brand" href="/" aria-label="Revvia — home">
+      <Image src={logo} alt="Revvia" width={112} height={90} />
+      <span class="wm">Revvia</span>
+    </a>
+    <nav class="foot-links" aria-label="Footer">
+      {FOOTER_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+  </div>
+  <div class="foot-tag">
+    <span>
+      Revvia — DTC Growth Studio · {NAP.address.addressLocality}, {NAP.address.addressRegion}
+      · <a href={`tel:${NAP.telephone}`}>{NAP.telephoneDisplay}</a>
+    </span>
+    <span class="grad-text">{TAGLINE}</span>
+  </div>
+</footer>
+
+<style>
+  footer { border-top: 1px solid var(--line); padding: 46px 0 40px; background: var(--bg); }
+  .foot-in {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 28px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+  }
+  .foot-in .brand img { height: 28px; }
+  .foot-in .brand .wm { font-size: 21px; }
+  .foot-links { display: flex; gap: 22px; font-size: 14px; color: var(--muted); flex-wrap: wrap; }
+  .foot-links a:hover { color: #fff; }
+  .foot-tag {
+    max-width: var(--maxw);
+    margin: 28px auto 0;
+    padding: 22px 28px 0;
+    border-top: 1px solid var(--line);
+    font-size: 13.5px;
+    color: var(--muted-2);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .foot-tag a:hover { color: #fff; }
+</style>
