@@ -6,24 +6,42 @@
  * the alt text; an optional leading "NN-" sets order. Until logos are added,
  * it shows client names as text so the strip is never empty.
  */
-const logoModules = import.meta.glob('/src/assets/brands/*.{svg,png,jpg,jpeg,webp,avif}', {
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+// Raster logos run through Astro's image pipeline (resized + modern formats via
+// Netlify's CDN); SVGs are served as-is (vector — nothing to optimize).
+const rasterModules = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/brands/*.{png,jpg,jpeg,webp,avif}',
+  { eager: true }
+);
+const svgModules = import.meta.glob('/src/assets/brands/*.svg', {
   eager: true,
   query: '?url',
   import: 'default',
 }) as Record<string, string>;
 
+// Known brand-name casing (filenames can't hold "/" or mixed case).
+const NAME_OVERRIDES: Record<string, string> = {
+  itan: 'iTAN',
+  eversun: 'EverSun',
+  'eversun-itan': 'EverSun/iTAN',
+};
+
 function prettyName(path: string) {
-  const file = path.split('/').pop() ?? '';
-  return file
+  const slug = (path.split('/').pop() ?? '')
     .replace(/\.[^.]+$/, '')
-    .replace(/^\d+[-_]/, '') // drop leading "NN-" ordering prefix
-    .replace(/[-_]/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+    .replace(/^\d+[-_]/, ''); // drop leading "NN-" ordering prefix
+  if (NAME_OVERRIDES[slug]) return NAME_OVERRIDES[slug];
+  return slug.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-const logos = Object.entries(logoModules)
-  .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
-  .map(([path, src]) => ({ src, alt: prettyName(path) }));
+const logos = [
+  ...Object.entries(rasterModules).map(([path, mod]) => ({ path, img: mod.default, url: undefined as string | undefined })),
+  ...Object.entries(svgModules).map(([path, url]) => ({ path, img: undefined as ImageMetadata | undefined, url })),
+]
+  .sort((a, b) => a.path.localeCompare(b.path, undefined, { numeric: true }))
+  .map((l) => ({ ...l, alt: prettyName(l.path) }));
 
 // Real clients — shown as text chips until logo files are dropped in.
 const fallbackNames = ['Peter Grimm', 'Voyage Air Guitar', 'EverSun/iTAN', 'For Every Need'];
@@ -37,7 +55,13 @@ const hasLogos = logos.length > 0;
       hasLogos ? (
         <ul class="bs-logos">
           {logos.map((l) => (
-            <li><img src={l.src} alt={l.alt} loading="lazy" decoding="async" /></li>
+            <li>
+              {l.img ? (
+                <Image src={l.img} alt={l.alt} height={76} densities={[1, 2]} loading="lazy" decoding="async" />
+              ) : (
+                <img src={l.url} alt={l.alt} loading="lazy" decoding="async" />
+              )}
+            </li>
           ))}
         </ul>
       ) : (
