@@ -19,7 +19,7 @@ const crumbs = [
 ];
 
 // Drop high-res photos into src/assets/photography/ and they appear here,
-// optimised, automatically. Filename controls order/span/label — see
+// optimised, automatically. Filename controls order/span/label - see
 // src/assets/photography/README.md. Until then, gradient placeholders show.
 const photoModules = import.meta.glob<{ default: ImageMetadata }>(
   '/src/assets/photography/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG,WEBP,AVIF}',
@@ -44,22 +44,18 @@ const placeholderTiles = [
   { label: 'On location', span: 'wide' as const, g: 0 },
 ];
 
-const hasPhotos = photoTiles.length > 0;
-const tiles = hasPhotos ? photoTiles : placeholderTiles;
-const galleryNote = hasPhotos
-  ? undefined
-  : "Placeholder gallery — these tiles become your real shoot work once it's loaded in.";
+const tiles = photoTiles.length > 0 ? photoTiles : placeholderTiles;
 
 const caps = [
   { sw: 'g2', t: 'Product', d: 'Clean, e-comm-ready hero shots and detail work that make the buy button easy.' },
-  { sw: 'g1', t: 'Lifestyle & On-Model', d: 'Your product in the world — the imagery that builds desire and brand.' },
+  { sw: 'g1', t: 'Lifestyle & On-Model', d: 'Your product in the world - the imagery that builds desire and brand.' },
   { sw: 'g3', t: 'Video & Motion', d: 'Short-form, brand films, and ad creative built to stop the scroll.' },
   { sw: 'g0', t: 'UGC & Social', d: 'Native-feeling content engineered for Reels, TikTok, and paid social.' },
 ];
 
 const faqs: FaqItem[] = [
-  { question: 'Do you really shoot everything in-house?', answer: 'Yes. Product, lifestyle, on-model, motion, and UGC are all produced by our own team — on location and in person, no freelance roulette, no stock, no waiting weeks on a contractor.' },
-  { question: 'How do we get a full season of content fast?', answer: 'A Seasonal Content Capsule captures a whole quarter of photo and video in one production — days, not months of back-and-forth.' },
+  { question: 'Do you really shoot everything in-house?', answer: 'Yes. Product, lifestyle, on-model, motion, and UGC are all produced by our own team - on location and in person, no freelance roulette, no stock, no waiting weeks on a contractor.' },
+  { question: 'How do we get a full season of content fast?', answer: 'A Seasonal Content Capsule captures a whole quarter of photo and video in one production - days, not months of back-and-forth.' },
   { question: 'Is the creative built to perform in ads?', answer: 'From the start. We shoot with your paid social and email in mind, so the same assets that look great on your site are engineered to convert as ad creative.' },
 ];
 
@@ -67,7 +63,7 @@ const schemas = [
   serviceSchema({
     name: 'In-house Photography & Video Production',
     description:
-      'In-house photography and video for consumer & lifestyle brands — product, lifestyle, on-model, motion, and UGC, shot on location and in person.',
+      'In-house photography and video for consumer & lifestyle brands - product, lifestyle, on-model, motion, and UGC, shot on location and in person.',
     url: '/work/photography',
     serviceType: 'Content production',
   }),
@@ -77,7 +73,7 @@ const schemas = [
 ---
 <BaseLayout
   title="Photography & Production"
-  description="In-house photography and video for consumer & lifestyle brands. Product, lifestyle, on-model, motion, and UGC — shot on location and in person by Revvia, San Diego."
+  description="In-house photography and video for consumer & lifestyle brands. Product, lifestyle, on-model, motion, and UGC - shot on location and in person by Revvia, San Diego."
   path="/work/photography"
   schemas={schemas}
 >
@@ -86,7 +82,7 @@ const schemas = [
       <Breadcrumbs crumbs={crumbs} class="hero-crumbs" />
       <div class="eyebrow">Production</div>
       <h1>Every frame, <span class="grad-text">shot in-house.</span></h1>
-      <p class="sub">Product, lifestyle, on-model, motion, and UGC — produced by our own team, on location and in person. The creative engine behind every result we drive.</p>
+      <p class="sub">Product, lifestyle, on-model, motion, and UGC - produced by our own team, on location and in person. The creative engine behind every result we drive.</p>
       <div class="hero-cta">
         <a href="/services/seasonal-content-capsule" class="btn btn-lg">Book a content capsule</a>
         <a href="/services/flagship-brand-film" class="btn btn-lg btn-ghost">Explore brand films</a>
@@ -95,7 +91,7 @@ const schemas = [
   </header>
 
   <div class="wrap galwrap">
-    <Gallery tiles={tiles} variant="showcase" note={galleryNote} />
+    <Gallery tiles={tiles} variant="showcase" />
   </div>
 
   <section class="psec">
@@ -117,7 +113,7 @@ const schemas = [
     <div class="moat-in">
       <div class="eyebrow">The in-house difference</div>
       <h2>Most agencies outsource your creative. We're in your warehouse with a camera.</h2>
-      <p>No freelance roulette, no stock, no waiting weeks on a contractor. We shoot it ourselves — which means it's faster, on-brand, and built from the start to perform in your ads and email. That's the moat, and it's why the numbers move.</p>
+      <p>No freelance roulette, no stock, no waiting weeks on a contractor. We shoot it ourselves - which means it's faster, on-brand, and built from the start to perform in your ads and email. That's the moat, and it's why the numbers move.</p>
     </div>
   </section>
 
@@ -132,7 +128,7 @@ const schemas = [
   <section class="cta">
     <div class="cta-in">
       <h2 class="display">Ready for content that actually performs?</h2>
-      <p class="lead">The fastest way in is a Seasonal Content Capsule — a whole season of photo and video from one shoot. Or start with a growth audit and we'll tell you what your channels need most.</p>
+      <p class="lead">The fastest way in is a Seasonal Content Capsule - a whole season of photo and video from one shoot. Or start with a growth audit and we'll tell you what your channels need most.</p>
       <div class="cta-cta">
         <a class="btn btn-lg" href="/services/seasonal-content-capsule">Book a content capsule</a>
         <a class="btn btn-lg btn-ghost" href="/contact">Get a Growth Audit</a>

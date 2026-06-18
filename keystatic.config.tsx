@@ -1,7 +1,7 @@
 import { config, fields, collection } from '@keystatic/core';
 
 /**
- * Keystatic CMS — admin UI at /keystatic.
+ * Keystatic CMS - admin UI at /keystatic.
  *
  * Storage: GitHub mode in production (editors publish straight to this repo,
  * which triggers a Netlify rebuild). Local mode in `astro dev` so you can edit
@@ -103,12 +103,12 @@ export default config({
         }),
         transform: fields.object(
           {
-            fromLabel: fields.text({ label: 'From — label' }),
-            fromValue: fields.text({ label: 'From — value' }),
+            fromLabel: fields.text({ label: 'From - label' }),
+            fromValue: fields.text({ label: 'From - value' }),
             delta: fields.text({ label: 'Delta (gradient figure, e.g. 3.2×)' }),
-            toLabel: fields.text({ label: 'To — label' }),
-            toValue: fields.text({ label: 'To — value' }),
-            toSub: fields.text({ label: 'To — sub' }),
+            toLabel: fields.text({ label: 'To - label' }),
+            toValue: fields.text({ label: 'To - value' }),
+            toSub: fields.text({ label: 'To - sub' }),
           },
           { label: 'Transform (before → after hero card)' }
         ),

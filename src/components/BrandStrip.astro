@@ -1,8 +1,8 @@
 ---
 /**
- * Social-proof strip — logos of the brands we work with, right under the hero.
+ * Social-proof strip - logos of the brands we work with, right under the hero.
  * Drop logo files into src/assets/brands/ and they appear here automatically
- * (PNG, SVG, JPG, or WebP — transparent PNG/SVG look best). Filename becomes
+ * (PNG, SVG, JPG, or WebP - transparent PNG/SVG look best). Filename becomes
  * the alt text; an optional leading "NN-" sets order. Until logos are added,
  * it shows client names as text so the strip is never empty.
  */
@@ -10,7 +10,7 @@ import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
 // Raster logos run through Astro's image pipeline (resized + modern formats via
-// Netlify's CDN); SVGs are served as-is (vector — nothing to optimize).
+// Netlify's CDN); SVGs are served as-is (vector - nothing to optimize).
 const rasterModules = import.meta.glob<{ default: ImageMetadata }>(
   '/src/assets/brands/*.{png,jpg,jpeg,webp,avif,PNG,JPG,JPEG,WEBP,AVIF}',
   { eager: true }
@@ -43,7 +43,7 @@ const logos = [
   .sort((a, b) => a.path.localeCompare(b.path, undefined, { numeric: true }))
   .map((l) => ({ ...l, alt: prettyName(l.path) }));
 
-// Real clients — shown as text chips until logo files are dropped in.
+// Real clients - shown as text chips until logo files are dropped in.
 const fallbackNames = ['Peter Grimm', 'Voyage Air Guitar', 'EverSun/iTAN', 'For Every Need'];
 
 const hasLogos = logos.length > 0;

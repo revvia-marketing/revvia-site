@@ -1,7 +1,7 @@
 /**
  * JSON-LD builders. Every page composes the structured-data types the spec
  * requires by calling these helpers, so the shapes stay consistent and valid.
- * Returned objects are injected by <SchemaJsonLd /> (no @context duplication —
+ * Returned objects are injected by <SchemaJsonLd /> (no @context duplication -
  * each top-level node carries its own).
  */
 import {
@@ -68,7 +68,7 @@ export function websiteSchema() {
 }
 
 /**
- * LocalBusiness / ProfessionalService — used on Home, About, Contact.
+ * LocalBusiness / ProfessionalService - used on Home, About, Contact.
  * Full NAP + geo + hours + areaServed + priceRange + sameAs.
  */
 export function localBusinessSchema() {

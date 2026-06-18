@@ -1,7 +1,7 @@
 ---
 /*
-  DRAFT v1 — findings + architecture focus. Marquee local proof.
-  The RESULTS section is an intentional PLACEHOLDER ("Measurement underway") —
+  DRAFT v1 - findings + architecture focus. Marquee local proof.
+  The RESULTS section is an intentional PLACEHOLDER ("Measurement underway") -
   do not invent numbers. Swap in real member-acquisition / retention figures as
   the engagement matures (see the TODO in the Results section).
   Confirm with EverSun which specifics (member count, churn %, impression and
@@ -23,35 +23,35 @@ const crumbs = [
 const stats = [
   { v: '28', cls: 'grad-text', l: 'Locations unified under one growth system' },
   { v: '24,070', cls: 'white', l: 'Active members in the base we’re optimizing' },
-  { v: '129K+', cls: 'grad-text', l: 'Monthly searches for the old iTAN name — being recaptured' },
+  { v: '129K+', cls: 'grad-text', l: 'Monthly searches for the old iTAN name - being recaptured' },
   { v: '1', cls: 'grad-text', l: 'Integrated partner, replacing a fragmented vendor stack' },
 ];
 
 const findings = [
-  { t: 'Tracking measured the wrong thing.', d: 'Success was being counted in form fills and clicks — not paying members. The one number that actually mattered, member acquisition, wasn’t being measured at all.' },
-  { t: 'A rebrand leaking its own equity.', d: 'The old iTAN name still drew over 129,000 searches a month — but the listings never said “now EverSun,” so barely 4.6% clicked through. A decade of brand equity, quietly draining.' },
-  { t: 'Invisible to search and AI.', d: 'No sitemap submitted, and no location or FAQ structure across the 28 studios — so neither Google nor AI assistants could cleanly read who EverSun was, or where.' },
-  { t: 'Revenue slipping out the back.', d: 'Six figures in failed-payment billing with no systematic recovery — much of it recoverable, none of it owned by anyone.' },
+  { t: 'Tracking measured the wrong thing.', d: 'Success was being counted in form fills and clicks - not paying members. The one number that actually mattered, member acquisition, wasn’t being measured at all.' },
+  { t: 'A rebrand leaking its own equity.', d: 'The old iTAN name still drew over 129,000 searches a month - but the listings never said “now EverSun,” so barely 4.6% clicked through. A decade of brand equity, quietly draining.' },
+  { t: 'Invisible to search and AI.', d: 'No sitemap submitted, and no location or FAQ structure across the 28 studios - so neither Google nor AI assistants could cleanly read who EverSun was, or where.' },
+  { t: 'Revenue slipping out the back.', d: 'Six figures in failed-payment billing with no systematic recovery - much of it recoverable, none of it owned by anyone.' },
 ];
 
 const insights = [
-  { big: 'First 90 days', t: 'Where retention is decided', d: 'Over half of all member churn happens in the first three months — while members who pass three-plus years almost never leave. The whole retention fight is at the very start.' },
-  { big: 'Routine > purchase', t: 'What actually keeps members', d: 'Members who build a skincare or lotion routine churn far less than those who buy nothing — but cheap one-off accessories do nothing. It’s the routine, not the transaction, that signals a member who stays.' },
-  { big: 'Members, not signups', t: 'The metric that matters', d: 'Every dollar should answer to paying-member acquisition and lifetime value — so that became the metric the entire system was built to optimize.' },
+  { big: 'First 90 days', t: 'Where retention is decided', d: 'Over half of all member churn happens in the first three months - while members who pass three-plus years almost never leave. The whole retention fight is at the very start.' },
+  { big: 'Routine > purchase', t: 'What actually keeps members', d: 'Members who build a skincare or lotion routine churn far less than those who buy nothing - but cheap one-off accessories do nothing. It’s the routine, not the transaction, that signals a member who stays.' },
+  { big: 'Members, not signups', t: 'The metric that matters', d: 'Every dollar should answer to paying-member acquisition and lifetime value - so that became the metric the entire system was built to optimize.' },
 ];
 
 const built = [
-  { n: '01', t: 'One source of truth for tracking', d: 'Wired the member database and point-of-sale through to Google Ads and Meta so a conversion fires on a new <em>paying member</em> — not a form fill — and the ad platforms optimize toward members and their lifetime value.' },
-  { n: '02', t: 'A GEO/SEO foundation across all 28 locations', d: 'Location schema for every studio, a 92-question FAQ structured for AI search, titles and metadata that finally say “formerly iTAN,” and a sitemap submitted — so search and AI can find every door.' },
-  { n: '03', t: 'A retention engine built on the data', d: 'A 90-day onboarding play around routine attach, winback and at-risk flows, and systematic failed-payment recovery — aimed squarely at the windows the data flagged.' },
-  { n: '04', t: 'One dashboard, one plan', d: 'Cost-per-member, acquisition by source, member LTV by channel, and churn by cohort — pulled into a single view leadership can act on, instead of five reports that never agreed.' },
+  { n: '01', t: 'One source of truth for tracking', d: 'Wired the member database and point-of-sale through to Google Ads and Meta so a conversion fires on a new <em>paying member</em> - not a form fill - and the ad platforms optimize toward members and their lifetime value.' },
+  { n: '02', t: 'A GEO/SEO foundation across all 28 locations', d: 'Location schema for every studio, a 92-question FAQ structured for AI search, titles and metadata that finally say “formerly iTAN,” and a sitemap submitted - so search and AI can find every door.' },
+  { n: '03', t: 'A retention engine built on the data', d: 'A 90-day onboarding play around routine attach, winback and at-risk flows, and systematic failed-payment recovery - aimed squarely at the windows the data flagged.' },
+  { n: '04', t: 'One dashboard, one plan', d: 'Cost-per-member, acquisition by source, member LTV by channel, and churn by cohort - pulled into a single view leadership can act on, instead of five reports that never agreed.' },
 ];
 
 const schemas = [
   articleSchema({
     headline: 'EverSun/iTAN: One Integrated Growth System for a 28-Location Southern California Brand',
     description:
-      'How Revvia replaced a fragmented vendor stack with one integrated growth system for EverSun/iTAN — the beloved 28-location Southern California beauty & wellness brand.',
+      'How Revvia replaced a fragmented vendor stack with one integrated growth system for EverSun/iTAN - the beloved 28-location Southern California beauty & wellness brand.',
     url,
     image: '/og/revvia-og.png',
     author: 'Revvia',
@@ -61,7 +61,7 @@ const schemas = [
 ---
 <BaseLayout
   title="EverSun/iTAN Case Study"
-  description="How Revvia replaced a fragmented vendor stack with one integrated growth system for EverSun/iTAN — the beloved 28-location Southern California beauty & wellness brand."
+  description="How Revvia replaced a fragmented vendor stack with one integrated growth system for EverSun/iTAN - the beloved 28-location Southern California beauty & wellness brand."
   path={url}
   ogType="article"
   schemas={schemas}
@@ -72,7 +72,7 @@ const schemas = [
       <div class="eyebrow">Beauty &amp; Wellness · 28 Locations · Southern California</div>
       <h1 class="cs-h1">EverSun/iTAN</h1>
       <div class="formerly">Beauty &amp; wellness · rebranded from iTAN in 2025</div>
-      <p class="lede">How we replaced a stack of disconnected vendors with one integrated growth system — for a beloved Southern California brand in the middle of a full rebrand.</p>
+      <p class="lede">How we replaced a stack of disconnected vendors with one integrated growth system - for a beloved Southern California brand in the middle of a full rebrand.</p>
       <div class="transform">
         <div class="t-from"><div class="t-label">Before</div><div class="t-val num">5+ vendors</div></div>
         <div class="t-arrow"><div class="arc" aria-hidden="true">→</div><div class="pct num grad-text">one plan</div></div>
@@ -97,7 +97,7 @@ const schemas = [
     <section class="psec">
       <div class="eyebrow blk">The Challenge</div>
       <h2 class="sec">The real cost of a fragmented stack.</h2>
-      <p class="body-lg">EverSun’s marketing lived across separate vendors — ads in one place, the website in another, SEO somewhere else. Each did their slice. <strong>No one owned the whole system.</strong> When we ran a full diagnostic, the revenue wasn’t leaking inside any one channel — it was leaking through the seams between them.</p>
+      <p class="body-lg">EverSun’s marketing lived across separate vendors - ads in one place, the website in another, SEO somewhere else. Each did their slice. <strong>No one owned the whole system.</strong> When we ran a full diagnostic, the revenue wasn’t leaking inside any one channel - it was leaking through the seams between them.</p>
       <ul class="findings">
         {findings.map((f) => (
           <li><span class="mk" aria-hidden="true"></span><span><span class="ft">{f.t}</span><span class="fd">{f.d}</span></span></li>
@@ -129,10 +129,10 @@ const schemas = [
     <section class="psec">
       <div class="eyebrow blk">The Results</div>
       <h2 class="sec">The engine’s in place. The numbers are coming.</h2>
-      <p class="body-lg">This is a current engagement. The integrated system is live, and for the first time performance is being measured against the metric that matters — paying members, and what they’re worth over time.</p>
+      <p class="body-lg">This is a current engagement. The integrated system is live, and for the first time performance is being measured against the metric that matters - paying members, and what they’re worth over time.</p>
       <div class="pending">
         <span class="tag">Measurement underway</span>
-        <p>We’ll publish the member-acquisition and retention numbers here as they mature — on the same honest basis we built the tracking: revenue and members, not vanity metrics.</p>
+        <p>We’ll publish the member-acquisition and retention numbers here as they mature - on the same honest basis we built the tracking: revenue and members, not vanity metrics.</p>
       </div>
       {/* TODO: replace the placeholder above with real results once data matures, e.g.:
            - cost-per-member trend / change
@@ -145,13 +145,13 @@ const schemas = [
 
     <section class="psec">
       <div class="eyebrow blk">The Takeaway</div>
-      <blockquote class="takeaway">Five vendors each optimized their own slice — and the revenue leaked through the seams between them. <span class="grad-text">One studio, holding the whole system,</span> closes the gaps no one else could see.</blockquote>
+      <blockquote class="takeaway">Five vendors each optimized their own slice - and the revenue leaked through the seams between them. <span class="grad-text">One studio, holding the whole system,</span> closes the gaps no one else could see.</blockquote>
     </section>
   </div>
 
   <CTASection
     heading={`Find your brand's <span class="grad-text">missing revenue.</span>`}
-    lead="Most brands are leaking growth in the seams between their vendors. We'll show you exactly where — start with a growth audit."
+    lead="Most brands are leaking growth in the seams between their vendors. We'll show you exactly where - start with a growth audit."
   />
 </BaseLayout>
 

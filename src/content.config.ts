@@ -65,7 +65,7 @@ export const SERIES_META = {
     accent: '#C24DE0',
     cardBg: 'linear-gradient(150deg,#8A0FAD,#2a1140)',
     barBg: 'linear-gradient(90deg,#8A0FAD,#B5179E)',
-    desc: 'Field notes from Tim and the team — growth lessons, hard-won opinions, and the occasional look behind the curtain of running a production-led studio.',
+    desc: 'Field notes from Tim and the team - growth lessons, hard-won opinions, and the occasional look behind the curtain of running a production-led studio.',
     allLabel: 'All notes',
   },
   'built-in-san-diego': {
@@ -83,7 +83,7 @@ export const SERIES_META = {
     accent: '#FEB44E',
     cardBg: 'linear-gradient(150deg,#FE9C1C,#5a3408)',
     barBg: 'linear-gradient(90deg,#F77F3A,#FE9C1C)',
-    desc: 'The consumer brands and the founders building them on the SoCal coast — heritage labels, challenger brands, and the drops worth knowing about.',
+    desc: 'The consumer brands and the founders building them on the SoCal coast - heritage labels, challenger brands, and the drops worth knowing about.',
     allLabel: 'All founders',
   },
 } as const;

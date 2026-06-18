@@ -1,5 +1,5 @@
 /**
- * Single source of truth for sitewide constants — NAP, socials, nav,
+ * Single source of truth for sitewide constants - NAP, socials, nav,
  * and contact details. Imported by Nav, Footer, SEO, and the JSON-LD
  * builders so nothing is hard-coded twice.
  */
@@ -12,17 +12,17 @@ export const SITE_NAME = 'Revvia';
 export const LEGAL_NAME = 'First Door, LLC';
 export const TAGLINE = 'Marketing how it should be.';
 export const DEFAULT_DESCRIPTION =
-  'Revvia is the San Diego production-led growth studio for consumer & lifestyle brands — full-stack and in person, run by the founder. Revenue over impressions, month-to-month.';
+  'Revvia is the San Diego production-led growth studio for consumer & lifestyle brands - full-stack and in person, run by the founder. Revenue over impressions, month-to-month.';
 
 /** Default Open Graph share image (generated from the logo, 1200×630). */
 export const DEFAULT_OG_IMAGE = '/og/revvia-og.png';
 
-/** Name, Address, Phone — the canonical business record. */
+/** Name, Address, Phone - the canonical business record. */
 export const NAP = {
   name: SITE_NAME,
   legalName: LEGAL_NAME,
   description:
-    'San Diego production-led growth studio for consumer & lifestyle brands — full-stack and in person. Paid media, in-house production, retention, and clean tracking, serving Southern California.',
+    'San Diego production-led growth studio for consumer & lifestyle brands - full-stack and in person. Paid media, in-house production, retention, and clean tracking, serving Southern California.',
   email: 'info@revvia.com',
   /** E.164 for schema / tel: links. */
   telephone: '+1-760-782-2875',
@@ -57,7 +57,7 @@ export const SOCIALS = [
   'https://www.facebook.com/firstdoormarketing/',
 ] as const;
 
-/** Primary navigation — used by both desktop nav and the mobile drawer. */
+/** Primary navigation - used by both desktop nav and the mobile drawer. */
 export const NAV_LINKS = [
   { label: 'Services', href: '/services' },
   { label: 'Work', href: '/work' },

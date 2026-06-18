@@ -12,7 +12,7 @@ function titleCase(s: string) {
 
 /**
  * Turn a folder of imported images (from import.meta.glob(..., { eager: true }))
- * into Gallery tiles. The filename drives everything — no code edits per photo:
+ * into Gallery tiles. The filename drives everything - no code edits per photo:
  *
  *   01-big-lifestyle-hero.jpg  → order 1, big tile, label "Lifestyle Hero"
  *   wide-on-location.jpg       → wide tile, label "On Location"
