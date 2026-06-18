@@ -91,20 +91,21 @@ const hasLogos = logos.length > 0;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 28px 48px;
+    gap: 26px 44px;
     width: 100%;
   }
-  .bs-logos li { display: flex; }
+  .bs-logos li { display: flex; align-items: center; }
   .bs-logos img {
-    height: 38px;
+    height: 44px;
     width: auto;
-    max-width: 160px;
+    max-width: 220px;
     object-fit: contain;
     /* monochrome on the dark theme; full color on hover */
-    filter: grayscale(1) brightness(0) invert(1) opacity(0.62);
+    filter: grayscale(1) brightness(0) invert(1) opacity(0.7);
     transition: filter 0.18s, transform 0.18s;
   }
   .bs-logos li:hover img { filter: none; transform: translateY(-2px); }
+  @media (max-width: 600px) { .bs-logos img { height: 38px; max-width: 160px; } }
 
   /* placeholder client names until real logos drop in */
   .bs-names {
