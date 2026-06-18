@@ -4,6 +4,8 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Gallery from '../../components/Gallery.astro';
 import CTASection from '../../components/CTASection.astro';
 import Faq from '../../components/Faq.astro';
+import type { ImageMetadata } from 'astro';
+import { buildGalleryTiles } from '../../lib/gallery';
 import {
   serviceSchema,
   faqPageSchema,
@@ -31,7 +33,7 @@ const steps = [
   { n: '4', t: 'Post & delivery', d: 'Edit, color, sound, and every cutdown, delivered ready to run.' },
 ];
 
-const tiles = [
+const placeholderTiles = [
   { label: 'Hero film', span: 'big' as const, video: true },
   { label: 'Behind the scenes' },
   { label: 'Color & grade' },
@@ -41,6 +43,15 @@ const tiles = [
   { label: 'Lighting' },
   { label: 'Story frame' },
 ];
+
+// Drop photos in src/assets/galleries/flagship-brand-film/ to replace the
+// placeholders (filename sets order/span/label — see the folder README).
+const photoModules = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/galleries/flagship-brand-film/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true }
+);
+const built = buildGalleryTiles(photoModules);
+const tiles = built.length ? built : placeholderTiles;
 
 const faqs: FaqItem[] = [
   { question: 'How long is a flagship brand film?', answer: 'Typically a 60–90 second hero cut, plus 15s, 30s, and vertical cutdowns engineered to run as paid creative.' },

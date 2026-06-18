@@ -4,6 +4,8 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Gallery from '../../components/Gallery.astro';
 import CTASection from '../../components/CTASection.astro';
 import Faq from '../../components/Faq.astro';
+import type { ImageMetadata } from 'astro';
+import { buildGalleryTiles } from '../../lib/gallery';
 import {
   serviceSchema,
   faqPageSchema,
@@ -31,7 +33,7 @@ const steps = [
   { n: '4', t: 'Launch', d: 'Everything fires together — and we work the spike in real time.' },
 ];
 
-const tiles = [
+const placeholderTiles = [
   { label: 'Teaser', span: 'big' as const, video: true },
   { label: 'Hero shot' },
   { label: 'Launch email' },
@@ -41,6 +43,13 @@ const tiles = [
   { label: 'Countdown' },
   { label: 'Sold out' },
 ];
+
+const photoModules = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/galleries/drop-launch/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true }
+);
+const built = buildGalleryTiles(photoModules);
+const tiles = built.length ? built : placeholderTiles;
 
 const faqs: FaqItem[] = [
   { question: 'What exactly is a Drop Launch?', answer: 'It’s a full campaign engineered around a single product release. We handle the creative, the hype, and the conversion — teaser content, an email and SMS sequence, paid support, and a drop page — and run the whole launch as one coordinated moment.' },

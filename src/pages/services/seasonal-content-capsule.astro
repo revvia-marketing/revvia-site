@@ -4,6 +4,8 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Gallery from '../../components/Gallery.astro';
 import CTASection from '../../components/CTASection.astro';
 import Faq from '../../components/Faq.astro';
+import type { ImageMetadata } from 'astro';
+import { buildGalleryTiles } from '../../lib/gallery';
 import {
   serviceSchema,
   faqPageSchema,
@@ -31,7 +33,7 @@ const steps = [
   { n: '4', t: 'Edit & deliver', d: 'Retouched, organized, and handed over ready to post.' },
 ];
 
-const tiles = [
+const placeholderTiles = [
   { label: 'Lifestyle 01', span: 'big' as const },
   { label: 'Product' },
   { label: 'UGC style', video: true },
@@ -42,6 +44,13 @@ const tiles = [
   { label: 'Motion', video: true },
   { label: 'Behind the scenes' },
 ];
+
+const photoModules = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/galleries/seasonal-content-capsule/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true }
+);
+const built = buildGalleryTiles(photoModules);
+const tiles = built.length ? built : placeholderTiles;
 
 const faqs: FaqItem[] = [
   { question: 'How much content do we actually get from one shoot?', answer: 'A typical capsule delivers 40+ finished photos and 12+ short-form video clips — enough to keep your feed, ads, and email fed for a full quarter. We map the exact count to your channels in the shot list before we roll.' },

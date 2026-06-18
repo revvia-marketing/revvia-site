@@ -7,6 +7,7 @@ import Faq from '../components/Faq.astro';
 import Video from '../components/Video.astro';
 import Comparison from '../components/Comparison.astro';
 import BrandStrip from '../components/BrandStrip.astro';
+import { resolveCover } from '../lib/images';
 import {
   localBusinessSchema,
   faqPageSchema,
@@ -117,6 +118,7 @@ const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
       <div class="work-grid">
         <CaseCard
           href="/work/eversun"
+          cover={resolveCover('eversun')}
           mediaStyle="background:linear-gradient(145deg,#2a1a0e,#3a2412 68%,#140d07)"
           tag="Beauty & Wellness · 28 Locations"
           name="EverSun/iTAN"
@@ -125,6 +127,7 @@ const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
         />
         <CaseCard
           href="/work/peter-grimm"
+          cover={resolveCover('peter-grimm')}
           media="pg"
           name="Peter Grimm"
           stat="3.2×"
@@ -132,6 +135,7 @@ const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
         />
         <CaseCard
           href="/work/voyage-air"
+          cover={resolveCover('voyage-air')}
           media="va"
           name="Voyage Air Guitar"
           stat="&gt; full year"

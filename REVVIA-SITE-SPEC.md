@@ -248,7 +248,12 @@ Editors (Tim, Kennedi) should be able to create and publish entries entirely thr
 
 - **Images:** all raster images go through Astro's image pipeline (responsive, lazy, AVIF/WebP). Provide high-res originals; never ship unoptimized images.
 - **Video:** host on **Vimeo or Mux** and embed via a reusable `Video` component (by ID). **Never self-host video files** in the repo.
-- **Placeholders to replace later:** the hero reel zone (homepage), all gallery tiles (production + photography pages), and the team avatars (About) are intentional placeholders. Build them so real assets drop in via Keystatic or a simple props/config change.
+- **Placeholders to replace later:** the hero reel zone (homepage) and all gradient placeholders (gallery tiles + card media) are intentional. They're filled by **dropping files into folders** — no code changes:
+  - **Galleries** auto-load from a per-page folder (`src/assets/photography/` and `src/assets/galleries/<page-slug>/`). Filename drives order/span/caption: `NN-[big|wide|tall-]label.jpg`. Empty folder → gradient placeholder tiles. (`buildGalleryTiles` in `src/lib/gallery.ts`.)
+  - **Card media** (Home proof cards, /work case cards, /services production cards): drop `src/assets/covers/<slug>.jpg` (slug = the card's link segment) to replace the gradient with a photo + scrim. No file → gradient stays. (`resolveCover` in `src/lib/images.ts`.)
+  - **Brand logos** (homepage social-proof strip): `src/assets/brands/` (see `BrandStrip`).
+  - **Journal / case-study covers:** via Keystatic `coverImage`.
+  - Each folder has a short README documenting the convention. All run through Astro's image pipeline (resized + AVIF/WebP via Netlify's CDN).
 
 ---
 

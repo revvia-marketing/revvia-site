@@ -1,10 +1,16 @@
 ---
-/** Work card with a gradient media zone (placeholder), headline stat, link. */
+/** Work card with a media zone, headline stat, link. The media is a gradient
+ *  placeholder by default; pass an imported `cover` image to replace it. */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
 interface Props {
   href: string;
   /** Built-in media gradients: "pg" | "va", or pass custom inline `mediaStyle`. */
   media?: 'pg' | 'va';
   mediaStyle?: string;
+  /** Real cover image (run through the pipeline) — replaces the gradient. */
+  cover?: ImageMetadata;
   tag?: string;
   name: string;
   stat: string;
@@ -15,6 +21,7 @@ const {
   href,
   media,
   mediaStyle,
+  cover,
   tag = 'Photo + Video',
   name,
   stat,
@@ -23,7 +30,10 @@ const {
 } = Astro.props;
 ---
 <a class="wcard" href={href}>
-  <div class:list={['wmedia', media]} style={mediaStyle}>
+  <div class:list={['wmedia', media, { 'has-cover': cover }]} style={cover ? undefined : mediaStyle}>
+    {cover && (
+      <Image class="wmedia-img" src={cover} alt={name} widths={[400, 700, 1000]} sizes="(max-width: 760px) 100vw, 560px" loading="lazy" />
+    )}
     {tag && <span class="mtag">{tag}</span>}
     <span class="wname">{name}</span>
   </div>
@@ -33,3 +43,16 @@ const {
     <span class="link grad-text">{linkText}</span>
   </div>
 </a>
+
+<style>
+  .wmedia.has-cover { background: #0e0f14; }
+  .wmedia-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+  /* scrim so the tag + name stay legible over a photo */
+  .wmedia.has-cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10, 10, 12, 0.78), rgba(10, 10, 12, 0.15) 55%, transparent);
+    z-index: 0;
+  }
+</style>

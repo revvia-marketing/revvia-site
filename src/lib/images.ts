@@ -16,3 +16,23 @@ export function resolveImage(path?: string): ImageMetadata | undefined {
   const key = path.startsWith('/') ? path : `/${path}`;
   return assets[key]?.default;
 }
+
+/**
+ * Resolve a card cover image by base name from src/assets/covers/, regardless
+ * of extension. Drop e.g. `peter-grimm.jpg` in that folder and the matching
+ * card's gradient is replaced by the photo. Returns undefined → keep gradient.
+ */
+const covers = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/covers/*.{jpeg,jpg,png,gif,webp,avif}',
+  { eager: true }
+);
+const coverByName = new Map(
+  Object.entries(covers).map(([path, mod]) => [
+    (path.split('/').pop() ?? '').replace(/\.[^.]+$/, ''),
+    mod.default,
+  ])
+);
+
+export function resolveCover(name: string): ImageMetadata | undefined {
+  return coverByName.get(name);
+}
