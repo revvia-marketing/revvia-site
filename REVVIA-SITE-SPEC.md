@@ -89,7 +89,8 @@ Capabilities are **qualifiers / proof points**, never claimed as unique: full-st
 - `CTASection` (gradient-glow closing CTA)
 - `SchemaJsonLd` (a component that injects the right JSON-LD per page — see §5)
 - `SEO` (a `<head>` component for title/description/canonical/OG/Twitter per page)
-- `Comparison` (the homepage "how to choose" fit matrix — National growth agency · Local web/CRO shop · Revvia, Revvia column highlighted; semantic table that reflows to stacked cards on mobile, with text-labelled marks for accessibility — see §3.1)
+- `Comparison` (the "how to choose" fit matrix — National growth agency · Local web/CRO shop · Revvia, Revvia column highlighted; semantic table that reflows to stacked cards on mobile, with text-labelled marks for accessibility. Used on Home and About — see §3.1)
+- `BrandStrip` (social-proof logo strip under the hero; auto-loads logos from `src/assets/brands/`, falls back to client-name chips when empty — see §3.1)
 - `Barchart` (CSS revenue chart for case studies, authored from Keystatic via the `barchart` markdoc tag)
 - `Video` (Vimeo/Mux embed by ID — never self-hosted; powers the homepage hero reel)
 
@@ -134,12 +135,15 @@ Internal links across the mockups currently point at flat filenames (e.g., `revv
 
 ### 3.1 Homepage section order & the comparison
 
-Homepage flows: hero → trust strip → problem → services → **Proof, not promises.** (proof sits above the differentiators; EverSun is the **lead** case card, ahead of Peter Grimm and Voyage Air) → reviews → **We're in your warehouse with a camera** (the reframed differentiators — local-first; 4 cards: local & in person · in-house on location · you work with the founder · built for your size) → **the "how to choose" comparison** (`Comparison` component) → FAQ → contact.
+Homepage flows: hero → **social-proof logo strip** (`BrandStrip`) → trust strip → problem → services → **Proof, not promises.** (proof sits above the differentiators; EverSun/iTAN is the **lead** case card, ahead of Peter Grimm and Voyage Air) → reviews → **We're in your warehouse with a camera** (the reframed differentiators — local-first; 4 cards: local & in person · in-house on location · you work with the founder · built for your size) → **the "how to choose" comparison** (`Comparison` component) → FAQ → contact.
 
-- **Trust strip** under the hero carries the demoted parity claims: "Revenue, not vanity metrics. Month-to-month, no lock-ins. We win when you win."
-- **Comparison** uses categories, never named competitors (`National growth agency` · `Local web/CRO shop` · `Revvia`), five fit rows, Revvia column highlighted, mobile-stacked with accessible mark labels.
+- **BrandStrip** sits directly under the hero — a row of client logos (drop files into `src/assets/brands/`; client-name text chips show until then). This is the social-proof strip.
+- **Trust strip** under the logos carries the demoted parity claims: "Revenue, not vanity metrics. Month-to-month, no lock-ins. We win when you win."
+- **Comparison** uses categories, never named competitors (`National growth agency` · `Local web/CRO shop` · `Revvia`), five fit rows, Revvia column highlighted, mobile-stacked with accessible mark labels. Reused on **/about** (before the closing CTA).
 
 ### 3.2 EverSun case study
+
+**Naming:** refer to the brand as **"EverSun/iTAN"** in identity spots sitewide (title, h1, breadcrumb, card names, meta, Article headline) — iTAN is the more recognized name in San Diego, so surface both. Keep the factual rebrand prose ("rebranded from iTAN to EverSun", listings that "never said now EverSun") as-is.
 
 `/work/eversun` is a **dedicated page** (not the CMS bar-chart template) because its structure is findings-and-architecture: hero with a "formerly iTAN" sub and a *Before → With Revvia* transform (`5+ vendors → one system`), a 4-stat band, The Brand, The Challenge (4 "leak in the seams" findings), What the Data Revealed (3 insight cards), What We Built (4 architecture cards), The Results, The Takeaway. It carries `Article` + `BreadcrumbList` schema like the other case studies and is featured as the lead proof card on Home and `/work`. **The Results section is an intentional placeholder ("Measurement underway") — real member-acquisition / retention numbers are pending and must be cleared with EverSun before publishing. Do not invent results.** `caseStudies` in Keystatic still backs Peter Grimm and Voyage Air; EverSun is bespoke. Design source of truth: `case-study-eversun.html`.
 

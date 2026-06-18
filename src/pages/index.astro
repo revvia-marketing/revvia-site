@@ -6,6 +6,7 @@ import GrowthAuditForm from '../components/GrowthAuditForm.astro';
 import Faq from '../components/Faq.astro';
 import Video from '../components/Video.astro';
 import Comparison from '../components/Comparison.astro';
+import BrandStrip from '../components/BrandStrip.astro';
 import {
   localBusinessSchema,
   faqPageSchema,
@@ -69,6 +70,8 @@ const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
     </div>
   </header>
 
+  <BrandStrip />
+
   <div class="trust-strip">
     <div class="wrap trust-in">
       <span>Revenue, not vanity metrics.</span>
@@ -116,9 +119,9 @@ const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
           href="/work/eversun"
           mediaStyle="background:linear-gradient(145deg,#2a1a0e,#3a2412 68%,#140d07)"
           tag="Beauty & Wellness · 28 Locations"
-          name="EverSun"
+          name="EverSun/iTAN"
           stat="28 locations"
-          label="One integrated growth system for a beloved SoCal brand — formerly iTAN."
+          label="One integrated growth system for a beloved 28-location SoCal brand."
         />
         <CaseCard
           href="/work/peter-grimm"

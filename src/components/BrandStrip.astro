@@ -1,0 +1,107 @@
+---
+/**
+ * Social-proof strip — logos of the brands we work with, right under the hero.
+ * Drop logo files into src/assets/brands/ and they appear here automatically
+ * (PNG, SVG, JPG, or WebP — transparent PNG/SVG look best). Filename becomes
+ * the alt text; an optional leading "NN-" sets order. Until logos are added,
+ * it shows client names as text so the strip is never empty.
+ */
+const logoModules = import.meta.glob('/src/assets/brands/*.{svg,png,jpg,jpeg,webp,avif}', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+}) as Record<string, string>;
+
+function prettyName(path: string) {
+  const file = path.split('/').pop() ?? '';
+  return file
+    .replace(/\.[^.]+$/, '')
+    .replace(/^\d+[-_]/, '') // drop leading "NN-" ordering prefix
+    .replace(/[-_]/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+const logos = Object.entries(logoModules)
+  .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+  .map(([path, src]) => ({ src, alt: prettyName(path) }));
+
+// Real clients — shown as text chips until logo files are dropped in.
+const fallbackNames = ['Peter Grimm', 'Voyage Air Guitar', 'EverSun/iTAN', 'For Every Need'];
+
+const hasLogos = logos.length > 0;
+---
+<section class="brandstrip" aria-label="Brands we work with">
+  <div class="wrap bs-in">
+    <p class="bs-label">Trusted by consumer &amp; lifestyle brands across Southern California</p>
+    {
+      hasLogos ? (
+        <ul class="bs-logos">
+          {logos.map((l) => (
+            <li><img src={l.src} alt={l.alt} loading="lazy" decoding="async" /></li>
+          ))}
+        </ul>
+      ) : (
+        <ul class="bs-names" aria-label="A few of the brands we work with">
+          {fallbackNames.map((n) => <li>{n}</li>)}
+        </ul>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .brandstrip { border-bottom: 1px solid var(--line); background: var(--bg); padding: 26px 0; }
+  .bs-in { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .bs-label {
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted-2);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .bs-logos {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 28px 48px;
+    width: 100%;
+  }
+  .bs-logos li { display: flex; }
+  .bs-logos img {
+    height: 38px;
+    width: auto;
+    max-width: 160px;
+    object-fit: contain;
+    /* monochrome on the dark theme; full color on hover */
+    filter: grayscale(1) brightness(0) invert(1) opacity(0.62);
+    transition: filter 0.18s, transform 0.18s;
+  }
+  .bs-logos li:hover img { filter: none; transform: translateY(-2px); }
+
+  /* placeholder client names until real logos drop in */
+  .bs-names {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px 14px;
+  }
+  .bs-names li {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: clamp(15px, 2vw, 19px);
+    color: var(--muted);
+    padding: 8px 16px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bs-logos li:hover img { transform: none; }
+  }
+</style>
