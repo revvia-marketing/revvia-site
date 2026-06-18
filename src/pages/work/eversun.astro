@@ -1,0 +1,223 @@
+---
+/*
+  DRAFT v1 — findings + architecture focus. Marquee local proof.
+  The RESULTS section is an intentional PLACEHOLDER ("Measurement underway") —
+  do not invent numbers. Swap in real member-acquisition / retention figures as
+  the engagement matures (see the TODO in the Results section).
+  Confirm with EverSun which specifics (member count, churn %, impression and
+  billing figures) are cleared for public use before this goes live.
+  Financials here are genericized.
+*/
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import CTASection from '../../components/CTASection.astro';
+import { articleSchema, breadcrumbSchema } from '../../lib/schema';
+
+const url = '/work/eversun';
+const crumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Work', url: '/work' },
+  { name: 'EverSun', url },
+];
+
+const stats = [
+  { v: '28', cls: 'grad-text', l: 'Locations unified under one growth system' },
+  { v: '24,070', cls: 'white', l: 'Active members in the base we’re optimizing' },
+  { v: '129K+', cls: 'grad-text', l: 'Monthly searches for the old iTAN name — being recaptured' },
+  { v: '1', cls: 'grad-text', l: 'Integrated partner, replacing a fragmented vendor stack' },
+];
+
+const findings = [
+  { t: 'Tracking measured the wrong thing.', d: 'Success was being counted in form fills and clicks — not paying members. The one number that actually mattered, member acquisition, wasn’t being measured at all.' },
+  { t: 'A rebrand leaking its own equity.', d: 'The old iTAN name still drew over 129,000 searches a month — but the listings never said “now EverSun,” so barely 4.6% clicked through. A decade of brand equity, quietly draining.' },
+  { t: 'Invisible to search and AI.', d: 'No sitemap submitted, and no location or FAQ structure across the 28 studios — so neither Google nor AI assistants could cleanly read who EverSun was, or where.' },
+  { t: 'Revenue slipping out the back.', d: 'Six figures in failed-payment billing with no systematic recovery — much of it recoverable, none of it owned by anyone.' },
+];
+
+const insights = [
+  { big: 'First 90 days', t: 'Where retention is decided', d: 'Over half of all member churn happens in the first three months — while members who pass three-plus years almost never leave. The whole retention fight is at the very start.' },
+  { big: 'Routine > purchase', t: 'What actually keeps members', d: 'Members who build a skincare or lotion routine churn far less than those who buy nothing — but cheap one-off accessories do nothing. It’s the routine, not the transaction, that signals a member who stays.' },
+  { big: 'Members, not signups', t: 'The metric that matters', d: 'Every dollar should answer to paying-member acquisition and lifetime value — so that became the metric the entire system was built to optimize.' },
+];
+
+const built = [
+  { n: '01', t: 'One source of truth for tracking', d: 'Wired the member database and point-of-sale through to Google Ads and Meta so a conversion fires on a new <em>paying member</em> — not a form fill — and the ad platforms optimize toward members and their lifetime value.' },
+  { n: '02', t: 'A GEO/SEO foundation across all 28 locations', d: 'Location schema for every studio, a 92-question FAQ structured for AI search, titles and metadata that finally say “formerly iTAN,” and a sitemap submitted — so search and AI can find every door.' },
+  { n: '03', t: 'A retention engine built on the data', d: 'A 90-day onboarding play around routine attach, winback and at-risk flows, and systematic failed-payment recovery — aimed squarely at the windows the data flagged.' },
+  { n: '04', t: 'One dashboard, one plan', d: 'Cost-per-member, acquisition by source, member LTV by channel, and churn by cohort — pulled into a single view leadership can act on, instead of five reports that never agreed.' },
+];
+
+const schemas = [
+  articleSchema({
+    headline: 'EverSun: One Integrated Growth System for a 28-Location Southern California Brand',
+    description:
+      'How Revvia replaced a fragmented vendor stack with one integrated growth system for EverSun — formerly iTAN — a beloved 28-location Southern California beauty & wellness brand.',
+    url,
+    image: '/og/revvia-og.png',
+    author: 'Revvia',
+  }),
+  breadcrumbSchema(crumbs),
+];
+---
+<BaseLayout
+  title="EverSun (formerly iTAN) Case Study"
+  description="How Revvia replaced a fragmented vendor stack with one integrated growth system for EverSun — formerly iTAN — a beloved 28-location Southern California beauty & wellness brand."
+  path={url}
+  ogType="article"
+  schemas={schemas}
+>
+  <header class="page-hero">
+    <div class="page-hero-in cs-hero">
+      <Breadcrumbs crumbs={crumbs} class="hero-crumbs" />
+      <div class="eyebrow">Beauty &amp; Wellness · 28 Locations · Southern California</div>
+      <h1 class="cs-h1">EverSun</h1>
+      <div class="formerly">formerly iTAN</div>
+      <p class="lede">How we replaced a stack of disconnected vendors with one integrated growth system — for a beloved Southern California brand in the middle of a full rebrand.</p>
+      <div class="transform">
+        <div class="t-from"><div class="t-label">Before</div><div class="t-val num">5+ vendors</div></div>
+        <div class="t-arrow"><div class="arc" aria-hidden="true">→</div><div class="pct num grad-text">one plan</div></div>
+        <div class="t-to"><div class="t-label">With Revvia</div><div class="t-val num grad-text">One system</div><div class="t-sub">tracking, search &amp; retention, integrated</div></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="stats">
+      {stats.map((s) => (
+        <div class="stat"><div class:list={['v', 'num', s.cls]}>{s.v}</div><div class="l">{s.l}</div></div>
+      ))}
+    </div>
+
+    <section class="psec">
+      <div class="eyebrow blk">The Brand</div>
+      <h2 class="sec">A beloved SoCal name, mid-reinvention.</h2>
+      <p class="body-lg">EverSun Beauty &amp; Wellness — formerly iTAN — is a 28-location tanning and wellness brand across Southern California, with tens of thousands of active members and deep local brand equity built over years. In late 2025 it rebranded from iTAN to EverSun. The name on the door changed. The growth engine underneath it hadn’t caught up.</p>
+    </section>
+
+    <section class="psec">
+      <div class="eyebrow blk">The Challenge</div>
+      <h2 class="sec">The real cost of a fragmented stack.</h2>
+      <p class="body-lg">EverSun’s marketing lived across separate vendors — ads in one place, the website in another, SEO somewhere else. Each did their slice. <strong>No one owned the whole system.</strong> When we ran a full diagnostic, the revenue wasn’t leaking inside any one channel — it was leaking through the seams between them.</p>
+      <ul class="findings">
+        {findings.map((f) => (
+          <li><span class="mk" aria-hidden="true"></span><span><span class="ft">{f.t}</span><span class="fd">{f.d}</span></span></li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="psec">
+      <div class="eyebrow blk">What the Data Revealed</div>
+      <h2 class="sec">One partner, holding all the data, sees what no single vendor can.</h2>
+      <p class="body-lg">With the whole picture in one place for the first time, the analysis surfaced where this business is actually won and lost.</p>
+      <div class="insight">
+        {insights.map((ic) => (
+          <div class="ic"><div class="big grad-text num">{ic.big}</div><h3>{ic.t}</h3><p>{ic.d}</p></div>
+        ))}
+      </div>
+    </section>
+
+    <section class="psec">
+      <div class="eyebrow blk">What We Built</div>
+      <h2 class="sec">One system, built to talk to itself.</h2>
+      <div class="did">
+        {built.map((c) => (
+          <div class="c"><span class="n grad-text">{c.n}</span><h3>{c.t}</h3><p set:html={c.d}></p></div>
+        ))}
+      </div>
+    </section>
+
+    <section class="psec">
+      <div class="eyebrow blk">The Results</div>
+      <h2 class="sec">The engine’s in place. The numbers are coming.</h2>
+      <p class="body-lg">This is a current engagement. The integrated system is live, and for the first time performance is being measured against the metric that matters — paying members, and what they’re worth over time.</p>
+      <div class="pending">
+        <span class="tag">Measurement underway</span>
+        <p>We’ll publish the member-acquisition and retention numbers here as they mature — on the same honest basis we built the tracking: revenue and members, not vanity metrics.</p>
+      </div>
+      {/* TODO: replace the placeholder above with real results once data matures, e.g.:
+           - cost-per-member trend / change
+           - member acquisition lift by channel
+           - retention / churn movement in the first-90-day window
+           - iTAN-brand CTR recovery (from the 4.6% baseline)
+           - failed-payment dollars recovered
+           Confirm cleared specifics with EverSun before publishing. */}
+    </section>
+
+    <section class="psec">
+      <div class="eyebrow blk">The Takeaway</div>
+      <blockquote class="takeaway">Five vendors each optimized their own slice — and the revenue leaked through the seams between them. <span class="grad-text">One studio, holding the whole system,</span> closes the gaps no one else could see.</blockquote>
+    </section>
+  </div>
+
+  <CTASection
+    heading={`Find your brand's <span class="grad-text">missing revenue.</span>`}
+    lead="Most brands are leaking growth in the seams between their vendors. We'll show you exactly where — start with a growth audit."
+  />
+</BaseLayout>
+
+<style>
+  .hero-crumbs { margin-bottom: 16px; }
+  .cs-hero { padding-bottom: 24px; }
+  .cs-h1 { font-size: clamp(52px, 9vw, 100px) !important; margin: 16px 0 4px !important; }
+  .formerly { font-size: 14px; letter-spacing: 0.04em; color: var(--muted-2); margin-bottom: 10px; }
+  .lede { font-size: clamp(18px, 2.3vw, 24px); color: var(--muted); max-width: 680px; }
+
+  .transform {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 22px; align-items: center;
+    margin: 44px 0 8px; padding: 32px; background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+  }
+  .t-label { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 8px; }
+  .t-val { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: clamp(28px, 4.4vw, 46px); }
+  .t-from .t-val { color: #6c7480; }
+  .t-arrow { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .t-arrow .arc { font-size: 28px; color: var(--m); }
+  .t-arrow .pct { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .t-to .t-sub { font-size: 14px; margin-top: 4px; color: var(--muted); }
+  @media (max-width: 720px) { .transform { grid-template-columns: 1fr; text-align: left; } .t-arrow { flex-direction: row; } }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 30px 0 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .stat { padding: 24px 22px; border-right: 1px solid var(--line); }
+  .stat:last-child { border-right: none; }
+  .stat .v { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(28px, 4vw, 40px); line-height: 1; }
+  .stat .v.white { color: #fff; }
+  .stat .l { font-size: 13px; color: var(--muted); margin-top: 9px; line-height: 1.35; }
+  @media (max-width: 720px) {
+    .stats { grid-template-columns: 1fr 1fr; }
+    .stat:nth-child(2) { border-right: none; }
+    .stat:nth-child(1), .stat:nth-child(2) { border-bottom: 1px solid var(--line); }
+  }
+
+  /* sections share the case-study reading rhythm */
+  .psec { padding: 54px 0; border-top: 1px solid var(--line); }
+  .psec:first-of-type { border-top: none; }
+  h2.sec { margin: 14px 0 18px; max-width: 780px; }
+  .body-lg { font-size: 18px; color: var(--muted); max-width: 740px; margin-bottom: 14px; }
+  .body-lg strong { color: #fff; font-weight: 600; }
+
+  .findings { list-style: none; margin-top: 24px; display: grid; gap: 14px; max-width: 760px; }
+  .findings li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: start; }
+  .findings .mk { width: 9px; height: 9px; border-radius: 50%; background: var(--grad); margin-top: 8px; }
+  .findings .ft { font-weight: 600; display: block; margin-bottom: 2px; color: #fff; }
+  .findings .fd { color: var(--muted); font-size: 15.5px; }
+
+  .insight { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 24px; }
+  .insight .ic { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px; }
+  .insight .ic .big { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(26px, 3.4vw, 34px); line-height: 1; margin-bottom: 10px; }
+  .insight .ic h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 7px; color: #fff; }
+  .insight .ic p { color: var(--muted); font-size: 14.5px; }
+  @media (max-width: 760px) { .insight { grid-template-columns: 1fr; } }
+
+  .did { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+  .did .c { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px; }
+  .did .c .n { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 15px; margin-bottom: 12px; display: block; }
+  .did .c h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; margin-bottom: 8px; color: #fff; }
+  .did .c p { color: var(--muted); font-size: 15px; }
+  @media (max-width: 680px) { .did { grid-template-columns: 1fr; } }
+
+  .pending { background: var(--card); border: 1px dashed var(--line-2); border-radius: 16px; padding: 30px 26px; margin-top: 6px; max-width: 760px; }
+  .pending .tag { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 10px; display: block; }
+  .pending p { color: var(--muted); font-size: 16px; }
+
+  blockquote.takeaway { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: clamp(24px, 3.4vw, 34px); line-height: 1.25; max-width: 840px; letter-spacing: -0.01em; color: #fff; }
+  blockquote.takeaway :global(.grad-text) { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+</style>

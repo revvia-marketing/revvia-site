@@ -1,0 +1,141 @@
+---
+/**
+ * "How to choose" comparison — fit, not "we win". Three categories (never named
+ * competitors); the Revvia column is highlighted. Semantic <table> for screen
+ * readers; reflows to stacked per-row cards on mobile, with text labels on every
+ * mark for accessibility.
+ */
+type Mark = 'yes' | 'no' | 'maybe';
+
+const rows: { label: string; national: Mark; local: Mark; revvia: Mark }[] = [
+  { label: 'Runs your full growth engine — paid · creative · retention · tracking', national: 'yes', local: 'no', revvia: 'yes' },
+  { label: 'Shoots your content in person, on location', national: 'no', local: 'no', revvia: 'yes' },
+  { label: 'Local San Diego studio that knows your market', national: 'no', local: 'yes', revvia: 'yes' },
+  { label: 'Right-sized for a $300K–$8M brand', national: 'no', local: 'yes', revvia: 'yes' },
+  { label: 'You work directly with the founder', national: 'no', local: 'maybe', revvia: 'yes' },
+];
+
+const MARK = {
+  yes: { glyph: '✓', label: 'included', cls: 'm-yes' },
+  no: { glyph: '✗', label: 'not included', cls: 'm-no' },
+  maybe: { glyph: '?', label: 'depends on the shop', cls: 'm-maybe' },
+} as const;
+---
+<section class="cmp-section">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">How to choose</div>
+      <h2>Same goal. Three very different fits.</h2>
+      <p>Most agencies are either a national machine or a local site builder. We're the one studio that's both — local and in person, running your whole growth engine.</p>
+    </div>
+
+    <table class="cmp">
+      <caption class="sr-only">
+        How Revvia compares with a national growth agency and a local web/CRO shop.
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col"><span class="sr-only">Capability</span></th>
+          <th scope="col">National growth agency</th>
+          <th scope="col">Local web/CRO shop</th>
+          <th scope="col" class="revvia-col">Revvia</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((row) => (
+            <tr>
+              <th scope="row">{row.label}</th>
+              {(['national', 'local', 'revvia'] as const).map((col) => {
+                const m = MARK[row[col]];
+                const colName =
+                  col === 'national'
+                    ? 'National growth agency'
+                    : col === 'local'
+                      ? 'Local web/CRO shop'
+                      : 'Revvia';
+                return (
+                  <td data-label={colName} class:list={[col === 'revvia' && 'revvia-col']}>
+                    <span class:list={['mark', m.cls]} aria-hidden="true">{m.glyph}</span>
+                    <span class="sr-only">{m.label}</span>
+                  </td>
+                );
+              })}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<style>
+  .cmp-section { padding: 80px 0; border-top: 1px solid var(--line); background: var(--bg-2); }
+
+  .cmp { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .cmp th,
+  .cmp td { text-align: left; padding: 18px 20px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+
+  /* column headers */
+  .cmp thead th { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 15px; color: var(--muted); border-bottom: 1px solid var(--line-2); }
+  .cmp thead th:not(:first-child) { text-align: center; width: 19%; }
+
+  /* row label */
+  .cmp tbody th { font-weight: 500; font-size: 15.5px; color: #fff; max-width: 420px; }
+
+  /* mark cells */
+  .cmp td { text-align: center; }
+  .mark { font-size: 19px; font-weight: 700; line-height: 1; display: inline-block; }
+  .m-yes {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .m-no { color: var(--muted-2); opacity: 0.7; }
+  .m-maybe { color: var(--muted-2); }
+
+  /* highlight the Revvia column */
+  .cmp .revvia-col { background: rgba(214, 36, 143, 0.06); }
+  .cmp thead th.revvia-col {
+    color: #fff;
+    background: rgba(214, 36, 143, 0.1);
+    border-top: 2px solid var(--m);
+    border-radius: 10px 10px 0 0;
+  }
+  .cmp tbody tr:last-child .revvia-col { border-radius: 0 0 10px 10px; }
+
+  /* ── mobile: reflow each row into a card ── */
+  @media (max-width: 720px) {
+    .cmp,
+    .cmp tbody,
+    .cmp tr,
+    .cmp th,
+    .cmp td { display: block; }
+    .cmp thead { display: none; }
+    .cmp tr {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 6px 18px 12px;
+      margin-bottom: 14px;
+    }
+    .cmp th,
+    .cmp td { border-bottom: 1px solid var(--line); padding: 12px 0; }
+    .cmp tbody th { max-width: none; padding-top: 16px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 16px; }
+    .cmp td {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-align: left;
+    }
+    .cmp td:last-child { border-bottom: none; }
+    .cmp td::before {
+      content: attr(data-label);
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .cmp .revvia-col { background: none; border-radius: 0; }
+    .cmp td.revvia-col::before { color: #fff; font-weight: 600; }
+  }
+</style>

@@ -12,7 +12,7 @@ export const SITE_NAME = 'Revvia';
 export const LEGAL_NAME = 'First Door, LLC';
 export const TAGLINE = 'Marketing how it should be.';
 export const DEFAULT_DESCRIPTION =
-  "Revvia is the full-stack, production-led DTC growth studio for Southern California's brand-driven consumer brands. Revenue over impressions. Month-to-month.";
+  'Revvia is the San Diego production-led growth studio for consumer & lifestyle brands — full-stack and in person, run by the founder. Revenue over impressions, month-to-month.';
 
 /** Default Open Graph share image (generated from the logo, 1200×630). */
 export const DEFAULT_OG_IMAGE = '/og/revvia-og.png';
@@ -22,7 +22,7 @@ export const NAP = {
   name: SITE_NAME,
   legalName: LEGAL_NAME,
   description:
-    'Full-stack, production-led DTC growth studio for brand-driven consumer brands in Southern California.',
+    'San Diego production-led growth studio for consumer & lifestyle brands — full-stack and in person. Paid media, in-house production, retention, and clean tracking, serving Southern California.',
   email: 'info@revvia.com',
   /** E.164 for schema / tel: links. */
   telephone: '+1-760-782-2875',

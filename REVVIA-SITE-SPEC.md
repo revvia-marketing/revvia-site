@@ -15,22 +15,26 @@ You are building the **entire** Revvia website. Do not skip sections. The mockup
 
 **Who we are.** Revvia is a production-led DTC growth studio in Carlsbad, California (legal entity: First Door, LLC). We run the full growth stack for brand-driven consumer brands — paid media, in-house creative and production, email/SMS retention, and clean tracking — and we report to revenue, not vanity metrics.
 
-**What we're building.** The agency is specializing: away from a generalist local shop and toward brand-driven consumer/DTC brands (lifestyle, apparel, beauty, wellness, accessories, home, food & beverage) on Shopify, roughly $500K–$8M in revenue, concentrated in Southern California. The website must position us narrowly (DTC growth studio) while remaining credible to our existing local book.
+**What we're building.** A **San Diego, production-led growth studio for consumer & lifestyle brands** — apparel, beauty, wellness, accessories, home, and food & beverage, plus multi-location and membership brands like them, roughly $300K–$8M in revenue, across Southern California. Many are DTC on Shopify, but the top-line audience is consumer & lifestyle (not online-only). San Diego / North County is the home base and production hub; the growth stack serves SoCal. Position as **local-first** — a studio you can sit across the table from — not a generic remote agency.
 
-**Positioning one-liner.** "We run the whole stack — so your brand actually grows."
+**Anchor positioning line (north star).** "The San Diego growth studio that actually shows up — full-stack and in person, run by the founder, for brands too big for a freelancer and too small for the national agencies."
+
+**Positioning one-liner.** "We run your whole growth engine — in person, right here in San Diego."
 
 **The pitch.** Most brands stitch together a media buyer, a freelance designer, and an email tool no one touches. We do all of it under one roof, shoot the creative ourselves, and make the whole engine work together — senior-led, month-to-month, measured against real revenue.
 
 **Origin story (essence — full version lives on the About page).** Started in early 2020 as First Door Marketing to keep churches and nonprofits alive through the pandemic. Businesses noticed, came to us frustrated with their agencies, and our playbook worked — every business client grew at least 50% YoY within six months. The founding insight still runs everything: don't act like a marketing company; be the client's CMO and their whole team, and obsess over revenue. Founder Tim Holt started this as a pastor and says he "answers to a higher power than your checkbook."
 
-**Who we serve (ICP).** Brand-driven consumer brands on Shopify, ~$500K–$8M revenue, Southern California (San Diego + Orange County core), founders who care about brand and are ready to actually grow. Not commodity/functional ecommerce.
+**Who we serve (ICP).** Consumer & lifestyle brands — apparel, beauty, wellness, accessories, home, food & beverage, plus multi-location and membership brands — ~$300K–$8M revenue, Southern California (San Diego + Orange County core). Founders who care about brand and are ready to actually grow. Many are DTC on Shopify; not all are online-only.
 
-**What makes us different (the moat).**
-- **In-house production** — we shoot your creative ourselves ("we're in your warehouse with a camera"), in America. Not outsourced, not stock.
-- **Full-stack** — media, creative, retention, and tracking under one roof, working together.
-- **Senior-led** — the people who win the account run it.
-- **Honest measurement** — revenue against real spend (blended MER), not platform-inflated metrics.
-- **Month-to-month** — no lock-ins, no hidden fees; we'll tell you on the first call if we're not a fit.
+**What makes us different (the moat — in priority order).** We pressure-tested our differentiators against ~20 competitors: most "capabilities" (in-house production, full-stack, senior-led, honest measurement, month-to-month) are **parity claims** national agencies make too. So we never frame a capability as unique, and we lead with the hierarchy below. Local is the frame, not a bullet.
+1. **Proof** — real, named work (lead with the marquee local brand, EverSun). This is the real differentiator; it sits high on the homepage.
+2. **Local & in person** — a San Diego studio that shows up to plan, shoot, and fix things in the room. Strongest local buying preference; the whole site should feel like a local studio.
+3. **Right-sized** — built for $300K–$8M brands: too big for a freelancer, too small to be a rounding error at a national agency.
+4. **You work with the founder** — the owner on your account, not a junior.
+5. **The story** — pastor-founded, revenue-obsessed, "answers to a higher power than your checkbook."
+
+Capabilities are **qualifiers / proof points**, never claimed as unique: full-stack (media + creative + retention + tracking under one roof), in-house production **on location, in person** (drop "in America" — it points national), honest measurement (revenue, not vanity metrics), and month-to-month (no lock-ins). Keep the latter two as a small trust strip near the hero, not as headline differentiators.
 
 **Voice & tone.** Confident, plain, honest, revenue-first. Short sentences. No jargon-as-decoration, no hype, no vanity metrics. We push back kindly and lead with proof. Signature line: **"Marketing how it should be."**
 
@@ -85,6 +89,9 @@ You are building the **entire** Revvia website. Do not skip sections. The mockup
 - `CTASection` (gradient-glow closing CTA)
 - `SchemaJsonLd` (a component that injects the right JSON-LD per page — see §5)
 - `SEO` (a `<head>` component for title/description/canonical/OG/Twitter per page)
+- `Comparison` (the homepage "how to choose" fit matrix — National growth agency · Local web/CRO shop · Revvia, Revvia column highlighted; semantic table that reflows to stacked cards on mobile, with text-labelled marks for accessibility — see §3.1)
+- `Barchart` (CSS revenue chart for case studies, authored from Keystatic via the `barchart` markdoc tag)
+- `Video` (Vimeo/Mux embed by ID — never self-hosted; powers the homepage hero reel)
 
 **Spacing/shape/motion.** Generous section padding (~60–84px). Card radius 14–20px. Subtle hover lift (translateY -3/-4px) and gradient-shadow on primary buttons. Respect `prefers-reduced-motion` (disable transitions/scroll-behavior). Keep a max content width ~1080–1120px.
 
@@ -105,6 +112,7 @@ Build all of the following. Routes are suggestions; keep them clean and lowercas
 | Work (index) | `/work` | work.html |
 | Peter Grimm case study | `/work/peter-grimm` | case-study-peter-grimm.html |
 | Voyage Air case study | `/work/voyage-air` | case-study-voyage-air.html |
+| EverSun case study (marquee local proof) | `/work/eversun` | case-study-eversun.html |
 | Photography & Production | `/work/photography` | photography.html |
 | About | `/about` | about.html |
 | Journal (hub) | `/journal` | journal.html |
@@ -123,6 +131,17 @@ Build all of the following. Routes are suggestions; keep them clean and lowercas
 - `/terms` — terms (placeholder; legal review).
 
 Internal links across the mockups currently point at flat filenames (e.g., `revvia-homepage.html#contact`). **Rewire all internal links to the clean routes above.** The nav CTA "Get a Growth Audit" should point to `/contact`.
+
+### 3.1 Homepage section order & the comparison
+
+Homepage flows: hero → trust strip → problem → services → **Proof, not promises.** (proof sits above the differentiators; EverSun is the **lead** case card, ahead of Peter Grimm and Voyage Air) → reviews → **We're in your warehouse with a camera** (the reframed differentiators — local-first; 4 cards: local & in person · in-house on location · you work with the founder · built for your size) → **the "how to choose" comparison** (`Comparison` component) → FAQ → contact.
+
+- **Trust strip** under the hero carries the demoted parity claims: "Revenue, not vanity metrics. Month-to-month, no lock-ins. We win when you win."
+- **Comparison** uses categories, never named competitors (`National growth agency` · `Local web/CRO shop` · `Revvia`), five fit rows, Revvia column highlighted, mobile-stacked with accessible mark labels.
+
+### 3.2 EverSun case study
+
+`/work/eversun` is a **dedicated page** (not the CMS bar-chart template) because its structure is findings-and-architecture: hero with a "formerly iTAN" sub and a *Before → With Revvia* transform (`5+ vendors → one system`), a 4-stat band, The Brand, The Challenge (4 "leak in the seams" findings), What the Data Revealed (3 insight cards), What We Built (4 architecture cards), The Results, The Takeaway. It carries `Article` + `BreadcrumbList` schema like the other case studies and is featured as the lead proof card on Home and `/work`. **The Results section is an intentional placeholder ("Measurement underway") — real member-acquisition / retention numbers are pending and must be cleared with EverSun before publishing. Do not invent results.** `caseStudies` in Keystatic still backs Peter Grimm and Voyage Air; EverSun is bespoke. Design source of truth: `case-study-eversun.html`.
 
 ---
 

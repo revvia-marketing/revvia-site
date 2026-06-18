@@ -39,14 +39,14 @@ const faqs: FaqItem[] = [
   { question: 'Do I have to buy the whole stack?', answer: 'No. Our core engagement runs the entire growth engine, but every single service is also a real entry point — many brands start with a tracking audit or a Klaviyo build and expand from there.' },
   { question: 'How is this priced?', answer: 'Full-stack growth is a monthly base plus a small percentage of ad spend, plus a growth bonus we only earn when we beat your efficiency baseline. Single services and productions are scoped per project. Everything is month-to-month.' },
   { question: 'What makes Revvia different from a media-buying agency?', answer: 'We shoot your creative in-house, run retention and tracking alongside paid, and report to revenue — not platform-inflated metrics. One senior-led team, one stack, working together.' },
-  { question: 'Who do you work with?', answer: 'Brand-driven consumer brands on Shopify, roughly $500K–$8M in revenue, concentrated in Southern California — lifestyle, apparel, beauty, wellness, accessories, home, and food & beverage.' },
+  { question: 'Who do you work with?', answer: 'Consumer & lifestyle brands — apparel, beauty, wellness, accessories, home, and food & beverage, plus multi-location and membership brands — roughly $300K–$8M in revenue, here in Southern California. Many are on Shopify; not all are online-only.' },
 ];
 
 const schemas = [
   serviceSchema({
-    name: 'Full-Stack DTC Growth',
+    name: 'Full-Stack Growth',
     description:
-      'Production-led growth retainers, single-service entry points, and premium in-house productions for brand-driven consumer brands.',
+      'Production-led growth retainers, single-service entry points, and premium in-house productions for consumer & lifestyle brands.',
     url: '/services',
   }),
   faqPageSchema(faqs),
@@ -62,7 +62,7 @@ const schemas = [
 ---
 <BaseLayout
   title="Services"
-  description="One studio for the whole growth engine. Full-stack growth retainers, single-service entry points, and premium productions for brand-driven consumer brands."
+  description="One studio for the whole growth engine. Full-stack growth retainers, single-service entry points, and premium productions for consumer & lifestyle brands — San Diego based."
   path="/services"
   schemas={schemas}
 >
