@@ -7,7 +7,7 @@ import type { ImageMetadata } from 'astro';
  * to the gradient placeholder.
  */
 const assets = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/**/*.{jpeg,jpg,png,gif,webp,avif}',
+  '/src/assets/**/*.{jpeg,jpg,png,gif,webp,avif,JPEG,JPG,PNG,GIF,WEBP,AVIF}',
   { eager: true }
 );
 
@@ -23,7 +23,7 @@ export function resolveImage(path?: string): ImageMetadata | undefined {
  * card's gradient is replaced by the photo. Returns undefined → keep gradient.
  */
 const covers = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/covers/*.{jpeg,jpg,png,gif,webp,avif}',
+  '/src/assets/covers/*.{jpeg,jpg,png,gif,webp,avif,JPEG,JPG,PNG,GIF,WEBP,AVIF}',
   { eager: true }
 );
 const coverByName = new Map(

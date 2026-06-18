@@ -45,7 +45,7 @@ const placeholderTiles = [
 ];
 
 const photoModules = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/galleries/drop-launch/*.{jpg,jpeg,png,webp,avif}',
+  '/src/assets/galleries/drop-launch/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG,WEBP,AVIF}',
   { eager: true }
 );
 const built = buildGalleryTiles(photoModules);

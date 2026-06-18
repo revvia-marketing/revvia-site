@@ -1,11 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import Gallery from '../../components/Gallery.astro';
 import CTASection from '../../components/CTASection.astro';
 import Faq from '../../components/Faq.astro';
-import type { ImageMetadata } from 'astro';
-import { buildGalleryTiles } from '../../lib/gallery';
 import {
   serviceSchema,
   faqPageSchema,
@@ -36,21 +33,14 @@ const steps = [
   { n: '4', t: 'Handoff', d: 'A dashboard and a walkthrough, so you own and understand the engine.' },
 ];
 
-const placeholderTiles = [
-  { label: 'Tracking', span: 'big' as const },
-  { label: 'Paid structure' },
-  { label: 'Email flows' },
-  { label: 'Dashboard' },
-  { label: 'Attribution' },
-  { label: 'Clean handoff', span: 'wide' as const },
+const buildItems = [
+  { t: 'Tracking layer', d: 'Pixels, server-side conversions, and GA4 ecommerce — fixed and verified, so Meta and Google optimize toward real purchases, not noise.' },
+  { t: 'Campaign structure', d: 'Paid media rebuilt on clean data: brand defense, non-brand search by product line, and prospecting — structured to scale without wasting spend.' },
+  { t: 'Retention flows', d: 'Five core Klaviyo flows — welcome, abandoned cart, browse abandonment, post-purchase, and winback — turning one-time buyers into repeat revenue.' },
+  { t: 'Attribution & blended MER', d: 'Marketing efficiency measured against real spend, so you read the whole engine — not platform-inflated, last-click ROAS.' },
+  { t: 'Reporting dashboard', d: 'Revenue, spend, and channel performance pulled into one view your team can actually act on.' },
+  { t: 'Clean handoff', d: 'Documentation and a walkthrough so you own and understand the engine — no black box, no lock-in.' },
 ];
-
-const photoModules = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/galleries/growth-foundation/*.{jpg,jpeg,png,webp,avif}',
-  { eager: true }
-);
-const built = buildGalleryTiles(photoModules);
-const tiles = built.length ? built : placeholderTiles;
 
 const faqs: FaqItem[] = [
   { question: 'What exactly does the Growth Foundation build?', answer: 'The complete growth engine, built once: a verified tracking layer (pixels, conversions, GA4), a paid media structure rebuilt on clean data, five core Klaviyo retention flows, and a blended-MER measurement dashboard — handed off so you own it.' },
@@ -111,10 +101,14 @@ const schemas = [
 
   <section class="psec">
     <div class="wrap">
-      <div class="eyebrow blk">The work</div>
-      <h2 class="sec">What gets built.</h2>
-      <p class="lead mut">The systems behind the growth — tracking, campaign structure, flows, and reporting.</p>
-      <Gallery tiles={tiles} note="Illustrative — every Foundation is built to your store and stack." />
+      <div class="eyebrow blk">What gets built</div>
+      <h2 class="sec">Six systems, defined.</h2>
+      <p class="lead mut">The Growth Foundation is a build, not a photoshoot — here's exactly what we put in place, and what each piece does.</p>
+      <div class="grid3 build-grid">
+        {buildItems.map((b) => (
+          <div class="pcard"><h3>{b.t}</h3><p>{b.d}</p></div>
+        ))}
+      </div>
     </div>
   </section>
 

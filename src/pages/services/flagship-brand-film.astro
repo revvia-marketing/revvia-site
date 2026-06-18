@@ -4,6 +4,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Gallery from '../../components/Gallery.astro';
 import CTASection from '../../components/CTASection.astro';
 import Faq from '../../components/Faq.astro';
+import Video from '../../components/Video.astro';
 import type { ImageMetadata } from 'astro';
 import { buildGalleryTiles } from '../../lib/gallery';
 import {
@@ -47,7 +48,7 @@ const placeholderTiles = [
 // Drop photos in src/assets/galleries/flagship-brand-film/ to replace the
 // placeholders (filename sets order/span/label — see the folder README).
 const photoModules = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/galleries/flagship-brand-film/*.{jpg,jpeg,png,webp,avif}',
+  '/src/assets/galleries/flagship-brand-film/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG,WEBP,AVIF}',
   { eager: true }
 );
 const built = buildGalleryTiles(photoModules);
@@ -96,6 +97,32 @@ const schemas = [
       <div class="eyebrow blk">What it is</div>
       <h2 class="sec">The one asset that does the most work.</h2>
       <p class="lead">A brand film tells your story in 60 to 90 seconds, anchors your homepage and socials, and — cut down — becomes the top-of-funnel ad that actually stops the scroll. We concept it, shoot it with our own crew, and deliver it ready to run everywhere.</p>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">Selected work</div>
+      <h2 class="sec">Brand films we've made.</h2>
+      <p class="lead mut">Two recent flagship films — concept to delivery, with the cutdowns that ran as paid creative.</p>
+      <div class="films">
+        <figure class="film">
+          <Video provider="vimeo" id="1202599528" title="The Coastal Cowgirl — Peter Grimm brand film" ratio="16 / 9" />
+          <figcaption>
+            <div class="film-tag grad-text">Peter Grimm</div>
+            <h3>The Coastal Cowgirl</h3>
+            <p>A festival-ready anthem for Peter Grimm's western heritage. With Stagecoach on the horizon, we concepted, shot, and cut the film, then ran it alongside a coordinated influencer activation — over 500K impressions across Stagecoach weekend.</p>
+          </figcaption>
+        </figure>
+        <figure class="film">
+          <Video provider="vimeo" id="1202599821" title="Bring the Music — Voyage Air brand film" ratio="16 / 9" />
+          <figcaption>
+            <div class="film-tag grad-text">Voyage Air</div>
+            <h3>Bring the Music</h3>
+            <p>The story of a guitar that goes where you go. Tasked with telling the traveling-guitar story, we storyboarded and produced a day in the life of a musician whose folding Voyage Air comes with her everywhere — turning a product feature into a feeling.</p>
+          </figcaption>
+        </figure>
+      </div>
     </div>
   </section>
 
@@ -158,4 +185,12 @@ const schemas = [
 
 <style>
   .hero-crumbs { margin-bottom: 16px; }
+
+  .films { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-top: 8px; }
+  .film { margin: 0; }
+  .film figcaption { padding-top: 16px; }
+  .film-tag { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; display: inline-block; margin-bottom: 8px; }
+  .film h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; color: #fff; margin-bottom: 8px; }
+  .film p { color: var(--muted); font-size: 15px; max-width: 48ch; }
+  @media (max-width: 760px) { .films { grid-template-columns: 1fr; gap: 32px; } }
 </style>

@@ -22,7 +22,7 @@ const crumbs = [
 // optimised, automatically. Filename controls order/span/label — see
 // src/assets/photography/README.md. Until then, gradient placeholders show.
 const photoModules = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/photography/*.{jpg,jpeg,png,webp,avif}',
+  '/src/assets/photography/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG,WEBP,AVIF}',
   { eager: true }
 );
 const photoTiles = buildGalleryTiles(photoModules);
