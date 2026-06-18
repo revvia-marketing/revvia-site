@@ -3,13 +3,14 @@ import { config, fields, collection } from '@keystatic/core';
 /**
  * Keystatic CMS — admin UI at /keystatic.
  *
- * Storage: GitHub mode in production (editors publish straight to the repo,
+ * Storage: GitHub mode in production (editors publish straight to this repo,
  * which triggers a Netlify rebuild). Local mode in `astro dev` so you can edit
- * without GitHub credentials. Point `repo` at the real GitHub repository and
- * complete the GitHub App connect flow at /keystatic the first time.
+ * without GitHub credentials. GitHub-mode auth uses a GitHub App; its
+ * credentials come from environment variables (see README → "Keystatic
+ * GitHub mode"): KEYSTATIC_GITHUB_CLIENT_ID, KEYSTATIC_GITHUB_CLIENT_SECRET,
+ * KEYSTATIC_SECRET, and PUBLIC_KEYSTATIC_GITHUB_APP_SLUG.
  */
-const repo = (import.meta.env.PUBLIC_KEYSTATIC_REPO as string) || 'revvia/revvia-site';
-const [owner, name] = repo.split('/');
+const GITHUB_REPO = { owner: 'revvia-marketing', name: 'revvia-site' } as const;
 
 const SERIES = [
   { label: "Founder's Notes", value: 'founders-notes' },
@@ -20,7 +21,7 @@ const SERIES = [
 export default config({
   storage: import.meta.env.DEV
     ? { kind: 'local' }
-    : { kind: 'github', repo: { owner: owner ?? 'revvia', name: name ?? 'revvia-site' } },
+    : { kind: 'github', repo: GITHUB_REPO },
   ui: {
     brand: { name: 'Revvia' },
     navigation: {

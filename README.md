@@ -38,11 +38,13 @@ prefixed `PUBLIC_` is intentionally exposed to the browser.
 | `PUBLIC_SITE_URL` | optional | Canonical site URL. Defaults to `https://www.revvia.com`. Only set if the domain/host changes. |
 | `PUBLIC_GA4_ID` | for analytics | GA4 Measurement ID for the **revvia.com** property, e.g. `G-XXXXXXXXXX`. Leave blank and no GA beacon loads. |
 | `PUBLIC_META_PIXEL_ID` | for analytics | Meta (Facebook) Pixel ID for the agency site, e.g. `1234567890123456`. Blank = no pixel. |
-| `PUBLIC_KEYSTATIC_REPO` | for CMS in prod | The GitHub repo Keystatic commits to, as `owner/name` (e.g. `revvia/revvia-site`). |
-| `KEYSTATIC_GITHUB_CLIENT_ID` | for CMS in prod | From the Keystatic GitHub App connect flow. |
-| `KEYSTATIC_GITHUB_CLIENT_SECRET` | for CMS in prod | From the Keystatic GitHub App connect flow. |
-| `KEYSTATIC_SECRET` | for CMS in prod | A random 40+ character string Keystatic uses to sign sessions. |
-| `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` | for CMS in prod | The GitHub App slug Keystatic created. |
+| `KEYSTATIC_GITHUB_CLIENT_ID` | for CMS in prod | GitHub App "Client ID" (from the Create-GitHub-App flow). |
+| `KEYSTATIC_GITHUB_CLIENT_SECRET` | for CMS in prod | GitHub App client secret. |
+| `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` | for CMS in prod | GitHub App slug, i.e. the `<slug>` in `github.com/apps/<slug>`. |
+| `KEYSTATIC_SECRET` | for CMS in prod | Random 32-byte hex string Keystatic uses to sign sessions. Generate with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`. |
+
+The repo Keystatic commits to is hard-coded in `keystatic.config.tsx`
+(`revvia-marketing/revvia-site`) — no env var for it.
 
 > Analytics and the Pixel are **off** until their IDs are set, so local dev and
 > previews never fire beacons. Consent default is privacy-forward (ad storage
@@ -54,10 +56,25 @@ prefixed `PUBLIC_` is intentionally exposed to the browser.
 
 - Admin UI: **`/keystatic`**. In `npm run dev` it runs in **local mode** (edits
   write straight to `src/content/` — no GitHub credentials needed).
-- In production it runs in **GitHub mode**: publishing commits to the repo,
-  which triggers a Netlify rebuild. Set `PUBLIC_KEYSTATIC_REPO` and the four
-  `KEYSTATIC_*` / app-slug vars above, then complete the GitHub App connect flow
-  the first time you open `/keystatic` on the live site.
+- In production it runs in **GitHub mode**: publishing commits to
+  `revvia-marketing/revvia-site` and triggers a Netlify rebuild.
+
+### One-time GitHub-mode auth setup
+
+1. Deploy to Netlify so `/keystatic` is live on a public URL.
+2. Visit `https://<your-site>/keystatic`. Keystatic detects no GitHub App and
+   shows a **"Create GitHub App"** button — click it. It sends you to GitHub
+   with a prefilled manifest (correct permissions + callback URL), you confirm,
+   and GitHub creates the App and installs it on the repo.
+3. Keystatic then shows the **Client ID**, **Client Secret**, and **App slug**.
+   Copy them into Netlify env vars (`KEYSTATIC_GITHUB_CLIENT_ID`,
+   `KEYSTATIC_GITHUB_CLIENT_SECRET`, `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`).
+4. Add `KEYSTATIC_SECRET` (a random 32-byte hex string you generate).
+5. Redeploy. `/keystatic` now signs editors in with GitHub and commits on save.
+
+If you ever move `/keystatic` to a different domain, update the GitHub App's
+OAuth callback URL to `https://<new-domain>/api/keystatic/github/oauth/callback`.
+
 - Collections:
   - **Journal** (`src/content/journal/*.mdoc`) — one collection split into three
     series via the `series` field: Founder's Notes, Built in San Diego, Coastal
