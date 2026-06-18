@@ -1,18 +1,21 @@
 ---
 /**
- * Asymmetric tile gallery (production + photography pages). Each tile is a
- * gradient placeholder that real frames/video thumbnails drop into later via
- * Keystatic or a props change. Supports `big` (2×2), `wide` (2 cols), `tall`
- * (2 rows) spans and an optional video badge.
+ * Asymmetric tile gallery (production + photography pages). A tile shows a real
+ * photo when given an imported `img` (run through Astro's image pipeline —
+ * responsive + modern formats), otherwise a gradient placeholder. Supports
+ * `big` (2×2), `wide` (2 cols), `tall` (2 rows) spans and an optional video badge.
  */
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
 export interface Tile {
   label: string;
   span?: 'big' | 'wide' | 'tall';
   video?: boolean;
   /** Override the placeholder gradient (0–5); defaults to cycling by index. */
   g?: number;
-  /** Optional real image src (string path) — replaces the gradient placeholder. */
-  image?: string;
+  /** A real, imported image. When set, it replaces the gradient placeholder. */
+  img?: ImageMetadata;
 }
 interface Props {
   tiles: Tile[];
@@ -27,10 +30,20 @@ const { tiles, note, variant = 'default', class: className = '' } = Astro.props;
   {
     tiles.map((t, i) => (
       <div
-        class:list={['tile', `g${t.g ?? i % 6}`, t.span]}
+        class:list={['tile', t.img ? 'has-photo' : `g${t.g ?? i % 6}`, t.span]}
         role="listitem"
-        style={t.image ? `background-image:url(${t.image});background-size:cover;background-position:center;` : undefined}
       >
+        {t.img && (
+          <Picture
+            class="tile-photo"
+            src={t.img}
+            alt={t.label}
+            formats={['avif', 'webp']}
+            widths={[400, 700, 1100]}
+            sizes="(max-width: 680px) 50vw, 28vw"
+            loading="lazy"
+          />
+        )}
         {t.video && <div class="vid" aria-hidden="true">▶</div>}
         <span>{t.label}</span>
       </div>
@@ -70,6 +83,12 @@ const { tiles, note, variant = 'default', class: className = '' } = Astro.props;
     position: absolute;
     inset: 0;
     background: radial-gradient(220px 150px at 78% 18%, rgba(255, 255, 255, 0.1), transparent 62%);
+  }
+  /* real photo: cover the tile, with a bottom scrim for label legibility */
+  .tile.has-photo { background: #0e0f14; }
+  .tile-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .tile.has-photo::after {
+    background: linear-gradient(to top, rgba(10, 10, 12, 0.7), transparent 45%);
   }
   .tile.big { grid-column: span 2; grid-row: span 2; }
   .tile.wide { grid-column: span 2; }

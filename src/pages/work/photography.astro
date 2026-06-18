@@ -1,4 +1,5 @@
 ---
+import type { ImageMetadata } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Gallery from '../../components/Gallery.astro';
@@ -9,6 +10,7 @@ import {
   breadcrumbSchema,
   type FaqItem,
 } from '../../lib/schema';
+import { buildGalleryTiles } from '../../lib/gallery';
 
 const crumbs = [
   { name: 'Home', url: '/' },
@@ -16,7 +18,16 @@ const crumbs = [
   { name: 'Photography & Production', url: '/work/photography' },
 ];
 
-const tiles = [
+// Drop high-res photos into src/assets/photography/ and they appear here,
+// optimised, automatically. Filename controls order/span/label — see
+// src/assets/photography/README.md. Until then, gradient placeholders show.
+const photoModules = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/photography/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true }
+);
+const photoTiles = buildGalleryTiles(photoModules);
+
+const placeholderTiles = [
   { label: 'Lifestyle · Hero', span: 'big' as const, g: 0 },
   { label: 'Product', g: 2 },
   { label: 'On model', g: 1 },
@@ -32,6 +43,12 @@ const tiles = [
   { label: 'Studio', g: 2 },
   { label: 'On location', span: 'wide' as const, g: 0 },
 ];
+
+const hasPhotos = photoTiles.length > 0;
+const tiles = hasPhotos ? photoTiles : placeholderTiles;
+const galleryNote = hasPhotos
+  ? undefined
+  : "Placeholder gallery — these tiles become your real shoot work once it's loaded in.";
 
 const caps = [
   { sw: 'g2', t: 'Product', d: 'Clean, e-comm-ready hero shots and detail work that make the buy button easy.' },
@@ -78,11 +95,7 @@ const schemas = [
   </header>
 
   <div class="wrap galwrap">
-    <Gallery
-      tiles={tiles}
-      variant="showcase"
-      note="Placeholder gallery — these tiles become your real shoot work once it's loaded in."
-    />
+    <Gallery tiles={tiles} variant="showcase" note={galleryNote} />
   </div>
 
   <section class="psec">
