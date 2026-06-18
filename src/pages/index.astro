@@ -4,6 +4,7 @@ import CaseCard from '../components/CaseCard.astro';
 import CTASection from '../components/CTASection.astro';
 import GrowthAuditForm from '../components/GrowthAuditForm.astro';
 import Faq from '../components/Faq.astro';
+import Video from '../components/Video.astro';
 import {
   localBusinessSchema,
   faqPageSchema,
@@ -59,14 +60,12 @@ const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
         <p class="sub">Paid media, in-house creative, retention, and clean tracking for brand-driven consumer brands. Revenue over impressions. Month-to-month.</p>
         <div class="hero-cta">
           <a href="/contact" class="btn btn-lg">Get a Growth Audit</a>
-          <a href="#work" class="play"><span class="ring" aria-hidden="true">▶</span> Watch the reel</a>
+          <a href="#reel" class="play"><span class="ring" aria-hidden="true">▶</span> Watch the reel</a>
         </div>
         <div class="sig grad-text">Marketing how it should be.</div>
       </div>
-      <!-- Hero reel: placeholder. Swap for <Video provider="vimeo" id="…" /> when the anthem reel is ready. -->
-      <div class="reel" aria-label="Brand reel placeholder">
-        <div class="pbtn" aria-hidden="true">▶</div>
-        <div class="plabel">Your anthem reel</div>
+      <div class="hero-reel" id="reel">
+        <Video provider="vimeo" id="1202242149" title="Revvia Showcase" ratio="16 / 9" />
       </div>
     </div>
   </header>
@@ -214,25 +213,12 @@ const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
   .play { display: inline-flex; align-items: center; gap: 11px; color: #fff; font-weight: 500; font-size: 15px; }
   .play .ring { width: 36px; height: 36px; border-radius: 50%; background: var(--grad); display: flex; align-items: center; justify-content: center; font-size: 11px; color: #fff; }
   .sig { margin-top: 32px; font-family: 'Bricolage Grotesque', sans-serif; font-style: italic; font-size: 15px; }
-  .reel {
-    aspect-ratio: 4 / 3;
-    border-radius: 18px;
-    border: 1px solid var(--line-2);
-    background: linear-gradient(150deg, #16131c, #0d0c11);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    position: relative;
-    overflow: hidden;
-  }
-  .reel::after { content: ""; position: absolute; inset: 0; background: radial-gradient(420px 280px at 50% 40%, rgba(214, 36, 143, 0.16), transparent 66%); }
-  .reel .pbtn { width: 72px; height: 72px; border-radius: 50%; background: var(--grad); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 23px; z-index: 1; box-shadow: 0 14px 44px rgba(236, 79, 101, 0.45); }
-  .reel .plabel { z-index: 1; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2); font-weight: 600; }
+  .hero-reel { width: 100%; scroll-margin-top: 90px; }
+  /* gradient-glow frame echoing the brand, behind the player */
+  .hero-reel :global(.video-embed) { box-shadow: 0 24px 70px rgba(138, 15, 173, 0.28); }
   .wedge h2 { margin-top: 14px; }
   @media (max-width: 880px) {
     .hero-in { grid-template-columns: 1fr; gap: 36px; }
-    .reel { order: -1; }
+    .hero-reel { order: -1; }
   }
 </style>

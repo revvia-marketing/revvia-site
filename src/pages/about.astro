@@ -16,17 +16,6 @@ const values = [
   { n: '06', t: 'Honest on the first call', d: 'If we’re not the right fit, we’ll tell you — before you’ve spent a dollar.' },
 ];
 
-// Team avatars are intentional placeholders (initials). Drop a real photo in
-// via the optional `image` path and it renders through Astro's pipeline.
-const team = [
-  { initials: 'TH', name: 'Tim Holt', role: 'Founder & CEO', bio: 'A SoCal native who started Revvia as a pastor — he likes to say he answers to a higher power than your checkbook. Marketing since 2014, with work that’s driven over a billion impressions. Surfs and plays guitar when he can.' },
-  { initials: 'KP', name: 'Kris Peterson', role: 'Account Executive · San Diego', bio: 'SDSU grad and lifelong brand-builder who co-founded Chuze Fitness. He’s been the small-business owner, so he gets both sides of the table.' },
-  { initials: 'PB', name: 'Paisley Bird', role: 'Marketing Executive · Production', bio: 'A local filmmaker and photographer who runs marketing and executive support — and brings the camera with her. Eight-plus years helping businesses thrive.' },
-  { initials: 'KC', name: 'Kennedi Cutliff', role: 'Social & Creative', bio: 'University of Oregon Art & Technology grad specializing in design, social, and brand development. Believes creative inspiration comes from new experiences.' },
-  { initials: 'JC', name: 'Jake Carr', role: 'Account Executive · Omaha', bio: 'A local business owner in Nebraska who knows what running a company actually takes. On the team since 2024.' },
-  { initials: 'CO', name: 'Christian Ortiz', role: 'Account Executive · San Diego', bio: 'A decade-plus in operations and team development, now helping small businesses scale. Snowboards, runs, and surfs the rest of the time.' },
-];
-
 const schemas = [
   localBusinessSchema(),
   aboutPageSchema({
@@ -92,23 +81,6 @@ const schemas = [
     </div>
   </section>
 
-  <section class="psec">
-    <div class="wrap">
-      <div class="eyebrow blk">The team</div>
-      <h2 class="sec">The people who'll actually run your account.</h2>
-      <div class="tgrid">
-        {team.map((m) => (
-          <div class="tcard">
-            <div class="av" aria-hidden="true">{m.initials}</div>
-            <h3>{m.name}</h3>
-            <div class="role">{m.role}</div>
-            <p>{m.bio}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
   <CTASection
     heading="Let's see if we're a fit."
     lead="Start with a growth audit. If we're not the right team for your brand, we'll tell you on the first call — that's the promise."
@@ -133,13 +105,4 @@ const schemas = [
   .vcard h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #fff; margin-bottom: 7px; }
   .vcard p { color: var(--muted); font-size: 15px; }
 
-  .tgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 6px; }
-  .tcard { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 24px; transition: transform 0.18s, border-color 0.18s; }
-  .tcard:hover { transform: translateY(-3px); border-color: var(--line-2); }
-  .av { width: 60px; height: 60px; border-radius: 50%; background: var(--grad); display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 21px; color: #fff; margin-bottom: 16px; }
-  .tcard h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 19px; color: #fff; margin-bottom: 2px; }
-  .tcard .role { font-size: 13px; font-weight: 600; letter-spacing: 0.02em; margin-bottom: 10px; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; display: inline-block; }
-  .tcard p { color: var(--muted); font-size: 14.5px; }
-  @media (max-width: 820px) { .tgrid { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 560px) { .tgrid { grid-template-columns: 1fr; } }
 </style>
