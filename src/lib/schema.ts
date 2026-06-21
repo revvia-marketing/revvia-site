@@ -203,6 +203,38 @@ export function breadcrumbSchema(crumbs: Crumb[]) {
   };
 }
 
+/**
+ * CollectionPage (optionally a Blog) for the journal hub and publication pages.
+ * `blog: true` types it as a Blog with blogPost entries (used by publications).
+ */
+export function collectionPageSchema(opts: {
+  name: string;
+  description: string;
+  url: string;
+  blog?: boolean;
+  posts?: { name: string; url: string; datePublished?: string }[];
+}) {
+  const node: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': opts.blog ? ['CollectionPage', 'Blog'] : 'CollectionPage',
+    name: opts.name,
+    description: opts.description,
+    url: absoluteUrl(opts.url),
+    isPartOf: { '@id': WEBSITE_ID },
+    publisher: { '@id': ORG_ID },
+  };
+  if (opts.posts?.length) {
+    node[opts.blog ? 'blogPost' : 'hasPart'] = opts.posts.map((p) => ({
+      '@type': opts.blog ? 'BlogPosting' : 'WebPage',
+      headline: p.name,
+      name: p.name,
+      url: absoluteUrl(p.url),
+      ...(p.datePublished ? { datePublished: p.datePublished } : {}),
+    }));
+  }
+  return node;
+}
+
 export function itemListSchema(opts: {
   name: string;
   items: { name: string; url: string }[];

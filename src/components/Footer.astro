@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/revvia-logo.png';
-import { FOOTER_LINKS, NAP, TAGLINE } from '../lib/site';
+import { FOOTER_LINKS, JOURNAL_LINKS, NAP, TAGLINE } from '../lib/site';
 ---
 <footer>
   <div class="foot-in">
@@ -11,6 +11,12 @@ import { FOOTER_LINKS, NAP, TAGLINE } from '../lib/site';
     </a>
     <nav class="foot-links" aria-label="Footer">
       {FOOTER_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+  </div>
+  <div class="foot-sub">
+    <span class="foot-sub-label">Journal</span>
+    <nav class="foot-sub-links" aria-label="Journal publications">
+      {JOURNAL_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}
     </nav>
   </div>
   <div class="foot-tag">
@@ -38,6 +44,19 @@ import { FOOTER_LINKS, NAP, TAGLINE } from '../lib/site';
   .foot-in .brand .wm { font-size: 21px; }
   .foot-links { display: flex; gap: 22px; font-size: 14px; color: var(--muted); flex-wrap: wrap; }
   .foot-links a:hover { color: #fff; }
+  .foot-sub {
+    max-width: var(--maxw);
+    margin: 18px auto 0;
+    padding: 0 28px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .foot-sub-label { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted-2); font-weight: 600; }
+  .foot-sub-links { display: flex; gap: 18px; flex-wrap: wrap; }
+  .foot-sub-links a { font-size: 13.5px; color: var(--muted-2); }
+  .foot-sub-links a:hover { color: #fff; }
   .foot-tag {
     max-width: var(--maxw);
     margin: 28px auto 0;

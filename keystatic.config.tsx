@@ -15,7 +15,7 @@ const GITHUB_REPO = { owner: 'revvia-marketing', name: 'revvia-site' } as const;
 const SERIES = [
   { label: "Founder's Notes", value: 'founders-notes' },
   { label: 'Built in San Diego', value: 'built-in-san-diego' },
-  { label: 'Coastal Drop Founders', value: 'coastal-drop-founders' },
+  { label: 'West Coast DTC', value: 'west-coast-dtc' },
 ] as const;
 
 export default config({

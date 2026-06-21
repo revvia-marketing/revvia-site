@@ -9,6 +9,8 @@ function isActive(href: string) {
   if (href === '/') return here === '/';
   return here === href || here.startsWith(href + '/');
 }
+/** Exact match - used for dropdown children so only one highlights. */
+const isExact = (href: string) => here === (href.replace(/\/$/, '') || '/');
 ---
 <nav aria-label="Primary">
   <div class="nav-in">
@@ -19,11 +21,37 @@ function isActive(href: string) {
 
     <div class="nav-links" role="list">
       {
-        NAV_LINKS.map((l) => (
-          <a href={l.href} aria-current={isActive(l.href) ? 'page' : undefined}>
-            {l.label}
-          </a>
-        ))
+        NAV_LINKS.map((l) =>
+          l.children ? (
+            <div class="navdrop" data-navdrop>
+              <a class="navdrop-link" href={l.href} aria-current={isActive(l.href) ? 'page' : undefined}>
+                {l.label}
+              </a>
+              <button
+                class="navdrop-toggle"
+                type="button"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-controls={`nd-${l.label.replace(/\s+/g, '-').toLowerCase()}`}
+                aria-label={`${l.label} menu`}
+                data-navdrop-toggle
+              >
+                <svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              </button>
+              <div class="navdrop-menu" id={`nd-${l.label.replace(/\s+/g, '-').toLowerCase()}`} role="menu">
+                {l.children.map((c) => (
+                  <a role="menuitem" href={c.href} aria-current={isExact(c.href) ? 'page' : undefined}>
+                    {c.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <a href={l.href} aria-current={isActive(l.href) ? 'page' : undefined}>
+              {l.label}
+            </a>
+          )
+        )
       }
       <a href={CTA.href} class="btn" aria-current={isActive(CTA.href) ? 'page' : undefined}>
         {CTA.label}
@@ -50,11 +78,22 @@ function isActive(href: string) {
     </button>
     <nav class="mm-links" aria-label="Mobile">
       {
-        NAV_LINKS.map((l) => (
-          <a href={l.href} aria-current={isActive(l.href) ? 'page' : undefined}>
-            {l.label}
-          </a>
-        ))
+        NAV_LINKS.map((l) =>
+          l.children ? (
+            <div class="mm-group">
+              <a href={l.href} aria-current={isActive(l.href) ? 'page' : undefined}>{l.label}</a>
+              <div class="mm-sub">
+                {l.children
+                  .filter((c) => c.href !== l.href)
+                  .map((c) => (
+                    <a href={c.href} aria-current={isExact(c.href) ? 'page' : undefined}>{c.label}</a>
+                  ))}
+              </div>
+            </div>
+          ) : (
+            <a href={l.href} aria-current={isActive(l.href) ? 'page' : undefined}>{l.label}</a>
+          )
+        )
       }
       <a href={CTA.href} class="btn btn-lg mm-cta">{CTA.label}</a>
     </nav>
@@ -81,9 +120,62 @@ function isActive(href: string) {
     justify-content: space-between;
   }
   .nav-links { display: flex; gap: 28px; align-items: center; }
-  .nav-links a:not(.btn) { font-size: 14.5px; font-weight: 500; color: var(--muted); }
-  .nav-links a:not(.btn):hover,
-  .nav-links a[aria-current='page']:not(.btn) { color: #fff; }
+  .nav-links > a:not(.btn) { font-size: 14.5px; font-weight: 500; color: var(--muted); }
+  .nav-links > a:not(.btn):hover,
+  .nav-links > a[aria-current='page']:not(.btn) { color: #fff; }
+
+  /* ── Journal dropdown (desktop) ── */
+  .navdrop { position: relative; display: inline-flex; align-items: center; gap: 2px; }
+  .navdrop-link { font-size: 14.5px; font-weight: 500; color: var(--muted); }
+  .navdrop:hover .navdrop-link,
+  .navdrop:focus-within .navdrop-link,
+  .navdrop-link[aria-current='page'] { color: #fff; }
+  .navdrop-toggle {
+    background: transparent; border: 0; color: var(--muted); cursor: pointer;
+    padding: 6px 2px; display: flex; align-items: center; border-radius: 6px;
+  }
+  .navdrop:hover .navdrop-toggle, .navdrop:focus-within .navdrop-toggle { color: #fff; }
+  .navdrop-toggle svg { width: 11px; height: 11px; transition: transform 0.2s; }
+  .navdrop:hover .navdrop-toggle svg,
+  .navdrop.open .navdrop-toggle svg { transform: rotate(180deg); }
+
+  .navdrop-menu {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    min-width: 224px;
+    background: rgba(14, 15, 20, 0.98);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--line-2);
+    border-radius: 14px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.16s ease, transform 0.16s ease;
+    z-index: 60;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+  }
+  /* invisible bridge so the hover doesn't drop crossing the gap */
+  .navdrop-menu::before { content: ""; position: absolute; top: -14px; left: 0; right: 0; height: 14px; }
+  .navdrop:hover .navdrop-menu,
+  .navdrop:focus-within .navdrop-menu,
+  .navdrop.open .navdrop-menu {
+    opacity: 1; visibility: visible; pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+  .navdrop-menu a {
+    font-size: 14px; color: var(--muted); padding: 9px 12px;
+    border-radius: 9px; white-space: nowrap;
+  }
+  .navdrop-menu a:hover,
+  .navdrop-menu a:focus-visible { color: #fff; background: rgba(255, 255, 255, 0.05); }
+  .navdrop-menu a[aria-current='page'] { color: #fff; background: rgba(214, 36, 143, 0.12); }
 
   /* hamburger - hidden on desktop */
   .hamburger {
@@ -133,6 +225,7 @@ function isActive(href: string) {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    overflow-y: auto;
     transform: translateY(-10px);
     transition: transform 0.24s ease;
   }
@@ -153,7 +246,8 @@ function isActive(href: string) {
     cursor: pointer;
   }
   .mm-links { display: flex; flex-direction: column; gap: 6px; }
-  .mm-links a:not(.btn) {
+  .mm-links > a:not(.btn),
+  .mm-group > a {
     font-family: 'Bricolage Grotesque', sans-serif;
     font-weight: 700;
     font-size: 30px;
@@ -161,8 +255,28 @@ function isActive(href: string) {
     padding: 14px 0;
     border-bottom: 1px solid var(--line);
     letter-spacing: -0.02em;
+    display: block;
   }
-  .mm-links a[aria-current='page']:not(.btn) {
+  .mm-links > a[aria-current='page']:not(.btn),
+  .mm-group > a[aria-current='page'] {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* dropdown children inside the mobile menu */
+  .mm-sub { display: flex; flex-direction: column; }
+  .mm-links .mm-sub a {
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--muted);
+    padding: 12px 0 12px 18px;
+    border-bottom: 1px solid var(--line);
+    letter-spacing: 0;
+  }
+  .mm-links .mm-sub a:hover { color: #fff; }
+  .mm-links .mm-sub a[aria-current='page'] {
     background: var(--grad);
     -webkit-background-clip: text;
     background-clip: text;
@@ -171,6 +285,7 @@ function isActive(href: string) {
   .mm-cta { text-align: center; margin-top: 22px; }
   .mm-tag {
     margin-top: auto;
+    padding-top: 22px;
     font-family: 'Bricolage Grotesque', sans-serif;
     font-style: italic;
     font-size: 16px;
@@ -183,6 +298,50 @@ function isActive(href: string) {
 </style>
 
 <script is:inline>
+  /* ── Journal dropdown: click/tap toggle, Escape + click-out close ── */
+  (() => {
+    const drops = Array.from(document.querySelectorAll('[data-navdrop]'));
+    drops.forEach((drop) => {
+      const toggle = drop.querySelector('[data-navdrop-toggle]');
+      if (!toggle) return;
+      const open = () => {
+        drop.classList.add('open');
+        toggle.setAttribute('aria-expanded', 'true');
+      };
+      const close = () => {
+        drop.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      };
+      toggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        drop.classList.contains('open') ? close() : open();
+      });
+      drop.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          close();
+          toggle.focus();
+        }
+      });
+      // close when focus leaves the dropdown entirely
+      drop.addEventListener('focusout', (e) => {
+        if (!drop.contains(e.relatedTarget)) close();
+      });
+      // close menu after choosing a destination
+      drop.querySelectorAll('.navdrop-menu a').forEach((a) =>
+        a.addEventListener('click', close)
+      );
+    });
+    document.addEventListener('click', (e) => {
+      drops.forEach((drop) => {
+        if (!drop.contains(e.target)) {
+          drop.classList.remove('open');
+          drop.querySelector('[data-navdrop-toggle]')?.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+  })();
+
+  /* ── Mobile menu ── */
   (() => {
     const btn = document.getElementById('hamburger');
     const menu = document.getElementById('mobile-menu');
@@ -206,7 +365,6 @@ function isActive(href: string) {
       document.body.style.overflow = 'hidden';
       btn.setAttribute('aria-expanded', 'true');
       btn.setAttribute('aria-label', 'Close menu');
-      // focus the first link once the overlay is painted
       requestAnimationFrame(() => {
         const f = focusable();
         (f[0] || closeBtn).focus();
@@ -245,17 +403,9 @@ function isActive(href: string) {
       }
     }
 
-    btn.addEventListener('click', () =>
-      menu.hidden ? openMenu() : closeMenu()
-    );
+    btn.addEventListener('click', () => (menu.hidden ? openMenu() : closeMenu()));
     closeBtn.addEventListener('click', closeMenu);
-
-    // close on link click
-    menu.querySelectorAll('a[href]').forEach((a) =>
-      a.addEventListener('click', closeMenu)
-    );
-
-    // close on click-out (anywhere on the backdrop, outside the panel)
+    menu.querySelectorAll('a[href]').forEach((a) => a.addEventListener('click', closeMenu));
     menu.addEventListener('click', (e) => {
       if (panel && !panel.contains(e.target)) closeMenu();
     });

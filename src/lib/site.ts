@@ -58,12 +58,31 @@ export const SOCIALS = [
 ] as const;
 
 /** Primary navigation - used by both desktop nav and the mobile drawer. */
-export const NAV_LINKS = [
+export type NavChild = { label: string; href: string };
+export type NavItem = { label: string; href: string; children?: readonly NavChild[] };
+
+export const NAV_LINKS: readonly NavItem[] = [
   { label: 'Services', href: '/services' },
   { label: 'Work', href: '/work' },
   { label: 'About', href: '/about' },
-  { label: 'Journal', href: '/journal' },
-] as const;
+  {
+    label: 'Journal',
+    href: '/journal',
+    children: [
+      { label: 'Journal', href: '/journal' },
+      { label: "Founder's Notes", href: '/journal/founders-notes' },
+      { label: 'Built in San Diego', href: '/journal/built-in-san-diego' },
+      { label: 'West Coast DTC', href: '/journal/west-coast-dtc' },
+    ],
+  },
+];
+
+/** The Journal publications - for the footer sub-list. */
+export const JOURNAL_LINKS: readonly NavChild[] = [
+  { label: "Founder's Notes", href: '/journal/founders-notes' },
+  { label: 'Built in San Diego', href: '/journal/built-in-san-diego' },
+  { label: 'West Coast DTC', href: '/journal/west-coast-dtc' },
+];
 
 export const CTA = { label: 'Get a Growth Audit', href: '/contact' } as const;
 

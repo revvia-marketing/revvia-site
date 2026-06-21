@@ -28,6 +28,8 @@ export default defineConfig({
     '/customwebsites': '/services',
     '/marketingsetupguide': '/services',
     '/builtinsd': '/journal/built-in-san-diego',
+    '/westcoastdtc': '/journal/west-coast-dtc',
+    '/journal/coastal-drop-founders': '/journal/west-coast-dtc',
     '/faq': '/#faq',
   },
   prefetch: { prefetchAll: true, defaultStrategy: 'viewport' },
