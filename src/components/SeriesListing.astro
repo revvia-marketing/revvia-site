@@ -17,6 +17,8 @@ const { series } = Astro.props;
 const meta = SERIES_META[series];
 const url = `/journal/${meta.slug}`;
 const isFeature = meta.type === 'feature';
+// Feature series steer to their own "get featured" flow; the column to contact.
+const ctaHref = isFeature ? `${url}/get-featured` : '/contact';
 
 const posts = (await getCollection('journal'))
   .filter((p) => p.data.series === series)
@@ -85,7 +87,7 @@ const schemas = [
             <div class="t">{meta.invite.title}</div>
             <div class="d">{meta.invite.text}</div>
           </div>
-          <a class="btn btn-ghost" href="/contact">Get featured →</a>
+          <a class="btn btn-ghost" href={ctaHref}>Get featured →</a>
         </div>
       )}
     </div>
@@ -105,7 +107,7 @@ const schemas = [
     heading={meta.cta.heading}
     lead={meta.cta.lead}
     buttonLabel={meta.cta.buttonLabel}
-    buttonHref="/contact"
+    buttonHref={ctaHref}
   />
 </BaseLayout>
 

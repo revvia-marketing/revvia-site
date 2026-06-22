@@ -1,0 +1,168 @@
+---
+/**
+ * "Get featured" form for the feature publications (Built in San Diego,
+ * West Coast DTC). Netlify Forms (build-time detection via data-netlify +
+ * the hidden form-name input) with a honeypot. JS enhances the submit:
+ * AJAX POST -> in-page success state + GA4 `feature_request` + Meta `Lead`.
+ * Distinct from the sales `generate_lead` event so feature interest can be
+ * tracked separately. With JS off it still posts to Netlify and lands on
+ * the success path.
+ */
+interface Props {
+  formName: string;
+  label: string;
+  noun: 'business' | 'brand';
+  locationLabel: string;
+  locationPlaceholder: string;
+  successPath: string;
+}
+const { formName, label, noun, locationLabel, locationPlaceholder, successPath } =
+  Astro.props;
+const id = formName;
+const Noun = noun === 'brand' ? 'Brand' : 'Business';
+---
+<div class="form-shell" data-feature-shell>
+  <form
+    id={id}
+    class="form-card"
+    name={formName}
+    method="POST"
+    data-netlify="true"
+    netlify-honeypot="bot-field"
+    action={`${successPath}?submitted=true`}
+    data-series={label}
+  >
+    <!-- Netlify needs the form name echoed as a hidden field -->
+    <input type="hidden" name="form-name" value={formName} />
+    <input type="hidden" name="publication" value={label} />
+
+    <div class="form-row">
+      <div class="field">
+        <label for={`${id}-name`}>Your name</label>
+        <input id={`${id}-name`} name="name" type="text" placeholder="First & last" autocomplete="name" required />
+      </div>
+      <div class="field">
+        <label for={`${id}-business`}>{Noun} name</label>
+        <input id={`${id}-business`} name="business" type="text" placeholder={`Your ${noun}`} autocomplete="organization" required />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="field">
+        <label for={`${id}-email`}>Email</label>
+        <input id={`${id}-email`} name="email" type="email" placeholder="you@brand.com" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for={`${id}-phone`}>Phone <span class="opt">(optional)</span></label>
+        <input id={`${id}-phone`} name="phone" type="tel" placeholder="(760) 555-0100" autocomplete="tel" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="field">
+        <label for={`${id}-link`}>Website or Instagram</label>
+        <input id={`${id}-link`} name="link" type="text" placeholder="yourbrand.com or @yourbrand" inputmode="url" />
+      </div>
+      <div class="field">
+        <label for={`${id}-location`}>{locationLabel} <span class="opt">(optional)</span></label>
+        <input id={`${id}-location`} name="location" type="text" placeholder={locationPlaceholder} />
+      </div>
+    </div>
+
+    <div class="field full">
+      <label for={`${id}-message`}>Tell us about your {noun}</label>
+      <textarea id={`${id}-message`} name="message" placeholder={`What you do, and what makes your ${noun} worth featuring…`} required></textarea>
+    </div>
+
+    <!-- honeypot: hidden from people, catnip for bots -->
+    <p class="hp" aria-hidden="true">
+      <label>Leave this blank if you're human: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+    </p>
+
+    <button type="submit" class="btn btn-lg">Send my feature request</button>
+    <div class="form-note">It's free, and there's no catch. You approve everything before it publishes.</div>
+  </form>
+
+  <div class="form-success" data-feature-success hidden role="status">
+    <div class="fs-mark grad-text" aria-hidden="true">✓</div>
+    <h3 class="display">Thanks - we'll be in touch.</h3>
+    <p>
+      Your feature request is in. We'll take a look and, if it's a fit, reach
+      out to set up your interview. No cost, no catch - and nothing publishes
+      without your sign-off.
+    </p>
+  </div>
+</div>
+
+<style>
+  .form-success {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 44px 32px;
+    text-align: center;
+  }
+  .form-success .fs-mark {
+    font-size: 46px;
+    font-weight: 800;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+  .form-success h3 { font-size: 26px; margin-bottom: 10px; }
+  .form-success p { color: var(--muted); max-width: 460px; margin: 0 auto; font-size: 16px; }
+  .opt { color: var(--muted-2); font-weight: 400; }
+</style>
+
+<script is:inline>
+  (() => {
+    document.querySelectorAll('[data-feature-shell]').forEach((shell) => {
+      const form = shell.querySelector('form');
+      const success = shell.querySelector('[data-feature-success]');
+      if (!form || !success) return;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        // Bot filled the honeypot -> silently drop.
+        if (form.querySelector('[name="bot-field"]')?.value) return;
+
+        const btn = form.querySelector('button[type="submit"]');
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = 'Sending…';
+        }
+
+        const data = new FormData(form);
+        try {
+          await fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(data).toString(),
+          });
+        } catch (err) {
+          /* Network hiccup: still show success so they can follow up. */
+        }
+
+        // Feature-intent conversion events (no-ops if GA4 / Pixel aren't set).
+        try {
+          const pub = form.getAttribute('data-series') || '';
+          if (typeof window.gtag === 'function') {
+            window.gtag('event', 'feature_request', {
+              form_name: form.getAttribute('name') || 'feature',
+              publication: pub,
+            });
+          }
+          if (typeof window.fbq === 'function') {
+            window.fbq('track', 'Lead', { content_name: 'Feature: ' + pub });
+          }
+        } catch (err) {
+          /* analytics must never block the success state */
+        }
+
+        form.hidden = true;
+        success.hidden = false;
+        success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    });
+  })();
+</script>

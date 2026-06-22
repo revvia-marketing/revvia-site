@@ -84,6 +84,14 @@ type Publication = {
   cta: { heading: string; lead: string; buttonLabel: string };
   /** FAQ accordion (feature series only). */
   faqs?: FaqItem[];
+  /** "Get featured" page: lead + how-it-works steps (feature series only). */
+  getFeatured?: {
+    lead: string;
+    noun: 'business' | 'brand';
+    locationLabel: string;
+    locationPlaceholder: string;
+    process: { title: string; text: string }[];
+  };
 };
 
 export const SERIES_META = {
@@ -130,8 +138,21 @@ export const SERIES_META = {
       { question: 'What do I actually get?', answer: "A professionally written article about you and your business, published on the Revvia Journal, with a live backlink to your site - plus a copy you're free to use anywhere." },
       { question: 'Do I own the content?', answer: "Yes. The story is about you - put it on your site, your socials, wherever you like. We keep it published here too." },
       { question: "What's the catch - are you going to sell me something?", answer: "No catch. We do this because we love this community and it's how people get to know Revvia. We may eventually reach out about working together - but never during the interview, and never as a condition of being featured." },
-      { question: 'How do I get featured?', answer: "Reach out through the contact form and tell us about your business. If it's a fit, we'll set up a short interview and take it from there." },
+      { question: 'How do I get featured?', answer: "Use the Get featured button to tell us about your business. If it's a fit, we'll set up a short interview and take it from there." },
     ],
+    getFeatured: {
+      lead: "It's free, and there's no catch. Here's exactly how a Built in San Diego feature works - and how to get yours started.",
+      noun: 'business',
+      locationLabel: 'City or neighborhood',
+      locationPlaceholder: 'Carlsbad, Encinitas, Vista…',
+      process: [
+        { title: 'Reach out', text: "Tell us about your business using the form below. If it's a fit - and for North County businesses it usually is - we'll reply to set up a time. It's free, with no catch." },
+        { title: 'The interview, about 30 minutes', text: "A relaxed conversation about your story: why you started, what makes your business different, who your customers are, and what you'd want people to know. No prep required - we're after the real story in your own words, not polished answers. It can help to think about a project you're proud of, what you wish more people knew, and how it all started." },
+        { title: 'The photos', text: "We take a few candid photos of you at your location - in your space, doing what you do. They run with the article and are yours to use however you like afterward. If there's a corner or a wall that tells your story, we'll make sure to capture it." },
+        { title: 'Your review and approval', text: "Before anything publishes, you review the article and approve your quotes - nothing goes live without your sign-off. We set that review session at the interview, usually about a week later." },
+        { title: 'Published', text: "Your story goes live on the Revvia Journal: a professionally written article, a live backlink to your site, and a copy that's yours to share anywhere." },
+      ],
+    },
   },
   'west-coast-dtc': {
     label: 'West Coast DTC',
@@ -159,8 +180,21 @@ export const SERIES_META = {
       { question: 'What do I actually get?', answer: 'A professionally written feature interview - the story, the strategy, and the work behind the scroll - published on the Revvia Journal with a live backlink, plus a copy you own and can share anywhere.' },
       { question: 'Do I own the content?', answer: "Yes. It's your story. Use it on your site and socials however you like; we keep it published here too." },
       { question: "What's the catch - is this a sales pitch?", answer: 'No catch. We feature brands we admire because it is how the right people get to know Revvia. We may eventually talk about working together - but never during the interview, and never as a condition of being featured.' },
-      { question: 'How do I get featured?', answer: "Reach out through the contact form with a few words about your brand. If it's a fit, we'll set up the interview." },
+      { question: 'How do I get featured?', answer: "Use the Get featured button to tell us about your brand. If it's a fit, we'll set up the interview." },
     ],
+    getFeatured: {
+      lead: "It's free, and there's no catch. Here's exactly how a West Coast DTC feature works - and how to get yours started.",
+      noun: 'brand',
+      locationLabel: "Where you're based",
+      locationPlaceholder: 'City, state',
+      process: [
+        { title: 'Reach out', text: "Tell us about your brand using the form below. If it's a fit, we'll reply to set up the interview. It's free, with no catch." },
+        { title: 'The interview, about 30 minutes', text: "A relaxed conversation about the brand behind the brand: why you started, what makes the product different, who you're building for, and how you make the content that actually sells. No prep required - we want the real story in your own words. It can help to think about a launch or a piece of content you're proud of, what you wish more people knew, and how it all started." },
+        { title: 'The visuals', text: "Where it makes sense, we capture a few photos to run with the piece - in your space or with your product. They're yours to use however you like afterward." },
+        { title: 'Your review and approval', text: "Before anything publishes, you review the feature and approve your quotes - nothing goes live without your sign-off. We set that review session at the interview, usually about a week later." },
+        { title: 'Published', text: "Your feature goes live on the Revvia Journal: a professionally written piece, a live backlink to your site, and a copy that's yours to share anywhere." },
+      ],
+    },
   },
 } as const satisfies Record<string, Publication>;
 
