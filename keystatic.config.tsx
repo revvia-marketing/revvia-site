@@ -65,7 +65,18 @@ export default config({
           directory: 'src/assets/journal',
           publicPath: '/src/assets/journal/',
         }),
-        body: fields.markdoc({ label: 'Body' }),
+        body: fields.markdoc({
+          label: 'Body',
+          // Inline images inserted in the editor are stored under public/ so
+          // they're served directly (e.g. /images/journal/foo.jpg) and render
+          // anywhere in the article body.
+          options: {
+            image: {
+              directory: 'public/images/journal',
+              publicPath: '/images/journal/',
+            },
+          },
+        }),
         metaTitle: fields.text({ label: 'Meta title (SEO override)' }),
         metaDescription: fields.text({
           label: 'Meta description (SEO override)',

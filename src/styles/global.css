@@ -433,5 +433,5 @@ h2.sec {
 .prose li::marker { color: var(--m); }
 .prose blockquote { border-left: 3px solid var(--m); padding: 6px 0 6px 22px; margin: 32px 0; }
 .prose blockquote p { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: clamp(20px, 2.6vw, 26px); color: #fff; line-height: 1.35; }
-.prose img { border-radius: 14px; border: 1px solid var(--line); margin: 28px 0; }
+.prose img { max-width: 100%; height: auto; display: block; border-radius: 14px; border: 1px solid var(--line); margin: 28px 0; }
 .prose code { background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 2px 6px; font-size: 0.9em; }
