@@ -30,6 +30,15 @@ export default defineConfig({
     '/builtinsd': '/journal/built-in-san-diego',
     '/westcoastdtc': '/journal/west-coast-dtc',
     '/journal/coastal-drop-founders': '/journal/west-coast-dtc',
+    // Old Wix /post/ URLs for the migrated Built in San Diego features.
+    '/post/she-asked-meta-s-engineers-if-their-a-i-was-safe-their-answer-became-a-company':
+      '/journal/magier-ai',
+    '/post/he-knew-nothing-about-plants-nothing-about-greenwalls-nothing-about-america-he-built-a-national-b':
+      '/journal/growup-greenwalls',
+    '/post/the-architect-who-asks-what-if-it-was-better-than-you-imagined':
+      '/journal/kuhlman-scott-architects',
+    '/post/he-left-the-hospital-to-give-you-something-most-doctors-can-t-time':
+      '/journal/coastal-internal-medicine',
     '/faq': '/#faq',
   },
   prefetch: { prefetchAll: true, defaultStrategy: 'viewport' },
