@@ -70,6 +70,33 @@ const schemas = [
     </div>
   </section>
 
+  <section class="psec founder">
+    <div class="wrap">
+      <div class="eyebrow blk">Who runs it</div>
+      <h2 class="sec">Meet the founder.</h2>
+      <div class="founder-grid">
+        <figure class="founder-photo">
+          <img
+            src="/tim-holt.jpg"
+            alt="Tim Holt, founder and CEO of Revvia"
+            width="720"
+            height="900"
+            loading="lazy"
+            onerror="this.closest('.founder-photo').style.display='none'"
+          />
+        </figure>
+        <div class="founder-bio">
+          <div class="founder-name">Tim Holt</div>
+          <div class="founder-title grad-text">Founder &amp; CEO</div>
+          <p>Tim Holt is the founder and CEO of Revvia, a production-led growth studio in North County San Diego built for consumer and lifestyle brands.</p>
+          <p>He started taking on marketing work as a side gig in 2014 and turned it into Revvia in 2020 - back when he was still pastoring a church. That's where his north star comes from: he likes to say he answers to a higher power than your checkbook.</p>
+          <p>It's not just a line. Tim built Revvia around proof instead of promises - real revenue, real customers, receipts you can check - because he'd rather show a founder the work than sell them a story. His campaigns have driven more than a billion impressions for brands and nonprofits, but the number he actually cares about is the one on your P&amp;L.</p>
+          <p>A lifelong Southern Californian, Tim still does a lot of the building himself, working shoulder-to-shoulder with the founders he partners with. When he's off the clock, he's surfing or playing guitar. He and his wife Meghan live in North County San Diego with their five kids - Declan, Ronan, Sawyer, Johnny, and Haven.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="psec vals">
     <div class="wrap">
       <div class="eyebrow blk">What we believe</div>
@@ -101,6 +128,14 @@ const schemas = [
     font-size: clamp(22px, 3vw, 30px); line-height: 1.25; letter-spacing: -0.01em;
     margin: 34px 0; padding-left: 24px; border-left: 3px solid var(--m); max-width: 760px;
   }
+
+  .founder-grid { display: grid; grid-template-columns: 320px 1fr; gap: 36px; align-items: start; max-width: 920px; }
+  .founder-photo { margin: 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: var(--bg-2); }
+  .founder-photo img { width: 100%; height: auto; display: block; }
+  .founder-name { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 24px; color: #fff; }
+  .founder-title { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin: 4px 0 18px; display: inline-block; }
+  .founder-bio p { font-size: 17px; color: #cfd3db; margin-bottom: 16px; }
+  @media (max-width: 760px) { .founder-grid { grid-template-columns: 1fr; gap: 22px; } .founder-photo { max-width: 320px; } }
 
   .vals { background: var(--bg-2); }
   .vcard { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px; }

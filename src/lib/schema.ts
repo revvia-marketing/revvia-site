@@ -59,11 +59,12 @@ export function personSchema() {
     '@type': 'Person',
     '@id': PERSON_ID,
     name: 'Tim Holt',
-    jobTitle: 'Founder',
+    jobTitle: 'Founder & CEO',
     worksFor: { '@id': ORG_ID },
     url: absoluteUrl('/about'),
+    image: absoluteUrl('/tim-holt.jpg'),
     description:
-      "Tim Holt is the founder of Revvia, a production-led growth studio for consumer and lifestyle brands in San Diego. He writes Founder's Notes and leads the Built in San Diego and West Coast DTC feature series.",
+      'Tim Holt is the founder and CEO of Revvia, a production-led growth studio for consumer and lifestyle brands in North County San Diego. He started Revvia in 2020 while pastoring a church - which is why he likes to say he answers to a higher power than your checkbook. He builds on proof, not promises. A lifelong Southern Californian, Tim surfs, plays guitar, and lives in North County with his wife Meghan and their five kids.',
     knowsAbout: [
       'Direct-to-consumer growth',
       'Paid media',
