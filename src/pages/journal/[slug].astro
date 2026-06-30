@@ -50,7 +50,6 @@ const schemas = [
     url,
     image: ogImg ? ogImg.src : '/og/revvia-og.png',
     datePublished: d.date.toISOString().slice(0, 10),
-    author: 'Revvia',
   }),
   breadcrumbSchema(crumbs),
 ];
@@ -72,7 +71,7 @@ const schemas = [
         <a class="series-tag" href={`/journal/${meta.slug}`} style={`color:${meta.accent}`}>{meta.label}</a>
         <h1>{d.title}</h1>
         <div class="post-meta">
-          <time datetime={d.date.toISOString().slice(0, 10)}>{formatFullDate(d.date)}</time>
+          By <a href="/about" rel="author">Tim Holt</a> · <time datetime={d.date.toISOString().slice(0, 10)}>{formatFullDate(d.date)}</time>
         </div>
       </div>
     </header>
@@ -128,6 +127,8 @@ const schemas = [
   .series-tag { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; display: inline-block; margin-bottom: 12px; }
   .post-hero h1 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(34px, 5.2vw, 56px); letter-spacing: -0.02em; line-height: 1.05; margin-bottom: 16px; }
   .post-meta { color: var(--muted-2); font-size: 14px; }
+  .post-meta a { color: #fff; }
+  .post-meta a:hover { color: var(--m); }
 
   .post-body { max-width: 720px; margin: 0 auto; padding: 36px 28px 8px; }
   .post-cover { margin: 0 0 36px; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); }

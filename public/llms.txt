@@ -1,0 +1,27 @@
+# Revvia
+
+> Revvia is a San Diego production-led growth studio for consumer and lifestyle brands. We run the whole growth engine - paid media, in-house photo and video production, email and SMS retention, and clean tracking - in person and led by the founder, month-to-month.
+
+Revvia (legal name First Door, LLC) is based in Carlsbad, California and serves consumer and lifestyle brands across Southern California. The studio reports to revenue, not vanity metrics. Founder: Tim Holt.
+
+## Services
+- [Services overview](https://www.revvia.com/services): The full growth engine - full-stack retainers, single-service entry points, and premium in-house productions.
+- [GEO Visibility Overhaul](https://www.revvia.com/services/geo-visibility-overhaul): Rebuilding sites so AI engines (ChatGPT, Perplexity, Gemini, Claude) can find, trust, and cite them - with a before-and-after citation scorecard.
+- [Flagship Brand Film](https://www.revvia.com/services/flagship-brand-film): A cinematic anthem film that anchors a brand and performs as an ad.
+- [Seasonal Content Capsule](https://www.revvia.com/services/seasonal-content-capsule): A full season of photo and video shot in one production.
+- [Growth Foundation](https://www.revvia.com/services/growth-foundation): The complete growth engine built once - tracking, paid, retention, and measurement.
+- [Drop Launch](https://www.revvia.com/services/drop-launch): A full campaign engineered around a product drop.
+
+## Work
+- [Work and case studies](https://www.revvia.com/work): Selected client results.
+- [EverSun / iTAN case study](https://www.revvia.com/work/eversun): Production-led growth for a Southern California lifestyle brand.
+
+## Journal
+- [The Revvia Journal](https://www.revvia.com/journal): Three publications from the studio.
+- [Founder's Notes](https://www.revvia.com/journal/founders-notes): Essays by founder Tim Holt on building consumer brands and the marketing that moves revenue.
+- [Built in San Diego](https://www.revvia.com/journal/built-in-san-diego): A free feature series on the people building North County San Diego's businesses.
+- [West Coast DTC](https://www.revvia.com/journal/west-coast-dtc): A feature series on the consumer brands building the coast - and the content behind them.
+
+## Company
+- [About](https://www.revvia.com/about): Who Revvia is and how the studio works.
+- [Contact](https://www.revvia.com/contact): Get a growth audit or get in touch.

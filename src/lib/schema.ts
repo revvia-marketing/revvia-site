@@ -16,6 +16,7 @@ import {
 const ORG_ID = `${SITE_URL}/#organization`;
 const WEBSITE_ID = `${SITE_URL}/#website`;
 const LOCALBUSINESS_ID = `${SITE_URL}/#localbusiness`;
+const PERSON_ID = `${SITE_URL}/#tim-holt`;
 const LOGO_URL = absoluteUrl('/og/revvia-logo.png');
 
 const postalAddress = {
@@ -42,7 +43,34 @@ export function organizationSchema() {
     email: NAP.email,
     telephone: NAP.telephone,
     address: postalAddress,
+    founder: { '@id': PERSON_ID },
     sameAs: [...SOCIALS],
+  };
+}
+
+/**
+ * Founder Person node - sitewide, referenced by Organization.founder and by
+ * journal Article.author. The E-E-A-T anchor for the site's content and the
+ * "Person schema" AI engines look for.
+ */
+export function personSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': PERSON_ID,
+    name: 'Tim Holt',
+    jobTitle: 'Founder',
+    worksFor: { '@id': ORG_ID },
+    url: absoluteUrl('/about'),
+    description:
+      "Tim Holt is the founder of Revvia, a production-led growth studio for consumer and lifestyle brands in San Diego. He writes Founder's Notes and leads the Built in San Diego and West Coast DTC feature series.",
+    knowsAbout: [
+      'Direct-to-consumer growth',
+      'Paid media',
+      'Email and SMS retention',
+      'Generative engine optimization',
+      'Brand photo and video production',
+    ],
   };
 }
 
@@ -159,7 +187,7 @@ export function articleSchema(opts: {
     description: opts.description,
     image: /^https?:/.test(opts.image) ? opts.image : absoluteUrl(opts.image),
     mainEntityOfPage: { '@type': 'WebPage', '@id': absoluteUrl(opts.url) },
-    author: { '@type': 'Person', name: opts.author || 'Tim Holt' },
+    author: opts.author ? { '@type': 'Person', name: opts.author } : { '@id': PERSON_ID },
     publisher: { '@id': ORG_ID },
     ...(opts.datePublished ? { datePublished: opts.datePublished } : {}),
     dateModified: opts.dateModified || opts.datePublished,

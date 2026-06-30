@@ -5,7 +5,7 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import Analytics from '../components/Analytics.astro';
 import SchemaJsonLd from '../components/SchemaJsonLd.astro';
-import { organizationSchema, websiteSchema } from '../lib/schema';
+import { organizationSchema, websiteSchema, personSchema } from '../lib/schema';
 
 interface Props {
   title: string;
@@ -36,7 +36,7 @@ const {
 } = Astro.props;
 
 // Sitewide structured data lives on every page.
-const baseSchemas = [organizationSchema(), websiteSchema()];
+const baseSchemas = [organizationSchema(), websiteSchema(), personSchema()];
 ---
 <!doctype html>
 <html lang="en">
