@@ -44,6 +44,17 @@ const schemas = [
   path={path}
   schemas={schemas}
 >
+  <!-- Hidden form so Netlify detects + logs every readiness run (domain, score,
+       grade, timestamp). Fired silently by the widget; never user-facing. -->
+  <form name="geo-readiness-log" data-netlify="true" netlify-honeypot="bot-field" hidden aria-hidden="true">
+    <input type="hidden" name="form-name" value="geo-readiness-log" />
+    <input type="text" name="domain" />
+    <input type="text" name="score" />
+    <input type="text" name="grade" />
+    <input type="text" name="timestamp" />
+    <input type="text" name="bot-field" />
+  </form>
+
   <!-- 1 · HERO -->
   <header class="page-hero">
     <div class="page-hero-in">
@@ -337,6 +348,25 @@ const schemas = [
     );
   }
 
+  // Silent log of each successful run to the geo-readiness-log Netlify form.
+  // Fire-and-forget: never awaited, never blocks or changes the tool UI.
+  function logReadiness(data) {
+    try {
+      const body = new URLSearchParams({
+        'form-name': 'geo-readiness-log',
+        domain: data.domain || '',
+        score: String(data.score ?? ''),
+        grade: data.grade || '',
+        timestamp: new Date().toISOString(),
+      });
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body.toString(),
+      }).catch(() => {});
+    } catch { /* logging must never affect the tool */ }
+  }
+
   async function runCheck() {
     const input = $('#domain');
     const btn = $('#run');
@@ -358,6 +388,7 @@ const schemas = [
       const data = await res.json();
       if (data.error) { out.innerHTML = '<p class="geo-note">' + escapeHtml(data.error) + '</p>'; return; }
       renderResult(out, data);
+      logReadiness(data);
     } catch {
       out.innerHTML = '<p class="geo-note">Something went wrong running the check. Try again in a moment.</p>';
     } finally {
