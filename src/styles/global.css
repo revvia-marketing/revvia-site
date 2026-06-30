@@ -421,7 +421,11 @@ h2.sec {
 /* CMS article prose (journal posts) — tuned for a premium, readable column */
 .prose { max-width: 720px; }
 .prose::after { content: ""; display: block; clear: both; }
-.prose > * + * { margin-top: 22px; }
+/* Markdoc wraps body content in <article>, so stack-space both the direct
+   children and the article's children. :where() keeps specificity low so the
+   heading rules below still win. */
+.prose > * + *,
+.prose :where(article) > * + * { margin-top: 24px; }
 .prose h2 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: clamp(25px, 3.4vw, 31px); letter-spacing: -0.01em; line-height: 1.18; margin-top: 48px; color: #fff; }
 .prose h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; line-height: 1.25; margin-top: 32px; color: #fff; }
 .prose h2 + p, .prose h3 + p, .prose h2 + ul, .prose h3 + ul, .prose h2 + ol, .prose h3 + ol { margin-top: 14px; }
