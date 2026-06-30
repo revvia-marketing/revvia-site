@@ -80,7 +80,7 @@ const schemas = [
     <div class="post-body">
       {cover && (
         <figure class="post-cover">
-          <Image src={cover} alt={d.title} widths={[480, 800, 1080]} sizes="(max-width: 760px) 100vw, 720px" />
+          <Image src={cover} alt={d.title} widths={[480, 800, 1080, 1440]} sizes="(max-width: 760px) 100vw, 720px" quality={85} />
         </figure>
       )}
       <div class="prose">

@@ -12,7 +12,7 @@ const cover = resolveImage(post.data.coverImage);
 ---
 <a class="post" href={`/journal/${post.id}`}>
   <div class="media" style={`background:${meta.cardBg}`}>
-    {cover && <Image src={cover} alt={post.data.title} width={420} height={150} />}
+    {cover && <Image src={cover} alt={post.data.title} width={440} height={165} densities={[1, 2]} quality={85} />}
   </div>
   <div class="pb">
     <div class="tag" style={`color:${meta.accent}`}>{meta.label}</div>
