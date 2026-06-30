@@ -21,6 +21,9 @@ const journal = defineCollection({
     date: z.coerce.date(),
     excerpt: z.string(),
     coverImage: z.string().optional(),
+    gallery: z
+      .array(z.object({ image: z.string(), caption: z.string().optional() }))
+      .default([]),
     metaTitle: z.string().optional(),
     metaDescription: z.string().optional(),
     ogImage: z.string().optional(),

@@ -1,4 +1,5 @@
 import { config, fields, collection } from '@keystatic/core';
+import { block } from '@keystatic/core/content-components';
 
 /**
  * Keystatic CMS - admin UI at /keystatic.
@@ -65,16 +66,50 @@ export default config({
           directory: 'src/assets/journal',
           publicPath: '/src/assets/journal/',
         }),
+        gallery: fields.array(
+          fields.object({
+            image: fields.image({
+              label: 'Photo',
+              directory: 'src/assets/journal',
+              publicPath: '/src/assets/journal/',
+              validation: { isRequired: true },
+            }),
+            caption: fields.text({ label: 'Caption (optional)' }),
+          }),
+          {
+            label: 'Photo gallery',
+            description: 'Photos shown in a grid at the end of the article. Add as many as you like.',
+            itemLabel: (props) => props.fields.caption.value || 'Photo',
+          }
+        ),
         body: fields.markdoc({
           label: 'Body',
-          // Inline images inserted in the editor are stored under public/ so
-          // they're served directly (e.g. /images/journal/foo.jpg) and render
-          // anywhere in the article body.
-          options: {
-            image: {
-              directory: 'public/images/journal',
-              publicPath: '/images/journal/',
-            },
+          // Raw inline images are disabled (fragile in GitHub mode). In-article
+          // photos go in via the Figure block (wrap left/right or full width)
+          // or the Photo gallery field above.
+          options: { image: false },
+          components: {
+            figure: block({
+              label: 'Figure (image + text wrap)',
+              schema: {
+                src: fields.image({
+                  label: 'Image',
+                  directory: 'src/assets/journal',
+                  publicPath: '/src/assets/journal/',
+                  validation: { isRequired: true },
+                }),
+                align: fields.select({
+                  label: 'Alignment',
+                  options: [
+                    { label: 'Left - text wraps on the right', value: 'left' },
+                    { label: 'Right - text wraps on the left', value: 'right' },
+                    { label: 'Full width', value: 'full' },
+                  ],
+                  defaultValue: 'left',
+                }),
+                caption: fields.text({ label: 'Caption (optional)' }),
+              },
+            }),
           },
         }),
         metaTitle: fields.text({ label: 'Meta title (SEO override)' }),
