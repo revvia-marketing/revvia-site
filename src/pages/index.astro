@@ -117,15 +117,6 @@ const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
       </div>
       <div class="work-grid">
         <CaseCard
-          href="/work/eversun"
-          cover={resolveCover('eversun')}
-          mediaStyle="background:linear-gradient(145deg,#2a1a0e,#3a2412 68%,#140d07)"
-          tag="Beauty & Wellness · 28 Locations"
-          name="EverSun/iTAN"
-          stat="28 locations"
-          label="One integrated growth system for a beloved 28-location SoCal brand."
-        />
-        <CaseCard
           href="/work/peter-grimm"
           cover={resolveCover('peter-grimm')}
           media="pg"
@@ -262,9 +253,9 @@ const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
     flex-shrink: 0;
   }
 
-  /* proof now holds 3 cards (EverSun lead + two case studies) */
-  #work .work-grid { grid-template-columns: repeat(3, 1fr); }
-  @media (max-width: 900px) { #work .work-grid { grid-template-columns: 1fr 1fr; } }
+  /* proof holds the two case studies */
+  #work .work-grid { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) { #work .work-grid { grid-template-columns: 1fr; } }
   @media (max-width: 620px) { #work .work-grid { grid-template-columns: 1fr; } }
 
   @media (max-width: 880px) {

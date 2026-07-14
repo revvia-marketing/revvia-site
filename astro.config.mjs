@@ -40,6 +40,8 @@ export default defineConfig({
     '/post/he-left-the-hospital-to-give-you-something-most-doctors-can-t-time':
       '/journal/coastal-internal-medicine',
     '/faq': '/#faq',
+    // EverSun case study removed - keep the old URL from 404ing.
+    '/work/eversun': '/work',
   },
   prefetch: { prefetchAll: true, defaultStrategy: 'viewport' },
   image: {
