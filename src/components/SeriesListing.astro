@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getPublishedJournal } from '../lib/journal';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from './Breadcrumbs.astro';
 import PostCard from './PostCard.astro';
@@ -20,9 +20,8 @@ const isFeature = meta.type === 'feature';
 // Feature series steer to their own "get featured" flow; the column to contact.
 const ctaHref = isFeature ? `${url}/get-featured` : '/contact';
 
-const posts = (await getCollection('journal'))
-  .filter((p) => p.data.series === series)
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const posts = (await getPublishedJournal())
+  .filter((p) => p.data.series === series);
 
 const crumbs = [
   { name: 'Home', url: '/' },

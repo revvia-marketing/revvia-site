@@ -1,13 +1,11 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
 import { SERIES_META, type SeriesKey } from '../../content.config';
 import { breadcrumbSchema, collectionPageSchema } from '../../lib/schema';
+import { getPublishedJournal } from '../../lib/journal';
 
-const all = (await getCollection('journal')).sort(
-  (a, b) => b.data.date.getTime() - a.data.date.getTime()
-);
+const all = await getPublishedJournal();
 const latest = all.slice(0, 6);
 
 const seriesKeys = Object.keys(SERIES_META) as SeriesKey[];
