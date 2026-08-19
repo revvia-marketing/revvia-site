@@ -1,0 +1,35 @@
+---
+const checks = [
+  { tag: '01 / Queries', h: 'The questions homeowners ask', p: 'We run the real ones for your trade and your service area, across multiple AI engines, and record who gets named.' },
+  { tag: '02 / Competitors', h: 'Who is getting named instead', p: 'The specific companies the AI recommends in your city, and the reason it gives for recommending them.' },
+  { tag: '03 / Structured data', h: 'Whether your site is readable', p: 'Schema and JSON-LD markup for your services, service area, hours, licensing, and reviews. This is the layer most contractor sites are missing entirely.' },
+  { tag: '04 / Sources', h: 'Where the AI is getting its list', p: 'The directories, roundups, and review sources feeding the answer, and which ones have no record of you.' },
+  { tag: '05 / Coverage', h: 'Service and city gaps', p: 'The jobs and neighborhoods you actually serve that your site never says plainly enough for a machine to repeat.' },
+  { tag: '06 / Trust signals', h: 'Licensing, warranty, response', p: 'The proof points AI answers lean on most for home services, and whether yours are stated anywhere a machine can find them.' },
+];
+---
+<section class="psec">
+  <div class="wrap">
+    <div class="eyebrow blk">The free audit</div>
+    <h2 class="sec">What we actually look at.</h2>
+    <p class="lead mut">A real diagnostic, not a lead magnet with your logo dropped on it. Every audit gets read by a human before it goes out.</p>
+    <div class="checks">
+      {checks.map((c) => (
+        <div class="check">
+          <span class="check-tag">{c.tag}</span>
+          <h3>{c.h}</h3>
+          <p>{c.p}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .checks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 10px; }
+  .check { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 26px 24px; }
+  .check-tag { display: block; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+  .check h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 19px; color: #fff; margin-bottom: 8px; line-height: 1.2; }
+  .check p { color: var(--muted); font-size: 15px; margin: 0; }
+  @media (max-width: 900px) { .checks { grid-template-columns: 1fr; } }
+</style>

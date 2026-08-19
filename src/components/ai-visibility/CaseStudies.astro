@@ -1,0 +1,65 @@
+---
+const cases = [
+  {
+    tag: 'Case 01', name: 'Drain Mob', meta: 'Plumbing & drain · San Diego',
+    rows: [
+      { label: 'Before', out: false, p: "A working site with real reviews and real rankings, but no structured data anywhere. Nothing on the site told a machine what services they performed, which cities they covered, who was behind the company, or what made them credible." },
+      { label: 'What we did', out: false, p: "LocalBusiness, Service, and FAQPage schema implemented across the site. Titles and meta descriptions rewritten around real customer questions. A named owner-operator built out as the site's author and expertise signal. Core Web Vitals cleaned up." },
+      { label: 'What happened', out: true, p: "Drain Mob now comes up consistently across ChatGPT, Perplexity, and Claude when the engines are asked about drain and plumbing work in their service area. We check it on a schedule and show them the record." },
+    ],
+  },
+  {
+    tag: 'Case 02', name: 'Coastal Internal Medicine', meta: 'Independent practice · Vista, CA',
+    rows: [
+      { label: 'Before', out: false, p: "A homepage headline with no name or specialty in it, four near-identical service pages of about 250 words each, broken navigation, and no schema markup of any kind. To an AI engine, the practice was close to invisible." },
+      { label: 'What we did', out: false, p: "MedicalBusiness, Physician, and FAQPage schema written and installed. Nine real patient questions answered in a form built for extraction. All four service pages rebuilt with reviewed bylines, condition-level detail, and page-level schema." },
+      { label: 'What happened', out: true, p: "The practice reports at least three new patients a week arriving and volunteering, unprompted, that ChatGPT is how they found Dr. O'Brien. Patients are naming the AI engine as the referral source at the front desk." },
+    ],
+  },
+];
+---
+<section class="psec">
+  <div class="wrap">
+    <div class="eyebrow blk">Work we have done</div>
+    <h2 class="sec">Two San Diego businesses. Same problem.</h2>
+    <p class="lead mut">Both ranked fine on Google. Neither was being repeated back by an AI engine, because nothing on their sites was written in a form a machine could quote. Here is what changed.</p>
+    {cases.map((c) => (
+      <article class="case">
+        <div class="case-id">
+          <div class="case-tag">{c.tag}</div>
+          <h3>{c.name}</h3>
+          <div class="case-meta">{c.meta}</div>
+        </div>
+        <div class="case-body">
+          {c.rows.map((r) => (
+            <div class:list={['case-row', { out: r.out }]}>
+              <span class="case-label">{r.label}</span>
+              <p>{r.p}</p>
+            </div>
+          ))}
+        </div>
+      </article>
+    ))}
+    <div class="terms">Results above are reported by the clients themselves. We report visibility, not revenue - see what we promise and what we do not, below.</div>
+  </div>
+</section>
+
+<style>
+  .case { display: grid; grid-template-columns: 0.72fr 1.28fr; gap: 36px; padding: 34px 0; border-top: 1px solid var(--line); align-items: start; }
+  .case:last-of-type { border-bottom: 1px solid var(--line); }
+  .case-tag { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .case-id h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 32px; line-height: 0.98; color: #fff; margin-bottom: 8px; }
+  .case-meta { font-size: 13px; letter-spacing: 0.03em; color: var(--muted-2); }
+  .case-row { display: grid; grid-template-columns: 120px 1fr; gap: 20px; padding: 14px 0; border-top: 1px solid var(--line); }
+  .case-row:first-child { border-top: none; padding-top: 0; }
+  .case-label { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); padding-top: 4px; }
+  .case-row p { margin: 0; font-size: 15px; color: var(--muted); }
+  .case-row.out { border-top: none; border-left: 3px solid var(--gold); padding-left: 16px; background: var(--bg-2); border-radius: 0 10px 10px 0; }
+  .case-row.out p { color: #fff; font-weight: 500; }
+  .terms { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; letter-spacing: 0.03em; color: var(--muted-2); margin-top: 22px; line-height: 1.7; }
+  @media (max-width: 900px) {
+    .case { grid-template-columns: 1fr; gap: 22px; }
+    .case-row { grid-template-columns: 1fr; gap: 6px; }
+    .case-row.out { border-radius: 10px; }
+  }
+</style>

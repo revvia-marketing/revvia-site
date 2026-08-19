@@ -58,7 +58,8 @@ export default defineConfig({
       filter: (page) =>
         !page.includes('/keystatic') &&
         !page.includes('/api/') &&
-        !page.includes('/og-'),
+        !page.includes('/og-') &&
+        !page.includes('/ai-visibility/thanks'),
     }),
   ],
 });

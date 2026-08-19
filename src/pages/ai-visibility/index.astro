@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/ai-visibility/Hero.astro';
+import Checks from '../../components/ai-visibility/Checks.astro';
+import Steps from '../../components/ai-visibility/Steps.astro';
+import CaseStudies from '../../components/ai-visibility/CaseStudies.astro';
+import Pricing from '../../components/ai-visibility/Pricing.astro';
+import Promise from '../../components/ai-visibility/Promise.astro';
+import AuditForm from '../../components/ai-visibility/AuditForm.astro';
+import {
+  serviceSchema,
+  faqPageSchema,
+  breadcrumbSchema,
+  type FaqItem,
+} from '../../lib/schema';
+
+const path = '/ai-visibility';
+const description =
+  'When someone asks ChatGPT for the best plumber in your city, does it say your name? Free AI visibility audit for San Diego plumbing and HVAC companies.';
+
+// FAQ content is drawn from the visible page (checks, how-it-works, pricing,
+// promise). No statistics - answers stay within the page's own claims.
+const faqs: FaqItem[] = [
+  { question: 'Will this replace my SEO?', answer: 'No. Your Google rankings and reviews still matter. AI visibility is a separate job: making sure the AI engines can read your site and recommend you in the answers homeowners now get. We build it on top of your SEO, not instead of it.' },
+  { question: 'How long does the build take?', answer: 'The Foundation Build is a one-time engagement: full schema and JSON-LD, on-site SEO and GEO cleanup, and service and service-area pages written so a machine can quote them. Most builds wrap within a few weeks, depending on how many pages your site has.' },
+  { question: 'What happens after the build?', answer: 'Nothing is required. The build is what makes you findable and quotable. If you want ongoing tracking and content, the Monitor, Move, and Max plans start at $499, $1,299, and $2,499 per month - but they are only sold after the build, because there is nothing to maintain until then.' },
+  { question: 'What do you check in the free audit?', answer: 'We run the real questions homeowners ask for your trade and city across multiple AI engines, record which competitors get named and why, and check whether your structured data, service and city coverage, and trust signals like licensing, warranty, and response time are readable by a machine.' },
+  { question: 'Do you guarantee more leads or revenue?', answer: 'No. We promise to make you more findable and more frequently recommended by AI engines, and to show you the movement every month in writing. We do not promise a revenue or lead number - that depends on your pricing, your crews, and how your office answers the phone.' },
+];
+
+const schemas = [
+  serviceSchema({
+    name: 'AI Visibility',
+    description,
+    url: path,
+    serviceType: 'Generative Engine Optimization',
+    areaServed: ['San Diego County'],
+    offers: [
+      { '@type': 'Offer', name: 'Foundation Build (one-time)', price: '5000', priceCurrency: 'USD', category: 'One-time build' },
+      { '@type': 'Offer', name: 'Monitor (per month)', price: '499', priceCurrency: 'USD', category: 'Subscription' },
+      { '@type': 'Offer', name: 'Move (per month)', price: '1299', priceCurrency: 'USD', category: 'Subscription' },
+      { '@type': 'Offer', name: 'Max (per month)', price: '2499', priceCurrency: 'USD', category: 'Subscription' },
+    ],
+  }),
+  breadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'AI Visibility', url: path },
+  ]),
+  faqPageSchema(faqs),
+];
+---
+<BaseLayout
+  title="AI Visibility for San Diego Home Services"
+  description={description}
+  path={path}
+  schemas={schemas}
+>
+  <Hero />
+
+  <!-- What changed -->
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">What changed</div>
+      <h2 class="sec">You already won the search. You are losing the answer.</h2>
+      <p class="lead mut">You spent years earning the reviews, the map pin, and the page-one ranking. None of that is wasted. But a growing share of homeowners never scroll a results page anymore. They ask a question, they get one answer, and they call the names in it.</p>
+      <p class="lead mut">Ranking well and being recommended well are now two different jobs. Most home services companies in San Diego are doing the first one and have never checked the second.</p>
+    </div>
+  </section>
+
+  <Checks />
+  <Steps />
+  <CaseStudies />
+  <Pricing />
+  <Promise />
+  <AuditForm />
+</BaseLayout>

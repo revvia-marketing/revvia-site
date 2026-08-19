@@ -1,0 +1,36 @@
+---
+import AnswerCard from './AnswerCard.astro';
+---
+<section class="aiv-hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <div class="eyebrow">Plumbing &middot; HVAC &middot; Electrical</div>
+      <h1>Your customers stopped typing. They started <span class="grad-text">asking.</span></h1>
+      <p class="lead lede">When a homeowner in your city asks ChatGPT for the best plumber, an answer comes back. It names three or four companies. We will tell you, for free, whether one of them is you.</p>
+      <div class="cta-row">
+        <a class="btn btn-lg" href="#audit">Get my free AI audit</a>
+        <a class="btn btn-ghost btn-lg" href="#pricing">See pricing</a>
+      </div>
+      <p class="microcopy">No cost. No contract. We send the results whether they are good or bad.</p>
+    </div>
+    <div class="hero-card">
+      <AnswerCard />
+    </div>
+  </div>
+</section>
+
+<style>
+  .aiv-hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: var(--bg); padding: 64px 0 76px; }
+  .aiv-hero::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(680px 380px at 16% -10%, rgba(214, 36, 143, 0.16), transparent 60%),
+      radial-gradient(560px 340px at 94% 118%, rgba(254, 156, 28, 0.10), transparent 60%);
+  }
+  .hero-grid { position: relative; display: grid; grid-template-columns: 1.02fr 0.98fr; gap: 52px; align-items: center; }
+  .hero-copy h1 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(40px, 6.2vw, 72px); line-height: 1.02; letter-spacing: -0.02em; color: #fff; margin: 16px 0 20px; }
+  .lede { max-width: 46ch; margin-bottom: 0; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
+  .microcopy { color: var(--muted-2); font-size: 13px; margin-top: 16px; }
+  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; gap: 40px; } .aiv-hero { padding: 44px 0 56px; } }
+</style>

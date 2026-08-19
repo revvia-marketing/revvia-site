@@ -1,0 +1,108 @@
+---
+/**
+ * AI Visibility audit request. Netlify Forms (build-time detection via
+ * data-netlify + hidden form-name) with a honeypot, mirroring the site's
+ * contact form. JS enhances submit: AJAX POST -> GA4 `generate_lead`
+ * (the site's lead event) -> redirect to /ai-visibility/thanks. With JS off,
+ * the form's action posts to Netlify which redirects to the same thanks page.
+ */
+---
+<section id="audit" class="psec">
+  <div class="wrap form-wrap">
+    <div class="trust">
+      <div class="eyebrow blk">Who runs this</div>
+      <h2 class="sec">Revvia. Carlsbad.</h2>
+      <p class="lead mut">Revvia is a founder-run growth studio in North County San Diego. We work with home services companies on paid media, SEO, and brand. AI Visibility is the newest thing we do, and we are running it locally first.</p>
+      <ul class="trust-list">
+        <li><strong>Founder-led.</strong> You deal with Tim, not an account coordinator.</li>
+        <li><strong>Local.</strong> Carlsbad office, San Diego County clients, in person when it matters.</li>
+        <li><strong>Home services is our lane.</strong> Plumbing, HVAC, electrical, restoration.</li>
+      </ul>
+    </div>
+
+    <div class="form-col">
+      <div class="eyebrow blk">Request the audit</div>
+      <h2 class="sec">Find out if the AI says your name.</h2>
+      <form id="aiv-form" class="form-card" name="ai-visibility-audit" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/ai-visibility/thanks">
+        <input type="hidden" name="form-name" value="ai-visibility-audit" />
+        <p class="hp" aria-hidden="true"><label>Leave blank <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+        <div class="field full">
+          <label for="aiv-company">Business name</label>
+          <input id="aiv-company" name="company" type="text" autocomplete="organization" placeholder="ABC Plumbing &amp; Drain" required />
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="aiv-city">Primary city you serve</label>
+            <input id="aiv-city" name="city" type="text" placeholder="Carlsbad" required />
+          </div>
+          <div class="field">
+            <label for="aiv-trade">Trade</label>
+            <select id="aiv-trade" name="trade">
+              <option>Plumbing</option>
+              <option>HVAC</option>
+              <option>Electrical</option>
+              <option>Restoration / water damage</option>
+              <option>Roofing</option>
+              <option>Other home services</option>
+            </select>
+          </div>
+        </div>
+        <div class="field full">
+          <label for="aiv-website">Website</label>
+          <input id="aiv-website" name="website" type="url" placeholder="https://" />
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="aiv-name">Your name</label>
+            <input id="aiv-name" name="name" type="text" autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="aiv-email">Where to send the results</label>
+            <input id="aiv-email" name="email" type="email" autocomplete="email" placeholder="you@company.com" required />
+          </div>
+        </div>
+        <button type="submit" class="btn btn-lg aiv-submit">Send me the audit</button>
+        <div class="form-note">We send the summary by email, usually within two business days. We do not sell or share your information, and one reply gets you off the list for good.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<style>
+  .form-wrap { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 52px; align-items: start; }
+  .trust .sec, .form-col .sec { margin: 12px 0 18px; }
+  .trust-list { list-style: none; margin: 18px 0 0; padding: 0; }
+  .trust-list li { padding: 12px 0; border-top: 1px solid var(--line); font-size: 15px; color: var(--muted); }
+  .trust-list strong { color: #fff; font-weight: 600; }
+  .aiv-submit { width: 100%; text-align: center; margin-top: 4px; }
+  @media (max-width: 900px) { .form-wrap { grid-template-columns: 1fr; gap: 36px; } }
+</style>
+
+<script is:inline>
+  (() => {
+    const form = document.getElementById('aiv-form');
+    if (!form) return;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (form.querySelector('[name="bot-field"]')?.value) return;
+      const btn = form.querySelector('button[type="submit"]');
+      if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+      try {
+        await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(new FormData(form)).toString(),
+        });
+      } catch (err) { /* still redirect so the lead lands on thanks */ }
+      try {
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'generate_lead', { currency: 'USD', value: 1, form_name: 'ai-visibility-audit' });
+        }
+        if (typeof window.fbq === 'function') {
+          window.fbq('track', 'Lead', { content_name: 'AI Visibility Audit' });
+        }
+      } catch (err) { /* analytics never blocks */ }
+      window.location.href = '/ai-visibility/thanks';
+    });
+  })();
+</script>

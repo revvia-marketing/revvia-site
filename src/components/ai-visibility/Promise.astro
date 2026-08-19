@@ -1,0 +1,43 @@
+---
+const promises = [
+  'To make you more findable by AI engines',
+  'To make you more frequently recommended in the answers homeowners get',
+  'To show you the movement every month, in writing',
+  'To have a human check every report before it reaches you',
+];
+const wont = [
+  'A revenue number',
+  'A lead volume',
+  'A conversion rate',
+  'Anything that depends on your pricing, your crews, or how your office answers the phone',
+];
+---
+<section class="psec bg2">
+  <div class="wrap">
+    <div class="eyebrow blk">Straight talk</div>
+    <h2 class="sec">What we promise, and what we will not.</h2>
+    <p class="lead mut">You have been sold revenue before. We are not doing that. Here is the honest line between what we control and what we do not.</p>
+    <div class="promise">
+      <div class="promise-col do">
+        <h3>What we promise</h3>
+        <ul>{promises.map((l) => <li>{l}</li>)}</ul>
+      </div>
+      <div class="promise-col dont">
+        <h3>What we will not promise</h3>
+        <ul>{wont.map((l) => <li>{l}</li>)}</ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .promise { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px; }
+  .promise-col { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 28px 26px; }
+  .promise-col h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 21px; color: #fff; margin-bottom: 14px; }
+  .promise-col ul { margin: 0; padding: 0; }
+  .promise-col li { list-style: none; position: relative; padding: 11px 0 11px 26px; font-size: 15px; color: var(--muted); border-top: 1px solid var(--line); }
+  .promise-col li::before { position: absolute; left: 0; top: 11px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 700; font-size: 14px; }
+  .do li::before { content: "+"; color: var(--gold); }
+  .dont li::before { content: "-"; color: var(--muted-2); }
+  @media (max-width: 760px) { .promise { grid-template-columns: 1fr; } }
+</style>

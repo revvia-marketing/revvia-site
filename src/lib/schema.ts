@@ -156,6 +156,8 @@ export function serviceSchema(opts: {
   description: string;
   url: string;
   serviceType?: string;
+  areaServed?: readonly string[];
+  offers?: Record<string, unknown>[];
 }) {
   return {
     '@context': 'https://schema.org',
@@ -165,10 +167,11 @@ export function serviceSchema(opts: {
     serviceType: opts.serviceType || opts.name,
     url: absoluteUrl(opts.url),
     provider: { '@id': ORG_ID },
-    areaServed: NAP.areaServed.map((name) => ({
+    areaServed: (opts.areaServed ?? NAP.areaServed).map((name) => ({
       '@type': 'AdministrativeArea',
       name,
     })),
+    ...(opts.offers ? { offers: opts.offers } : {}),
   };
 }
 
