@@ -7,6 +7,7 @@ import CaseStudies from '../../components/ai-visibility/CaseStudies.astro';
 import Pricing from '../../components/ai-visibility/Pricing.astro';
 import Promise from '../../components/ai-visibility/Promise.astro';
 import AuditForm from '../../components/ai-visibility/AuditForm.astro';
+import Faq from '../../components/Faq.astro';
 import {
   serviceSchema,
   faqPageSchema,
@@ -72,5 +73,14 @@ const schemas = [
   <CaseStudies />
   <Pricing />
   <Promise />
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">FAQ</div>
+      <h2 class="sec">Questions contractors ask.</h2>
+      <Faq items={faqs} />
+    </div>
+  </section>
+
   <AuditForm />
 </BaseLayout>
