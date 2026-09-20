@@ -28,11 +28,13 @@ const covers = import.meta.glob<{ default: ImageMetadata }>(
 );
 const coverByName = new Map(
   Object.entries(covers).map(([path, mod]) => [
-    (path.split('/').pop() ?? '').replace(/\.[^.]+$/, ''),
+    (path.split('/').pop() ?? '').replace(/\.[^.]+$/, '').toLowerCase(),
     mod.default,
   ])
 );
 
+// Case-insensitive on the base name, so a drop-in like `Steady-Builders.JPG`
+// still matches resolveCover('steady-builders').
 export function resolveCover(name: string): ImageMetadata | undefined {
-  return coverByName.get(name);
+  return coverByName.get(name.toLowerCase());
 }
