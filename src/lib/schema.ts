@@ -11,6 +11,8 @@ import {
   SOCIALS,
   DEFAULT_DESCRIPTION,
   SERVICE_LINES,
+  SEGMENTS,
+  EXPERTISE_TOPICS,
   absoluteUrl,
 } from './site';
 
@@ -19,6 +21,11 @@ const WEBSITE_ID = `${SITE_URL}/#website`;
 const LOCALBUSINESS_ID = `${SITE_URL}/#localbusiness`;
 const PERSON_ID = `${SITE_URL}/#tim-holt`;
 const LOGO_URL = absoluteUrl('/og/revvia-logo.png');
+
+/** Industries served - mirrors the "Who we work with" segments. */
+const INDUSTRIES_SERVED = SEGMENTS.map((s) => s.label);
+/** Everything the entity is an authority on, for knowsAbout. */
+const KNOWS_ABOUT = [...SERVICE_LINES, ...INDUSTRIES_SERVED, ...EXPERTISE_TOPICS];
 
 const postalAddress = {
   '@type': 'PostalAddress',
@@ -44,11 +51,13 @@ export function organizationSchema() {
     email: NAP.email,
     telephone: NAP.telephone,
     address: postalAddress,
+    foundingDate: '2020',
     founder: { '@id': PERSON_ID },
-    areaServed: ['San Diego County', 'North County San Diego', 'Orange County', 'Southern California'].map(
-      (name) => ({ '@type': 'AdministrativeArea', name })
-    ),
-    knowsAbout: [...SERVICE_LINES],
+    areaServed: NAP.areaServed.map((name) => ({
+      '@type': 'AdministrativeArea',
+      name,
+    })),
+    knowsAbout: KNOWS_ABOUT,
     makesOffer: SERVICE_LINES.map((s) => ({
       '@type': 'Offer',
       itemOffered: { '@type': 'Service', name: s, provider: { '@id': ORG_ID } },
@@ -74,11 +83,11 @@ export function personSchema() {
     image: absoluteUrl('/tim-holt.jpg'),
     description:
       'Tim Holt is the founder and CEO of Revvia, a production-led, full-service growth studio in North County San Diego serving home services, B2B, healthcare, and consumer businesses. He started Revvia in 2020 while pastoring a church - which is why he likes to say he answers to a higher power than your checkbook. He builds on proof, not promises. A lifelong Southern Californian, Tim surfs, plays guitar, and lives in North County with his wife Meghan and their five kids.',
-    knowsAbout: [...SERVICE_LINES],
+    knowsAbout: [...SERVICE_LINES, ...INDUSTRIES_SERVED],
   };
 }
 
-/** Sitewide WebSite node with a SearchAction potentialAction. */
+/** Sitewide WebSite node. */
 export function websiteSchema() {
   return {
     '@context': 'https://schema.org',
@@ -88,14 +97,6 @@ export function websiteSchema() {
     url: SITE_URL,
     publisher: { '@id': ORG_ID },
     inLanguage: 'en-US',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${SITE_URL}/journal?q={search_term_string}`,
-      },
-      'query-input': 'required name=search_term_string',
-    },
   };
 }
 
@@ -198,7 +199,11 @@ export function articleSchema(opts: {
     description: opts.description,
     image: /^https?:/.test(opts.image) ? opts.image : absoluteUrl(opts.image),
     mainEntityOfPage: { '@type': 'WebPage', '@id': absoluteUrl(opts.url) },
-    author: opts.author ? { '@type': 'Person', name: opts.author } : { '@id': PERSON_ID },
+    author: opts.author
+      ? opts.author === SITE_NAME
+        ? { '@id': ORG_ID }
+        : { '@type': 'Person', name: opts.author }
+      : { '@id': PERSON_ID },
     publisher: { '@id': ORG_ID },
     ...(opts.datePublished ? { datePublished: opts.datePublished } : {}),
     dateModified: opts.dateModified || opts.datePublished,
@@ -272,6 +277,28 @@ export function collectionPageSchema(opts: {
     }));
   }
   return node;
+}
+
+/**
+ * Review nodes for the testimonials shown on a page (homepage). Each references
+ * the Organization via itemReviewed @id, so the graph ties the review to the
+ * entity. Emit ONLY on pages where the review text is visible, so the visible
+ * copy and the structured data never drift. `who` = author, `p` = review body.
+ */
+export function reviewSchema(reviews: readonly { who: string; p: string }[]) {
+  return reviews.map((r) => ({
+    '@context': 'https://schema.org',
+    '@type': 'Review',
+    itemReviewed: { '@id': ORG_ID },
+    author: { '@type': 'Person', name: r.who },
+    reviewBody: r.p,
+    reviewRating: {
+      '@type': 'Rating',
+      ratingValue: 5,
+      bestRating: 5,
+      worstRating: 1,
+    },
+  }));
 }
 
 export function itemListSchema(opts: {

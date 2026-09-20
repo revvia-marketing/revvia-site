@@ -1,26 +1,42 @@
 # Revvia
 
-> Revvia is a San Diego production-led growth studio for consumer and lifestyle brands. We run the whole growth engine - paid media, in-house photo and video production, email and SMS retention, and clean tracking - in person and led by the founder, month-to-month.
+> Revvia is a San Diego, production-led, full-service growth studio - full-stack and in person, run by the founder. Revvia serves home services and trades, B2B and industrial, healthcare and professional practices, DTC and consumer brands, and education and specialty. Revenue over impressions, month-to-month.
 
-Revvia (legal name First Door, LLC) is based in Carlsbad, California and serves consumer and lifestyle brands across Southern California. The studio reports to revenue, not vanity metrics. Founder: Tim Holt.
+Revvia (legal name First Door, LLC) is based in Carlsbad, California and serves San Diego County, North County San Diego, Orange County, and the rest of Southern California. It runs the whole growth engine - paid media, in-house photo and video production, SEO and AI visibility (GEO), email and SMS retention, and clean tracking - in person and led by founder Tim Holt. The studio reports to revenue, not vanity metrics, and works month-to-month. Revvia is a full-service studio, not a single-niche shop: DTC is one of the industries it serves, not the whole of what it does. It is built for growing businesses that are too big for a freelancer and too small for the national agencies.
+
+## Who Revvia works with
+- [Who we work with](https://www.revvia.com/who-we-work-with): The industries Revvia serves and how it works with each.
+- Home services and trades - construction, plumbing, HVAC, electrical, and contracting.
+- B2B and industrial - manufacturers, fabricators, fulfillment operations, and engineering firms that sell to other businesses.
+- Healthcare and professional practices - medical offices and professional services, with HIPAA-compliant advertising and lead tracking.
+- DTC and consumer brands - retail and wholesale, with paid media, in-house content, and retention.
+- Education and specialty - schools, nonprofits, and niche consumer services.
 
 ## Services
 - [Services overview](https://www.revvia.com/services): The full growth engine - full-stack retainers, single-service entry points, and premium in-house productions.
-- [GEO Visibility Overhaul](https://www.revvia.com/services/geo-visibility-overhaul): Rebuilding sites so AI engines (ChatGPT, Perplexity, Gemini, Claude) can find, trust, and cite them - with a before-and-after citation scorecard.
+- [AI Visibility](https://www.revvia.com/ai-visibility): Making sure AI engines (ChatGPT, Perplexity, Gemini, Claude) can read your site and recommend you when customers ask - a one-time foundation build plus optional monthly monitoring.
+- [GEO Visibility Overhaul](https://www.revvia.com/services/geo-visibility-overhaul): Rebuilding sites so AI engines can find, trust, and cite them - with a before-and-after citation scorecard.
 - [Flagship Brand Film](https://www.revvia.com/services/flagship-brand-film): A cinematic anthem film that anchors a brand and performs as an ad.
 - [Seasonal Content Capsule](https://www.revvia.com/services/seasonal-content-capsule): A full season of photo and video shot in one production.
 - [Growth Foundation](https://www.revvia.com/services/growth-foundation): The complete growth engine built once - tracking, paid, retention, and measurement.
 - [Drop Launch](https://www.revvia.com/services/drop-launch): A full campaign engineered around a product drop.
 
-## Work
-- [Work and case studies](https://www.revvia.com/work): Selected client results.
+Service lines: search engine optimization, generative engine optimization (GEO / AI visibility), Google Ads management, Meta advertising, brand development, commercial video production, conversion tracking, and fractional CMO services.
+
+## Work and case studies
+- [Work and case studies](https://www.revvia.com/work): Selected client results across the industries Revvia serves.
+- [Steady Builders](https://www.revvia.com/work/steady-builders): Home services / construction - from zero AI visibility to over $1M in attributed proposal-stage revenue in the first two months of advertising.
+- [Coastal Internal Medicine](https://www.revvia.com/work/coastal-internal-medicine): Healthcare - built to #1 in organic search for "internist Vista" and the highest AI visibility of any internal medicine practice in North County San Diego, HIPAA-compliant throughout.
+- [Drain Mob](https://www.revvia.com/work/drain-mob): Home services / plumbing - a 33% year-over-year revenue gain in June, a month plumbing normally contracts.
+- [Peter Grimm](https://www.revvia.com/work/peter-grimm): DTC / consumer - 3.6x monthly revenue growth in six months, rebuilt mid-migration.
+- [Voyage Air Guitar](https://www.revvia.com/work/voyage-air): DTC / consumer - more net revenue in the first half of 2026 than in all of 2025.
 
 ## Journal
 - [The Revvia Journal](https://www.revvia.com/journal): Three publications from the studio.
-- [Founder's Notes](https://www.revvia.com/journal/founders-notes): Essays by founder Tim Holt on building consumer brands and the marketing that moves revenue.
+- [Founder's Notes](https://www.revvia.com/journal/founders-notes): Essays by founder Tim Holt on growth and the marketing that actually moves revenue.
 - [Built in San Diego](https://www.revvia.com/journal/built-in-san-diego): A free feature series on the people building North County San Diego's businesses.
 - [West Coast DTC](https://www.revvia.com/journal/west-coast-dtc): A feature series on the consumer brands building the coast - and the content behind them.
 
 ## Company
-- [About](https://www.revvia.com/about): Who Revvia is and how the studio works.
-- [Contact](https://www.revvia.com/contact): Get a growth audit or get in touch.
+- [About](https://www.revvia.com/about): Who Revvia is, how the studio works, and founder Tim Holt's story.
+- [Contact](https://www.revvia.com/contact): Get a free growth audit or get in touch. Carlsbad, CA - (760) 782-2875.

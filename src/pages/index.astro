@@ -12,6 +12,7 @@ import { resolveCover } from '../lib/images';
 import {
   localBusinessSchema,
   faqPageSchema,
+  reviewSchema,
   type FaqItem,
 } from '../lib/schema';
 
@@ -52,7 +53,11 @@ const faqs: FaqItem[] = [
   { question: "How do we get started?", answer: "Start with a growth audit. We'll show you exactly where your growth is leaking, with no commitment - then you decide what's next." },
 ];
 
-const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
+const schemas = [
+  localBusinessSchema(),
+  faqPageSchema(faqs),
+  ...reviewSchema(reviews),
+];
 ---
 <BaseLayout
   title="Revvia - San Diego Full-Service Growth Studio"

@@ -36,7 +36,12 @@ export const NAP = {
     addressCountry: 'US',
   },
   geo: { latitude: 33.1281, longitude: -117.2655 },
-  areaServed: ['San Diego County', 'Orange County', 'Southern California'],
+  areaServed: [
+    'San Diego County',
+    'North County San Diego',
+    'Orange County',
+    'Southern California',
+  ],
   openingHours: {
     days: [
       'Monday',
@@ -94,6 +99,20 @@ export const SERVICE_LINES = [
   'Commercial video production',
   'Conversion tracking',
   'Fractional CMO services',
+] as const;
+
+/**
+ * Topical expertise for JSON-LD knowsAbout - the subjects the studio is an
+ * authority on, drawn from what the site actually asserts. Complements
+ * SERVICE_LINES (the offerings) and the industries in SEGMENTS.
+ */
+export const EXPERTISE_TOPICS = [
+  'AI search visibility',
+  'Answer engine optimization',
+  'Local SEO',
+  'HIPAA-compliant advertising',
+  'Conversion rate optimization',
+  'Marketing attribution',
 ] as const;
 
 /**
