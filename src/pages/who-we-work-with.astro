@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import WhoWeServe from '../components/WhoWeServe.astro';
+import CTASection from '../components/CTASection.astro';
+import Faq from '../components/Faq.astro';
+import { serviceSchema, faqPageSchema, breadcrumbSchema, type FaqItem } from '../lib/schema';
+import { SEGMENTS } from '../lib/site';
+
+const path = '/who-we-work-with';
+const description =
+  'Revvia is a full-service growth studio serving home services and trades, B2B and industrial, healthcare and professional practices, DTC and consumer brands, and education and specialty - across San Diego and Southern California.';
+
+const faqs: FaqItem[] = [
+  { question: "What industries does Revvia serve?", answer: "Home services and trades, B2B and industrial, healthcare and professional practices, DTC and consumer brands, and education and specialty. Revvia is a full-service studio, not a single-niche shop." },
+  { question: "Does Revvia work with B2B companies?", answer: "Yes. Revvia works with B2B and industrial companies - manufacturers, fabricators, fulfillment operations, and engineering firms that sell to other businesses." },
+  { question: "Does Revvia work with service businesses and contractors?", answer: "Yes. Revvia works with home services and trades - construction, plumbing, HVAC, electrical, and contracting businesses - on brand, video, search, AI visibility, and paid media." },
+  { question: "Does Revvia work with healthcare practices and medical offices?", answer: "Yes. Revvia works with medical practices and healthcare offices, including HIPAA-compliant advertising and lead tracking, schema architecture, and AI visibility built for how patients now search." },
+  { question: "Is Revvia only a DTC or ecommerce agency?", answer: "No. Revvia works across home services, B2B and industrial, healthcare, and professional practices as well as consumer brands. DTC is one of the industries we serve, not the whole of what we do." },
+  { question: "Where is Revvia located and what areas does it serve?", answer: "Revvia is based in Carlsbad and serves San Diego County, North County San Diego, Orange County, and the rest of Southern California - full-stack and in person." },
+];
+
+const schemas = [
+  serviceSchema({
+    name: 'Full-Service Growth Studio',
+    description,
+    url: path,
+    serviceType: 'Full-service marketing and growth studio',
+    audience: SEGMENTS.map((s) => s.label),
+  }),
+  breadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Who We Work With', url: path },
+  ]),
+  faqPageSchema(faqs),
+];
+---
+<BaseLayout title="Who We Work With" description={description} path={path} schemas={schemas}>
+  <header class="page-hero">
+    <div class="page-hero-in">
+      <div class="eyebrow">Who we work with</div>
+      <h1>A full-service growth studio for <span class="grad-text">every kind of growing business.</span></h1>
+      <p class="sub">Revvia runs the whole growth engine - brand, paid media, in-house video, SEO and AI visibility, retention, and clean tracking - for businesses across San Diego and Southern California. DTC is one of the industries we serve, not the whole of what we do.</p>
+      <a href="/contact" class="btn btn-lg">Get a Growth Audit</a>
+    </div>
+  </header>
+
+  <WhoWeServe showCta={false} />
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">FAQ</div>
+      <h2 class="sec">Common questions about who we serve.</h2>
+      <Faq items={faqs} />
+    </div>
+  </section>
+
+  <CTASection
+    heading="Not sure if you're a fit?"
+    lead="That's what the growth audit is for. We'll show you where your growth is leaking and recommend the one move that matters most - no commitment."
+  />
+</BaseLayout>

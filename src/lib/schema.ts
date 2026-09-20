@@ -10,6 +10,7 @@ import {
   NAP,
   SOCIALS,
   DEFAULT_DESCRIPTION,
+  SERVICE_LINES,
   absoluteUrl,
 } from './site';
 
@@ -44,6 +45,14 @@ export function organizationSchema() {
     telephone: NAP.telephone,
     address: postalAddress,
     founder: { '@id': PERSON_ID },
+    areaServed: ['San Diego County', 'North County San Diego', 'Orange County', 'Southern California'].map(
+      (name) => ({ '@type': 'AdministrativeArea', name })
+    ),
+    knowsAbout: [...SERVICE_LINES],
+    makesOffer: SERVICE_LINES.map((s) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: s, provider: { '@id': ORG_ID } },
+    })),
     sameAs: [...SOCIALS],
   };
 }
@@ -64,14 +73,8 @@ export function personSchema() {
     url: absoluteUrl('/about'),
     image: absoluteUrl('/tim-holt.jpg'),
     description:
-      'Tim Holt is the founder and CEO of Revvia, a production-led growth studio for consumer and lifestyle brands in North County San Diego. He started Revvia in 2020 while pastoring a church - which is why he likes to say he answers to a higher power than your checkbook. He builds on proof, not promises. A lifelong Southern Californian, Tim surfs, plays guitar, and lives in North County with his wife Meghan and their five kids.',
-    knowsAbout: [
-      'Direct-to-consumer growth',
-      'Paid media',
-      'Email and SMS retention',
-      'Generative engine optimization',
-      'Brand photo and video production',
-    ],
+      'Tim Holt is the founder and CEO of Revvia, a production-led, full-service growth studio in North County San Diego serving home services, B2B, healthcare, and consumer businesses. He started Revvia in 2020 while pastoring a church - which is why he likes to say he answers to a higher power than your checkbook. He builds on proof, not promises. A lifelong Southern Californian, Tim surfs, plays guitar, and lives in North County with his wife Meghan and their five kids.',
+    knowsAbout: [...SERVICE_LINES],
   };
 }
 
@@ -157,6 +160,7 @@ export function serviceSchema(opts: {
   url: string;
   serviceType?: string;
   areaServed?: readonly string[];
+  audience?: readonly string[];
   offers?: Record<string, unknown>[];
 }) {
   return {
@@ -171,6 +175,9 @@ export function serviceSchema(opts: {
       '@type': 'AdministrativeArea',
       name,
     })),
+    ...(opts.audience
+      ? { audience: opts.audience.map((name) => ({ '@type': 'Audience', audienceType: name })) }
+      : {}),
     ...(opts.offers ? { offers: opts.offers } : {}),
   };
 }

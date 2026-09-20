@@ -107,7 +107,7 @@ export const SERIES_META = {
     barBg: 'linear-gradient(90deg,#8A0FAD,#B5179E)',
     oneLiner: 'The thinking behind the work.',
     intro:
-      "Notes from the founder. Essays on building consumer and lifestyle brands, the marketing that actually moves revenue, and what we're learning running a production-led studio in San Diego. Written by Tim Holt, founder of Revvia.",
+      "Notes from the founder. Essays on building consumer and service businesses, the marketing that actually moves revenue, and what we're learning running a production-led studio in San Diego. Written by Tim Holt, founder of Revvia.",
     allLabel: 'All notes',
     cta: {
       heading: 'Work directly with the founder.',

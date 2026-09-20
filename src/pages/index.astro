@@ -7,6 +7,7 @@ import Faq from '../components/Faq.astro';
 import Video from '../components/Video.astro';
 import Comparison from '../components/Comparison.astro';
 import BrandStrip from '../components/BrandStrip.astro';
+import WhoWeServe from '../components/WhoWeServe.astro';
 import { resolveCover } from '../lib/images';
 import {
   localBusinessSchema,
@@ -37,28 +38,34 @@ const reviews = [
 ];
 
 const faqs: FaqItem[] = [
-  { question: 'What does Revvia do?', answer: 'We’re a San Diego, full-stack, production-led growth studio for consumer & lifestyle brands. We run paid media, shoot creative in-house, build email and SMS retention, and keep your tracking clean - all under one roof, in person.' },
-  { question: 'Who do you work with?', answer: 'Consumer & lifestyle brands - apparel, beauty, wellness, accessories, home, and food & beverage, plus multi-location and membership brands. Typically $300K to $8M in revenue, here in Southern California. Many are on Shopify; not all are online-only.' },
-  { question: 'How does your pricing work?', answer: 'A monthly base plus a small percentage of ad spend, plus a growth bonus we only earn when we beat your efficiency baseline. Month-to-month, with pricing that stays the same. We win when you win.' },
-  { question: 'Am I locked into a long contract?', answer: 'No. Every engagement is month-to-month. We earn the relationship each month - no multi-year lock-ins and no hidden fees.' },
-  { question: 'Do you really produce everything in-house?', answer: 'Yes. Photo, video, and creative are produced by our own team - on location and in person, not outsourced or art-directed over Slack.' },
-  { question: 'How do we get started?', answer: 'Start with a growth audit. We’ll show you exactly where your brand is leaking revenue, with no commitment - then you decide what’s next.' },
+  { question: "What does Revvia do?", answer: "We're a San Diego, full-service, production-led growth studio. We run paid media, SEO and AI visibility (GEO), brand and in-house video, email and SMS retention, and clean tracking - all under one roof, in person." },
+  { question: "What industries does Revvia serve?", answer: "Home services and trades, B2B and industrial, healthcare and professional practices, DTC and consumer brands, and education and specialty. We're a full-service studio, not a single-niche shop." },
+  { question: "Is Revvia only a DTC or ecommerce agency?", answer: "No. Revvia works across home services, B2B and industrial, healthcare, and professional practices as well as consumer brands. DTC is one of the industries we serve, not the whole of what we do." },
+  { question: "Does Revvia work with B2B companies?", answer: "Yes. Revvia works with B2B and industrial companies - manufacturers, fabricators, fulfillment operations, and engineering firms that sell to other businesses." },
+  { question: "Does Revvia work with service businesses and contractors?", answer: "Yes. Revvia works with home services and trades - construction, plumbing, HVAC, electrical, and contracting businesses - on brand, video, search, AI visibility, and paid media." },
+  { question: "Does Revvia work with healthcare practices and medical offices?", answer: "Yes. Revvia works with medical practices and healthcare offices, including HIPAA-compliant advertising and lead tracking, schema architecture, and AI visibility built for how patients now search." },
+  { question: "Who do you work with?", answer: "Founder-led and growing businesses across home services, B2B and industrial, healthcare and professional practices, and consumer brands - typically $300K to $8M in revenue, here in Southern California. Too big for a freelancer, too small for the national agencies." },
+  { question: "Where is Revvia located and what areas does it serve?", answer: "Revvia is based in Carlsbad and serves San Diego County, North County San Diego, Orange County, and the rest of Southern California - full-stack and in person." },
+  { question: "How does your pricing work?", answer: "A monthly base plus a small percentage of ad spend, plus a growth bonus we only earn when we beat your efficiency baseline. Month-to-month, with pricing that stays the same. We win when you win." },
+  { question: "Am I locked into a long contract?", answer: "No. Every engagement is month-to-month. We earn the relationship each month - no multi-year lock-ins and no hidden fees." },
+  { question: "Do you really produce everything in-house?", answer: "Yes. Photo, video, and creative are produced by our own team - on location and in person, not outsourced or art-directed over Slack." },
+  { question: "How do we get started?", answer: "Start with a growth audit. We'll show you exactly where your growth is leaking, with no commitment - then you decide what's next." },
 ];
 
 const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
 ---
 <BaseLayout
-  title="Revvia - San Diego Growth Studio for Consumer & Lifestyle Brands"
-  description="The San Diego growth studio that actually shows up - full-stack and in person, run by the founder, for consumer & lifestyle brands too big for a freelancer and too small for the national agencies."
+  title="Revvia - San Diego Full-Service Growth Studio"
+  description="The San Diego growth studio that actually shows up - full-stack and in person, run by the founder. We serve home services, B2B, healthcare, and consumer businesses too big for a freelancer and too small for the national agencies."
   path="/"
   schemas={schemas}
 >
   <header class="hero">
     <div class="hero-in">
       <div>
-        <div class="eyebrow">San Diego · Consumer &amp; Lifestyle Brands</div>
+        <div class="eyebrow">San Diego · Full-Service Growth Studio</div>
         <h1>We run your whole growth engine - <span class="grad-text">in person, right here in San Diego.</span></h1>
-        <p class="sub">Paid media, in-house production, retention, and clean tracking - one local studio for consumer and lifestyle brands. A senior team you can sit across the table from, built for your size. Revenue over impressions, month-to-month.</p>
+        <p class="sub">Paid media, in-house production, retention, SEO and AI visibility, and clean tracking - one local studio for growing businesses. A senior team you can sit across the table from, built for your size. Revenue over impressions, month-to-month.</p>
         <div class="hero-cta">
           <a href="/contact" class="btn btn-lg">Get a Growth Audit</a>
           <a href="#reel" class="play"><span class="ring" aria-hidden="true">▶</span> Watch the reel</a>
@@ -108,6 +115,8 @@ const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
     </div>
   </section>
 
+  <WhoWeServe />
+
   <section id="work" class="work">
     <div class="wrap">
       <div class="sec-head">
@@ -117,20 +126,37 @@ const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
       </div>
       <div class="work-grid">
         <CaseCard
+          href="/work/steady-builders"
+          mediaStyle="background:linear-gradient(145deg,#0e1a26,#12222e 70%,#0a1016)"
+          tag="Home services · North County"
+          name="Steady Builders"
+          stat="$1M+ in proposals"
+          label="Attributed proposal-stage revenue in the first two months of advertising - from 25 years of word-of-mouth."
+        />
+        <CaseCard
+          href="/work/coastal-internal-medicine"
+          mediaStyle="background:linear-gradient(145deg,#0a1f22,#0d2b2b 70%,#071417)"
+          tag="Healthcare · Vista, CA"
+          name="Coastal Internal Medicine"
+          stat="#1 in AI + search"
+          label="Highest AI visibility of any North County internal medicine practice; #1 organic for 'internist Vista.'"
+        />
+        <CaseCard
+          href="/work/drain-mob"
+          mediaStyle="background:linear-gradient(145deg,#0b1526,#102038 70%,#080d18)"
+          tag="Home services · San Diego"
+          name="Drain Mob"
+          stat="+33% in June"
+          label="Year-over-year revenue up in the month plumbing normally contracts."
+        />
+        <CaseCard
           href="/work/peter-grimm"
           cover={resolveCover('peter-grimm')}
           media="pg"
+          tag="Consumer · Shopify"
           name="Peter Grimm"
           stat="3.6×"
           label="Monthly revenue growth in six months - rebuilt mid-migration."
-        />
-        <CaseCard
-          href="/work/voyage-air"
-          cover={resolveCover('voyage-air')}
-          media="va"
-          name="Voyage Air Guitar"
-          stat="&gt; full year"
-          label="More net revenue in six months of 2026 than in all of 2025."
         />
       </div>
     </div>

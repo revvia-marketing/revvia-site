@@ -1,0 +1,45 @@
+---
+/**
+ * "Who we work with" segment block (Section 5). Plain declarative statements,
+ * one per vertical, each linking to proof where it exists. Drives AI extraction
+ * of the question "what kinds of businesses does Revvia serve?" Segments come
+ * from SEGMENTS in site.ts so the homepage block and the dedicated page agree.
+ */
+import { SEGMENTS } from '../lib/site';
+interface Props { showCta?: boolean; }
+const { showCta = true } = Astro.props;
+---
+<section class="who" id="who-we-serve">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Who we work with</div>
+      <h2>A full-service studio, not a one-niche shop.</h2>
+      <p>Revvia runs the whole growth engine for businesses across several industries. DTC is one of them - not the whole story.</p>
+    </div>
+    <div class="segs">
+      {SEGMENTS.map((s) => (
+        <div class="seg">
+          <h3>{s.label}</h3>
+          <p>{s.blurb}</p>
+          {s.href && <a class="seg-go grad-text" href={s.href}>See the work →</a>}
+        </div>
+      ))}
+    </div>
+    {showCta && (
+      <p class="who-more">
+        More on the industries we serve on the <a class="grad-text" href="/who-we-work-with">who we work with</a> page.
+      </p>
+    )}
+  </div>
+</section>
+
+<style>
+  .who { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--bg); }
+  .segs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .seg { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; }
+  .seg h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #fff; margin-bottom: 8px; line-height: 1.2; }
+  .seg p { color: var(--muted); font-size: 15px; flex: 1; }
+  .seg-go { font-weight: 600; font-size: 14px; margin-top: 14px; }
+  .who-more { color: var(--muted); font-size: 15px; margin-top: 22px; }
+  @media (max-width: 820px) { .segs { grid-template-columns: 1fr; } }
+</style>

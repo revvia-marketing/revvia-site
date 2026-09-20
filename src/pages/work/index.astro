@@ -7,18 +7,45 @@ import { resolveCover } from '../../lib/images';
 
 const cases = [
   {
+    href: '/work/steady-builders',
+    media: 'sb',
+    tag: 'Home services / construction · North County',
+    name: 'Steady Builders',
+    stat: '$1M+ in proposals',
+    sl: 'A 25-year word-of-mouth general contractor taken from zero AI visibility to over $1M in attributed proposal-stage revenue in the first two months of advertising.',
+    meta: 'Brand · Commercial Video · SEO/GEO · Paid · Tracking',
+  },
+  {
+    href: '/work/coastal-internal-medicine',
+    media: 'ci',
+    tag: 'Healthcare / practice · Vista, CA',
+    name: 'Coastal Internal Medicine',
+    stat: '#1 in AI + search',
+    sl: 'A new independent practice built to #1 organic for "internist Vista" and the highest AI visibility of any North County internal medicine practice - HIPAA-compliant throughout.',
+    meta: 'Brand · Video · SEO/GEO · Schema · HIPAA tracking',
+  },
+  {
+    href: '/work/drain-mob',
+    media: 'dm',
+    tag: 'Home services / plumbing · San Diego',
+    name: 'Drain Mob',
+    stat: '+33% in a down month',
+    sl: 'June is soft in plumbing. We turned it into a 33% year-over-year gain with a rebuilt search and AI foundation, restructured paid, and ServiceTitan lifecycle automation.',
+    meta: 'SEO/GEO · Google Ads · Meta · ServiceTitan',
+  },
+  {
     href: '/work/peter-grimm',
     media: 'pg',
-    tag: 'Heritage Headwear · Shopify',
+    tag: 'Consumer / heritage headwear · Shopify',
     name: 'Peter Grimm',
     stat: '3.6× in six months',
-    sl: 'Rebuilt the full stack mid-migration - tracking, paid, and retention - and turned a stalled store into accelerating growth.',
+    sl: 'Rebuilt the full stack mid-migration - tracking, paid, and retention - and turned a stalled store into accelerating, acquisition-led growth.',
     meta: 'Tracking · Paid Media · Klaviyo · Migration',
   },
   {
     href: '/work/voyage-air',
     media: 'va',
-    tag: 'Premium Guitars · WooCommerce',
+    tag: 'Consumer / premium guitars · WooCommerce',
     name: 'Voyage Air Guitar',
     stat: 'A year, in six months',
     sl: 'Turned on a near-dormant premium brand and earned more net revenue in H1 2026 than in all of 2025.',
@@ -27,10 +54,10 @@ const cases = [
 ];
 
 const highlights = [
+  { v: '$1M+', l: 'Steady Builders proposal-stage revenue, first two months of ads' },
+  { v: '#1', l: 'Coastal Internal Medicine, organic "internist Vista"' },
+  { v: '+33%', l: 'Drain Mob June revenue, year over year' },
   { v: '3.6×', l: 'Peter Grimm monthly revenue, six months' },
-  { v: '+41%', l: 'Peter Grimm revenue, year over year' },
-  { v: '8×', l: 'Voyage Air first-half revenue, year over year' },
-  { v: '100%', l: 'In-house creative - shot, not stock' },
 ];
 
 const schemas = [
@@ -46,7 +73,7 @@ const schemas = [
 ---
 <BaseLayout
   title="Work"
-  description="The work, and what it earned. Case studies from Revvia - the San Diego production-led growth studio for consumer & lifestyle brands. Revenue over impressions."
+  description="The work, and what it earned. Case studies from Revvia - a San Diego full-service growth studio for home services, B2B, healthcare, and consumer businesses. Revenue over impressions."
   path="/work"
   schemas={schemas}
 >
@@ -93,7 +120,7 @@ const schemas = [
       </div>
       <div class="next">
         <h3>Your brand could be next.</h3>
-        <p>We're taking on a small number of founding consumer & lifestyle brands. The first step is always the same - a growth audit.</p>
+        <p>We're taking on a small number of founding clients across home services, B2B, healthcare, and consumer brands. The first step is always the same - a growth audit.</p>
         <a class="btn" href="/contact">Get a Growth Audit</a>
       </div>
     </div>
@@ -138,6 +165,9 @@ const schemas = [
   .case .media { position: relative; overflow: hidden; min-height: 240px; display: flex; align-items: flex-end; padding: 24px; }
   .case .media.pg { background: linear-gradient(145deg, #2a0e1f, #3a1422 70%, #160a13); }
   .case .media.va { background: linear-gradient(145deg, #160a26, #241038 70%, #0e0918); }
+  .case .media.sb { background: linear-gradient(145deg, #0e1a26, #12222e 70%, #0a1016); }
+  .case .media.ci { background: linear-gradient(145deg, #0a1f22, #0d2b2b 70%, #071417); }
+  .case .media.dm { background: linear-gradient(145deg, #0b1526, #102038 70%, #080d18); }
   .case .media.has-cover { background: #0e0f14; }
   .case .media .case-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
   .case .media.has-cover::after { background: linear-gradient(to top, rgba(10, 10, 12, 0.8), rgba(10, 10, 12, 0.1) 60%, transparent); }

@@ -12,7 +12,7 @@ export const SITE_NAME = 'Revvia';
 export const LEGAL_NAME = 'First Door, LLC';
 export const TAGLINE = 'Marketing how it should be.';
 export const DEFAULT_DESCRIPTION =
-  'Revvia is the San Diego production-led growth studio for consumer & lifestyle brands - full-stack and in person, run by the founder. Revenue over impressions, month-to-month.';
+  'Revvia is a San Diego, production-led, full-service growth studio - full-stack and in person, run by the founder. We serve home services, B2B and industrial, healthcare and professional practices, and consumer brands. Revenue over impressions, month-to-month.';
 
 /** Default Open Graph share image (generated from the logo, 1200×630). */
 export const DEFAULT_OG_IMAGE = '/og/revvia-og.png';
@@ -22,7 +22,7 @@ export const NAP = {
   name: SITE_NAME,
   legalName: LEGAL_NAME,
   description:
-    'San Diego production-led growth studio for consumer & lifestyle brands - full-stack and in person. Paid media, in-house production, retention, and clean tracking, serving Southern California.',
+    'San Diego production-led, full-service growth studio - full-stack and in person. Paid media, in-house production, retention, SEO/GEO, and clean tracking for home services, B2B, healthcare, and consumer businesses across Southern California.',
   email: 'info@revvia.com',
   /** E.164 for schema / tel: links. */
   telephone: '+1-760-782-2875',
@@ -83,6 +83,31 @@ export const JOURNAL_LINKS: readonly NavChild[] = [
   { label: 'Built in San Diego', href: '/journal/built-in-san-diego' },
   { label: 'West Coast DTC', href: '/journal/west-coast-dtc' },
 ];
+
+/** Service lines - the single source for nav copy, JSON-LD knowsAbout, etc. */
+export const SERVICE_LINES = [
+  'Search engine optimization',
+  'Generative engine optimization',
+  'Google Ads management',
+  'Meta advertising',
+  'Brand development',
+  'Commercial video production',
+  'Conversion tracking',
+  'Fractional CMO services',
+] as const;
+
+/**
+ * The verticals Revvia serves - drives the "Who we work with" block, the
+ * dedicated page, and the Service audience in JSON-LD. Plain declarative
+ * statements, DTC as one segment among several.
+ */
+export const SEGMENTS = [
+  { label: 'Home services and trades', blurb: 'Revvia works with construction, plumbing, and contracting businesses - brand, video, search, AI visibility, and paid media that bring in qualified jobs.', href: '/work/steady-builders' },
+  { label: 'B2B and industrial', blurb: 'Revvia works with manufacturers, fabricators, fulfillment operations, and engineering firms that sell to other businesses.', href: '/journal/tmc-engineering' },
+  { label: 'Healthcare and professional practices', blurb: 'Revvia works with medical practices and professional services firms, with HIPAA-compliant advertising and lead tracking for healthcare.', href: '/work/coastal-internal-medicine' },
+  { label: 'DTC and ecommerce', blurb: 'Revvia works with consumer brands across retail and wholesale - paid media, in-house content, and retention.', href: '/work/peter-grimm' },
+  { label: 'Education and specialty', blurb: 'Revvia works with schools, nonprofits, and niche consumer services.', href: null },
+] as const;
 
 export const CTA = { label: 'Get a Growth Audit', href: '/contact' } as const;
 
