@@ -5,7 +5,7 @@
  */
 
 export const SITE_URL = (
-  import.meta.env.PUBLIC_SITE_URL || 'https://www.revvia.com'
+  import.meta.env.PUBLIC_SITE_URL || 'https://revvia.com'
 ).replace(/\/$/, '');
 
 export const SITE_NAME = 'Revvia';

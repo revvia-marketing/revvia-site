@@ -8,7 +8,7 @@ import react from '@astrojs/react';
 import keystatic from '@keystatic/astro';
 
 // Canonical production URL. Override with PUBLIC_SITE_URL if the host changes.
-const SITE = process.env.PUBLIC_SITE_URL || 'https://www.revvia.com';
+const SITE = process.env.PUBLIC_SITE_URL || 'https://revvia.com';
 
 // https://astro.build/config
 export default defineConfig({

@@ -35,7 +35,7 @@ prefixed `PUBLIC_` is intentionally exposed to the browser.
 
 | Variable | Required? | What it's for |
 |---|---|---|
-| `PUBLIC_SITE_URL` | optional | Canonical site URL. Defaults to `https://www.revvia.com`. Only set if the domain/host changes. |
+| `PUBLIC_SITE_URL` | optional | Canonical site URL. Defaults to `https://revvia.com`. Only set if the domain/host changes. |
 | `PUBLIC_GA4_ID` | for analytics | GA4 Measurement ID for the **revvia.com** property, e.g. `G-XXXXXXXXXX`. Leave blank and no GA beacon loads. |
 | `PUBLIC_META_PIXEL_ID` | for analytics | Meta (Facebook) Pixel ID for the agency site, e.g. `1234567890123456`. Blank = no pixel. |
 | `KEYSTATIC_GITHUB_CLIENT_ID` | for CMS in prod | GitHub App "Client ID" (from the Create-GitHub-App flow). |

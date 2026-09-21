@@ -12,7 +12,7 @@ export const config = { path: "/api/geo-readiness" };
 
 const FETCH_TIMEOUT_MS = 8000;
 const MAX_BYTES = 600_000;
-const UA = "RevviaGEOReadinessBot/1.0 (+https://www.revvia.com/services/geo-visibility-overhaul)";
+const UA = "RevviaGEOReadinessBot/1.0 (+https://revvia.com/services/geo-visibility-overhaul)";
 
 // Lightweight per-IP rate limit. In-memory, so it's per warm instance, not
 // global - it blunts casual hammering/scripting of this endpoint. For

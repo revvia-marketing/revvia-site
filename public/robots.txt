@@ -5,4 +5,4 @@ Allow: /
 Disallow: /keystatic
 Disallow: /api/
 
-Sitemap: https://www.revvia.com/sitemap-index.xml
+Sitemap: https://revvia.com/sitemap-index.xml
