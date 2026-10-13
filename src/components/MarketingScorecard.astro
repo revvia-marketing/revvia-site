@@ -1,0 +1,375 @@
+---
+// Revvia Marketing Scorecard - self-contained quiz + Netlify Form.
+// Rendered from src/pages/scorecard.astro inside LandingLayout.
+// The <form> below is plain static HTML so Netlify detects it at build time.
+// On submit it saves the result to sessionStorage (rv_scorecard) + writes
+// rv_conv, then redirects to /scorecard/results, where the score renders and
+// the single conversion fires. No conversion events fire here.
+---
+
+<section class="rsc" id="scorecard">
+  <div class="rsc-wrap">
+    <!-- INTRO -->
+    <div class="rsc-panel rsc-intro" data-step="intro">
+      <p class="rsc-eyebrow">The 10-Minute Marketing Scorecard</p>
+      <h1 class="rsc-h1">Is your marketing <span class="rsc-grad">actually working?</span></h1>
+      <p class="rsc-lede">
+        Ten quick questions. You'll get a score out of 20, see where you're strong, and find out
+        exactly where growth is leaking. Built for owners who don't have time to guess.
+      </p>
+      <ul class="rsc-checks">
+        <li>Takes about 3 minutes</li>
+        <li>Scored across 5 areas: leadership, tracking, channels, content, follow-up</li>
+        <li>Your results are shown instantly and emailed to you</li>
+      </ul>
+      <button type="button" class="rsc-btn" data-action="start">Start the scorecard →</button>
+    </div>
+
+    <!-- QUESTIONS (rendered by script) -->
+    <div class="rsc-panel rsc-quiz" data-step="quiz" hidden>
+      <div class="rsc-progress"><div class="rsc-progress-bar"></div></div>
+      <p class="rsc-count"></p>
+      <p class="rsc-cat"></p>
+      <h2 class="rsc-q"></h2>
+      <div class="rsc-options" role="radiogroup"></div>
+      <button type="button" class="rsc-back" data-action="back">← Back</button>
+    </div>
+
+    <!-- CONTACT GATE + NETLIFY FORM -->
+    <div class="rsc-panel rsc-gate" data-step="gate" hidden>
+      <p class="rsc-eyebrow">Your score is ready</p>
+      <h2 class="rsc-h2">Where should we send your results?</h2>
+      <p class="rsc-lede">We'll show your score on the next screen and email you a copy with the breakdown.</p>
+
+      <form
+        name="marketing-scorecard"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        action="/scorecard/results"
+        class="rsc-form"
+        id="rsc-form"
+      >
+        <input type="hidden" name="form-name" value="marketing-scorecard" />
+        <p hidden><label>Don't fill this out: <input name="bot-field" /></label></p>
+
+        <div class="rsc-grid">
+          <label class="rsc-field">
+            <span>Your name</span>
+            <input name="name" type="text" autocomplete="name" required placeholder="First & last" />
+          </label>
+          <label class="rsc-field">
+            <span>Business name</span>
+            <input name="business" type="text" autocomplete="organization" required placeholder="Your business" />
+          </label>
+          <label class="rsc-field">
+            <span>Email</span>
+            <input name="email" type="email" autocomplete="email" required placeholder="you@business.com" />
+          </label>
+          <label class="rsc-field">
+            <span>Website</span>
+            <input name="website" type="text" autocomplete="url" placeholder="yourbusiness.com" />
+          </label>
+          <label class="rsc-field">
+            <span>Annual revenue</span>
+            <select name="revenue" required>
+              <option value="">Select one</option>
+              <option>Under $1M</option>
+              <option>$1M – $5M</option>
+              <option>$5M – $20M</option>
+              <option>$20M+</option>
+            </select>
+          </label>
+          <label class="rsc-field">
+            <span>Phone <em>(optional)</em></span>
+            <input name="phone" type="tel" autocomplete="tel" placeholder="(760) 555-0123" />
+          </label>
+        </div>
+
+        <!-- Filled by script: scorecard results -->
+        <input type="hidden" name="score" />
+        <input type="hidden" name="tier" />
+        <input type="hidden" name="score_leadership" />
+        <input type="hidden" name="score_tracking" />
+        <input type="hidden" name="score_channels" />
+        <input type="hidden" name="score_content" />
+        <input type="hidden" name="score_followup" />
+        <input type="hidden" name="weakest_area" />
+        <input type="hidden" name="ai_visibility_answer" />
+        <input type="hidden" name="answers" />
+        <!-- Filled by script: ad attribution (section 2c) -->
+        <input type="hidden" name="fbclid" />
+        <input type="hidden" name="gclid" />
+        <input type="hidden" name="utm_source" />
+        <input type="hidden" name="utm_medium" />
+        <input type="hidden" name="utm_campaign" />
+        <input type="hidden" name="utm_content" />
+        <input type="hidden" name="utm_term" />
+        <input type="hidden" name="fbc" />
+        <input type="hidden" name="fbp" />
+        <input type="hidden" name="landing_url" />
+        <input type="hidden" name="event_id" />
+
+        <button type="submit" class="rsc-btn rsc-submit">See my score →</button>
+        <p class="rsc-fine">No spam. We'll send your results and a few useful follow-ups. Unsubscribe anytime.</p>
+        <p class="rsc-error" data-error hidden>Something went wrong sending your results. Please try again.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { fillAttribution } from '../lib/attribution';
+  import { markConversion } from '../lib/conversion';
+
+  (function () {
+    const QUESTIONS = [
+      { cat: "leadership", catLabel: "Leadership", q: "Who decides your marketing strategy today?",
+        opts: ["Me, when I have time", "A staff member, alongside other duties", "A dedicated marketing leader"] },
+      { cat: "leadership", catLabel: "Leadership", q: "Do you have a written marketing plan for the next 90 days?",
+        opts: ["No", "It's in my head", "Yes, it's written down"] },
+      { cat: "tracking", catLabel: "Tracking", q: "Do you know which channel brought in your last 10 customers?",
+        opts: ["No idea", "Roughly", "Yes, it's tracked"] },
+      { cat: "tracking", catLabel: "Tracking", q: "Do you know what it costs you to get a new customer?",
+        opts: ["No", "I have a guess", "Yes, I know the number"] },
+      { cat: "channels", catLabel: "Channels", q: "How many marketing channels are actively bringing you leads?",
+        opts: ["0 – 1", "2", "3 or more"] },
+      { cat: "channels", catLabel: "Channels", q: "How consistent is your marketing month to month?",
+        opts: ["It comes and goes", "Mostly consistent", "Every month, like clockwork"] },
+      { cat: "content", catLabel: "Content & Brand", q: "When did you last update your website or main marketing materials?",
+        opts: ["2+ years ago", "Sometime this year", "This quarter"] },
+      { cat: "content", catLabel: "Content & Brand", q: "Do you have current photos and video of your business?",
+        opts: ["No", "Some, but they're dated", "Yes, a real library"] },
+      { cat: "followup", catLabel: "Follow-up & Visibility", q: "How quickly do you respond to a new lead?",
+        opts: ["Next day or later", "Same day", "Within an hour"] },
+      { cat: "followup", catLabel: "Follow-up & Visibility", key: "ai",
+        q: "If someone asks ChatGPT for a business like yours in San Diego, do you come up?",
+        opts: ["I don't know", "Sometimes", "Yes, consistently"] },
+    ];
+
+    const CATS = {
+      leadership: { label: "Leadership", gap: "Nobody owns the strategy",
+        copy: "When marketing is run by whoever has time, it gets done in bursts and never compounds. The fix isn't working harder, it's putting one senior person in charge of the plan, the budget, and the results." },
+      tracking: { label: "Tracking", gap: "You can't see what's working",
+        copy: "If you don't know where customers come from or what each one costs, every marketing dollar is a guess. Clean tracking is the first thing we fix, because it decides where everything else goes." },
+      channels: { label: "Channels", gap: "Too few ways in",
+        copy: "Relying on one or two sources (usually referrals) works until it doesn't. Growing businesses build two or three steady channels so one slow month doesn't become a slow quarter." },
+      content: { label: "Content & Brand", gap: "Your brand looks older than your business",
+        copy: "Customers judge you by your website and photos before they ever call. Dated content quietly costs you the bigger jobs and the better customers, even when the work itself is excellent." },
+      followup: { label: "Follow-up & Visibility", gap: "Leads and searches are slipping past you",
+        copy: "Speed to lead and showing up where people now search, including AI assistants, decide who gets the call. Both are fixable systems, not personality traits." },
+    };
+
+    const TIERS = [
+      { max: 8, name: "Running on Instinct",
+        copy: "Your business is growing on your reputation and your effort, not on a marketing system. That's common, and it's also the ceiling most owners hit before their next stage." },
+      { max: 14, name: "Building the Engine",
+        copy: "You've got real pieces in place, but they aren't connected or owned. This is the stage where the right leadership turns scattered effort into predictable growth." },
+      { max: 20, name: "Ready to Scale",
+        copy: "You're ahead of most businesses your size. The opportunity now is sharper strategy, better creative, and more channels, without adding a six-figure hire." },
+    ];
+
+    const root = document.getElementById("scorecard");
+    if (!root) return;
+    const $ = (s) => root.querySelector(s);
+    const steps = ["intro", "quiz", "gate"];
+    const answers = new Array(QUESTIONS.length).fill(null);
+    let idx = 0;
+
+    function show(step) {
+      steps.forEach((s) => {
+        const el = root.querySelector('[data-step="' + s + '"]');
+        if (el) el.hidden = s !== step;
+      });
+      root.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function renderQuestion() {
+      const q = QUESTIONS[idx];
+      $(".rsc-count").textContent = "Question " + (idx + 1) + " of " + QUESTIONS.length;
+      $(".rsc-cat").textContent = q.catLabel;
+      $(".rsc-q").textContent = q.q;
+      $(".rsc-progress-bar").style.width = (idx / QUESTIONS.length) * 100 + "%";
+      $(".rsc-back").style.visibility = idx === 0 ? "hidden" : "visible";
+      const box = $(".rsc-options");
+      box.innerHTML = "";
+      q.opts.forEach((label, i) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "rsc-opt" + (answers[idx] === i ? " is-selected" : "");
+        b.setAttribute("role", "radio");
+        b.setAttribute("aria-checked", answers[idx] === i ? "true" : "false");
+        b.textContent = label;
+        b.addEventListener("click", () => {
+          answers[idx] = i;
+          if (idx < QUESTIONS.length - 1) {
+            idx++;
+            renderQuestion();
+          } else {
+            $(".rsc-progress-bar").style.width = "100%";
+            show("gate");
+          }
+        });
+        box.appendChild(b);
+      });
+    }
+
+    function compute() {
+      const cat = { leadership: 0, tracking: 0, channels: 0, content: 0, followup: 0 };
+      answers.forEach((a, i) => { cat[QUESTIONS[i].cat] += a || 0; });
+      const total = Object.values(cat).reduce((s, v) => s + v, 0);
+      const tier = TIERS.find((t) => total <= t.max);
+      // Weakest area; ties go to the order listed (leadership first).
+      const weakest = Object.keys(cat).reduce((w, k) => (cat[k] < cat[w] ? k : w), "leadership");
+      const aiIdx = QUESTIONS.findIndex((q) => q.key === "ai");
+      return { cat, total, tier, weakest, aiAnswer: QUESTIONS[aiIdx].opts[answers[aiIdx]], aiUnknown: answers[aiIdx] === 0 };
+    }
+
+    root.querySelector('[data-action="start"]').addEventListener("click", () => {
+      idx = 0;
+      renderQuestion();
+      show("quiz");
+    });
+    root.querySelector('[data-action="back"]').addEventListener("click", () => {
+      if (idx > 0) { idx--; renderQuestion(); }
+    });
+
+    const form = document.getElementById("rsc-form");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (form.querySelector('[name="bot-field"]')?.value) return;
+
+      const r = compute();
+      const set = (n, v) => { const el = form.querySelector('[name="' + n + '"]'); if (el) el.value = v == null ? "" : v; };
+      set("score", r.total);
+      set("tier", r.tier.name);
+      Object.keys(r.cat).forEach((k) => set("score_" + k, r.cat[k]));
+      set("weakest_area", CATS[r.weakest].label);
+      set("ai_visibility_answer", r.aiAnswer);
+      set("answers", QUESTIONS.map((q, i) => (i + 1) + ". " + q.q + " — " + q.opts[answers[i]]).join(" | "));
+
+      // Ad attribution hidden fields (section 2c), returns the event_id.
+      const eventId = fillAttribution(form);
+
+      // Render-ready result for the confirmation page.
+      try {
+        sessionStorage.setItem("rv_scorecard", JSON.stringify({
+          total: r.total,
+          tierName: r.tier.name,
+          tierCopy: r.tier.copy,
+          cat: r.cat,
+          weakest: r.weakest,
+          weakestLabel: CATS[r.weakest].label,
+          gapTitle: CATS[r.weakest].gap,
+          gapCopy: CATS[r.weakest].copy,
+          aiUnknown: r.aiUnknown,
+          ts: Date.now(),
+        }));
+      } catch (err) {}
+
+      // Pending conversion - fires once on /scorecard/results.
+      markConversion("scorecard", eventId);
+
+      const btn = form.querySelector(".rsc-submit");
+      const err = form.querySelector(".rsc-error");
+      btn.disabled = true;
+      btn.textContent = "Scoring…";
+      err.hidden = true;
+
+      try {
+        const body = new URLSearchParams(new FormData(form)).toString();
+        const res = await fetch("/", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body,
+        });
+        if (!res.ok) throw new Error("Bad response " + res.status);
+        window.location.assign("/scorecard/results");
+      } catch (ex) {
+        err.hidden = false;
+        btn.disabled = false;
+        btn.textContent = "See my score →";
+      }
+    });
+  })();
+</script>
+
+<style is:global>
+  .rsc {
+    --rsc-bg: #0a0a0c;
+    --rsc-card: rgba(14, 15, 20, 0.98);
+    --rsc-line: #2e303b;
+    --rsc-text: #f4f5f7;
+    --rsc-muted: #a7adba;
+    --rsc-grad: linear-gradient(115deg, #8a0fad 0%, #d6248f 38%, #ec4f65 64%, #fe9c1c 100%);
+    --rsc-pink: #d6248f;
+    background: var(--rsc-bg);
+    color: var(--rsc-text);
+    font-family: Inter, system-ui, sans-serif;
+    padding: 56px 16px 80px;
+  }
+  .rsc-wrap { max-width: 760px; margin: 0 auto; }
+  .rsc-panel {
+    background: var(--rsc-card);
+    border: 1px solid var(--rsc-line);
+    border-radius: 14px;
+    padding: 40px;
+  }
+  .rsc-panel[hidden] { display: none; }
+  .rsc-eyebrow {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+    background: var(--rsc-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin: 0 0 14px;
+  }
+  .rsc-h1, .rsc-h2, .rsc-h3, .rsc-q, .rsc-score-num {
+    font-family: "Bricolage Grotesque", Inter, sans-serif; letter-spacing: -0.02em; margin: 0;
+  }
+  .rsc-h1 { font-size: clamp(34px, 6vw, 54px); line-height: 1.05; font-weight: 800; }
+  .rsc-h2 { font-size: clamp(24px, 4vw, 32px); line-height: 1.15; font-weight: 700; }
+  .rsc-h3 { font-size: 21px; line-height: 1.25; font-weight: 700; margin-bottom: 8px; }
+  .rsc-grad { background: var(--rsc-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .rsc-lede { color: var(--rsc-muted); font-size: 17px; line-height: 1.6; margin: 18px 0 0; }
+  .rsc-checks { list-style: none; padding: 0; margin: 24px 0 32px; display: grid; gap: 10px; }
+  .rsc-checks li { color: var(--rsc-muted); padding-left: 26px; position: relative; }
+  .rsc-checks li::before {
+    content: ""; position: absolute; left: 0; top: 7px; width: 12px; height: 12px; border-radius: 3px; background: var(--rsc-grad);
+  }
+  .rsc-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--rsc-grad); color: #fff; border: 0; border-radius: 10px;
+    padding: 15px 26px; font: 600 16px Inter, system-ui, sans-serif; cursor: pointer; text-decoration: none;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .rsc-btn:hover { transform: translateY(-1px); }
+  .rsc-btn:disabled { opacity: 0.6; cursor: wait; }
+  .rsc-progress { height: 6px; background: var(--rsc-line); border-radius: 99px; overflow: hidden; margin-bottom: 22px; }
+  .rsc-progress-bar { height: 100%; width: 0; background: var(--rsc-grad); transition: width 0.25s ease; }
+  .rsc-count { color: var(--rsc-muted); font-size: 13px; margin: 0; }
+  .rsc-cat { color: var(--rsc-pink); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin: 6px 0 10px; }
+  .rsc-q { font-size: clamp(22px, 3.6vw, 30px); line-height: 1.2; font-weight: 700; margin-bottom: 24px; }
+  .rsc-options { display: grid; gap: 12px; }
+  .rsc-opt {
+    text-align: left; background: #12131a; color: var(--rsc-text); border: 1px solid var(--rsc-line);
+    border-radius: 10px; padding: 16px 18px; font: 500 16px Inter, system-ui, sans-serif; cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .rsc-opt:hover, .rsc-opt:focus-visible { border-color: var(--rsc-pink); outline: none; }
+  .rsc-opt.is-selected { border-color: var(--rsc-pink); background: #1a1220; }
+  .rsc-back { margin-top: 20px; background: none; border: 0; color: var(--rsc-muted); cursor: pointer; font: 500 14px Inter, sans-serif; padding: 0; }
+  .rsc-form { margin-top: 26px; }
+  .rsc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .rsc-field { display: grid; gap: 6px; font-size: 13px; color: var(--rsc-muted); }
+  .rsc-field em { font-style: normal; opacity: 0.7; }
+  .rsc-field input, .rsc-field select {
+    background: #12131a; border: 1px solid var(--rsc-line); border-radius: 10px; color: var(--rsc-text);
+    padding: 13px 14px; font: 400 15px Inter, system-ui, sans-serif; width: 100%; box-sizing: border-box;
+  }
+  .rsc-field input:focus, .rsc-field select:focus { outline: none; border-color: var(--rsc-pink); }
+  .rsc-fine { color: var(--rsc-muted); font-size: 13px; margin: 14px 0 0; }
+  .rsc-error { color: #ff7a7a; font-size: 14px; margin: 10px 0 0; }
+  @media (max-width: 640px) {
+    .rsc { padding: 32px 16px 56px; }
+    .rsc-panel { padding: 26px 20px; }
+    .rsc-grid { grid-template-columns: 1fr; }
+  }
+</style>

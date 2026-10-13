@@ -1,0 +1,46 @@
+---
+import LandingLayout from '../../layouts/LandingLayout.astro';
+---
+<LandingLayout
+  title="Your guide is ready"
+  description="Your Real Cost of Marketing Help guide is ready to read."
+  path="/real-cost/thanks"
+  noindex={true}
+>
+  <section class="ty">
+    <p class="eyebrow">Free guide</p>
+    <h1>Your guide is ready.</h1>
+    <p class="sub">We've emailed you a copy too. Read it now below.</p>
+
+    <div class="ty-actions">
+      <a class="lp-btn" href="/guides/real-cost">Read the guide →</a>
+      <a class="lp-link" href="/contact">Want to talk through which option fits you? Book a call →</a>
+    </div>
+
+    <div class="ty-card">
+      <p class="ty-card-label">One more thing</p>
+      <h2>Not sure where your marketing stands?</h2>
+      <p>Take the 10-minute scorecard and see exactly where growth is leaking.</p>
+      <a class="lp-link" href="/scorecard">Take the 10-minute scorecard →</a>
+    </div>
+  </section>
+</LandingLayout>
+
+<script>
+  import { fireConversion } from '../../lib/conversion';
+  fireConversion('real-cost');
+</script>
+
+<style>
+  .ty { max-width: 680px; margin: 0 auto; padding: 60px 16px 80px; }
+  .ty h1 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; letter-spacing: -0.02em; font-size: clamp(34px, 6vw, 52px); line-height: 1.05; margin: 14px 0 14px; }
+  .ty .sub { color: var(--muted); font-size: 18px; line-height: 1.6; }
+  .ty-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; margin: 32px 0 44px; }
+  .lp-btn { background: var(--grad); color: #fff; border: 0; border-radius: 10px; padding: 15px 26px; font: 600 16px Inter, system-ui, sans-serif; cursor: pointer; text-decoration: none; display: inline-block; transition: transform 0.15s; }
+  .lp-btn:hover { transform: translateY(-1px); }
+  .lp-link { color: var(--m); font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
+  .ty-card { background: var(--card); border: 1px solid var(--line-2); border-radius: 14px; padding: 26px; }
+  .ty-card-label { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); font-weight: 700; margin-bottom: 8px; }
+  .ty-card h2 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; margin-bottom: 8px; }
+  .ty-card p { color: var(--muted); font-size: 15.5px; margin-bottom: 14px; }
+</style>

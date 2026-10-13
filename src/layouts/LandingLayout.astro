@@ -1,0 +1,85 @@
+---
+/**
+ * Distraction-free layout for paid-traffic landing pages (section 2a).
+ * Reuses the site head (fonts, favicon, meta) + the shared tracking, but the
+ * only chrome is a logo-to-home header and a minimal footer: one page, one
+ * action. Landing pages are indexable; confirmation pages and the guide pass
+ * noindex and are excluded from the sitemap (see astro.config.mjs).
+ */
+import '../styles/global.css';
+import SEO from '../components/SEO.astro';
+import Analytics from '../components/Analytics.astro';
+import { Image } from 'astro:assets';
+import logo from '../assets/revvia-logo.png';
+
+interface Props {
+  title: string;
+  description?: string;
+  path?: string;
+  ogImage?: string;
+  noindex?: boolean;
+}
+const { title, description, path, ogImage, noindex = false } = Astro.props;
+const year = new Date().getFullYear();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <SEO
+      title={title}
+      description={description}
+      path={path}
+      ogImage={ogImage}
+      noindex={noindex}
+    />
+    <Analytics />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="lp-head">
+      <a class="brand" href="/" aria-label="Revvia - home">
+        <Image src={logo} alt="Revvia" width={120} height={97} loading="eager" />
+        <span class="wm">Revvia</span>
+      </a>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="lp-foot">
+      <span>&copy; {year} Revvia Marketing &middot; Carlsbad, CA</span>
+      <a href="/privacy">Privacy</a>
+    </footer>
+
+    <script>
+      import { initAttribution } from '../lib/attribution';
+      initAttribution();
+    </script>
+  </body>
+</html>
+
+<style>
+  .lp-head {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 20px 16px;
+    display: flex;
+    align-items: center;
+  }
+  .lp-head .brand img { height: 28px; }
+  .lp-head .brand .wm { font-size: 21px; }
+  .lp-foot {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 28px 16px 44px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    border-top: 1px solid var(--line);
+    color: var(--muted-2);
+    font-size: 13px;
+  }
+  .lp-foot a:hover { color: #fff; }
+</style>

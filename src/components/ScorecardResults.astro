@@ -1,0 +1,192 @@
+---
+/**
+ * Scorecard results, shown on /scorecard/results. Reads the render-ready payload
+ * saved to sessionStorage (rv_scorecard) by the quiz, renders the score ring,
+ * tier, five bars, biggest gap, and the two CTA cards, then fires the single
+ * scorecard conversion (fireConversion). On a direct visit / expiry (no
+ * rv_scorecard) it shows an empty state and fires nothing.
+ */
+---
+<section class="rsc" id="sc-results">
+  <div class="rsc-wrap">
+    <!-- EMPTY STATE (direct visit / expired) -->
+    <div class="rsc-panel" data-step="empty" hidden>
+      <p class="rsc-eyebrow">Marketing Scorecard</p>
+      <h1 class="rsc-h2">Take the scorecard to see your results.</h1>
+      <p class="rsc-lede">It takes about three minutes and shows exactly where your growth is leaking.</p>
+      <p style="margin-top:24px"><a class="rsc-btn" href="/scorecard">Start the scorecard →</a></p>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="rsc-panel" data-step="full" hidden>
+      <p class="rsc-eyebrow">Your Marketing Scorecard</p>
+      <div class="rsc-scorebox">
+        <div class="rsc-score"><span class="rsc-score-num">0</span><span class="rsc-score-of">/20</span></div>
+        <div>
+          <h1 class="rsc-h2 rsc-tier"></h1>
+          <p class="rsc-tier-copy"></p>
+        </div>
+      </div>
+
+      <div class="rsc-bars"></div>
+
+      <div class="rsc-insight">
+        <p class="rsc-insight-label">Your biggest gap</p>
+        <h2 class="rsc-h3 rsc-gap-title"></h2>
+        <p class="rsc-gap-copy"></p>
+      </div>
+
+      <div class="rsc-cta rsc-cta-snapshot" hidden>
+        <p class="rsc-insight-label">You said you're not sure if AI search recommends you</p>
+        <h2 class="rsc-h3">Let's find out. Together, in 30 minutes.</h2>
+        <p>
+          Book a free 30-minute Zoom and we'll walk you through your AI Visibility Snapshot: how you and three
+          competitors show up when customers ask ChatGPT and Google AI Mode for a business like yours.
+        </p>
+        <a class="rsc-btn" href="/ai-snapshot?src=scorecard">Book my snapshot call →</a>
+      </div>
+
+      <div class="rsc-cta rsc-cta-fractional">
+        <p class="rsc-insight-label">What most owners at your score do next</p>
+        <h2 class="rsc-h3">You don't need more marketing tasks. You need someone running marketing.</h2>
+        <p>
+          Most growing businesses don't need a full-time marketing director or another agency that only runs ads.
+          They need senior strategy plus the team that executes it. That's what a fractional CMO is, and it's how
+          Revvia works: founder-led, in person in San Diego, month to month.
+        </p>
+        <div class="rsc-cta-row">
+          <a class="rsc-btn" href="/contact">Talk through my results →</a>
+          <a class="rsc-link" href="/real-cost">Hire, agency, or fractional? See the real cost →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { fireConversion } from '../lib/conversion';
+
+  (function () {
+    const root = document.getElementById('sc-results');
+    if (!root) return;
+    const CAT_ORDER = ['leadership', 'tracking', 'channels', 'content', 'followup'];
+    const CAT_LABELS = {
+      leadership: 'Leadership',
+      tracking: 'Tracking',
+      channels: 'Channels',
+      content: 'Content & Brand',
+      followup: 'Follow-up & Visibility',
+    };
+
+    let data = null;
+    try { data = JSON.parse(sessionStorage.getItem('rv_scorecard') || 'null'); } catch (e) {}
+
+    if (!data || typeof data.total !== 'number') {
+      const empty = root.querySelector('[data-step="empty"]');
+      if (empty) empty.hidden = false;
+      return; // fire nothing on a direct visit / expiry
+    }
+
+    const full = root.querySelector('[data-step="full"]');
+    if (full) full.hidden = false;
+
+    root.querySelector('.rsc-score-num').textContent = data.total;
+    root.querySelector('.rsc-tier').textContent = data.tierName || '';
+    root.querySelector('.rsc-tier-copy').textContent = data.tierCopy || '';
+
+    const bars = root.querySelector('.rsc-bars');
+    bars.innerHTML = '';
+    CAT_ORDER.forEach((k) => {
+      const score = (data.cat && data.cat[k]) || 0;
+      const row = document.createElement('div');
+      row.className = 'rsc-bar' + (k === data.weakest ? ' is-weak' : '');
+      row.innerHTML =
+        '<span class="rsc-bar-label"></span><span class="rsc-bar-track"><span class="rsc-bar-fill"></span></span><span class="rsc-bar-val"></span>';
+      row.querySelector('.rsc-bar-label').textContent = CAT_LABELS[k];
+      row.querySelector('.rsc-bar-fill').style.width = (score / 4) * 100 + '%';
+      row.querySelector('.rsc-bar-val').textContent = score + '/4';
+      bars.appendChild(row);
+    });
+
+    root.querySelector('.rsc-gap-title').textContent = data.gapTitle || '';
+    root.querySelector('.rsc-gap-copy').textContent = data.gapCopy || '';
+
+    if (data.aiUnknown) {
+      const snap = root.querySelector('.rsc-cta-snapshot');
+      if (snap) snap.hidden = false;
+    }
+
+    // The single scorecard conversion (no-op if rv_conv is missing/expired).
+    fireConversion('scorecard');
+  })();
+</script>
+
+<style is:global>
+  #sc-results.rsc {
+    --rsc-bg: #0a0a0c;
+    --rsc-card: rgba(14, 15, 20, 0.98);
+    --rsc-line: #2e303b;
+    --rsc-text: #f4f5f7;
+    --rsc-muted: #a7adba;
+    --rsc-grad: linear-gradient(115deg, #8a0fad 0%, #d6248f 38%, #ec4f65 64%, #fe9c1c 100%);
+    --rsc-pink: #d6248f;
+    background: var(--rsc-bg);
+    color: var(--rsc-text);
+    font-family: Inter, system-ui, sans-serif;
+    padding: 56px 16px 80px;
+  }
+  #sc-results .rsc-wrap { max-width: 760px; margin: 0 auto; }
+  #sc-results .rsc-panel {
+    background: var(--rsc-card); border: 1px solid var(--rsc-line); border-radius: 14px; padding: 40px;
+  }
+  #sc-results .rsc-panel[hidden] { display: none; }
+  #sc-results .rsc-eyebrow {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+    background: var(--rsc-grad); -webkit-background-clip: text; background-clip: text; color: transparent; margin: 0 0 14px;
+  }
+  #sc-results .rsc-h2, #sc-results .rsc-h3, #sc-results .rsc-score-num {
+    font-family: "Bricolage Grotesque", Inter, sans-serif; letter-spacing: -0.02em; margin: 0;
+  }
+  #sc-results .rsc-h2 { font-size: clamp(24px, 4vw, 32px); line-height: 1.15; font-weight: 700; }
+  #sc-results .rsc-h3 { font-size: 21px; line-height: 1.25; font-weight: 700; margin-bottom: 8px; }
+  #sc-results .rsc-lede { color: var(--rsc-muted); font-size: 17px; line-height: 1.6; margin: 18px 0 0; }
+  #sc-results .rsc-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--rsc-grad); color: #fff; border: 0; border-radius: 10px;
+    padding: 15px 26px; font: 600 16px Inter, system-ui, sans-serif; cursor: pointer; text-decoration: none;
+    transition: transform 0.15s ease;
+  }
+  #sc-results .rsc-btn:hover { transform: translateY(-1px); }
+  #sc-results .rsc-scorebox { display: flex; gap: 28px; align-items: center; margin: 10px 0 30px; }
+  #sc-results .rsc-score {
+    flex: 0 0 auto; width: 132px; height: 132px; border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: conic-gradient(from 200deg, #8a0fad, #d6248f, #ec4f65, #fe9c1c, #8a0fad); position: relative;
+  }
+  #sc-results .rsc-score::before { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: var(--rsc-card); }
+  #sc-results .rsc-score-num { position: relative; font-size: 46px; font-weight: 800; line-height: 1; }
+  #sc-results .rsc-score-of { position: relative; color: var(--rsc-muted); font-size: 14px; margin-top: 4px; }
+  #sc-results .rsc-tier-copy { color: var(--rsc-muted); line-height: 1.6; margin: 8px 0 0; }
+  #sc-results .rsc-bars { display: grid; gap: 12px; margin-bottom: 30px; }
+  #sc-results .rsc-bar { display: grid; grid-template-columns: 170px 1fr 40px; gap: 14px; align-items: center; font-size: 14px; }
+  #sc-results .rsc-bar-label { color: var(--rsc-text); }
+  #sc-results .rsc-bar-track { height: 10px; background: var(--rsc-line); border-radius: 99px; overflow: hidden; }
+  #sc-results .rsc-bar-fill { display: block; height: 100%; background: var(--rsc-grad); border-radius: 99px; }
+  #sc-results .rsc-bar-val { color: var(--rsc-muted); text-align: right; }
+  #sc-results .rsc-bar.is-weak .rsc-bar-label { color: #fe9c1c; font-weight: 600; }
+  #sc-results .rsc-insight, #sc-results .rsc-cta { border-top: 1px solid var(--rsc-line); padding-top: 26px; margin-top: 26px; }
+  #sc-results .rsc-insight p, #sc-results .rsc-cta p { color: var(--rsc-muted); line-height: 1.6; margin: 0 0 18px; }
+  #sc-results .rsc-insight-label {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rsc-pink); margin-bottom: 8px;
+  }
+  #sc-results .rsc-cta-snapshot { background: #140f1a; border: 1px solid #4a2350; border-radius: 12px; padding: 24px; }
+  #sc-results .rsc-cta-row { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; }
+  #sc-results .rsc-link { color: var(--rsc-text); font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
+  @media (max-width: 640px) {
+    #sc-results.rsc { padding: 32px 16px 56px; }
+    #sc-results .rsc-panel { padding: 26px 20px; }
+    #sc-results .rsc-scorebox { flex-direction: column; align-items: flex-start; gap: 18px; }
+    #sc-results .rsc-bar { grid-template-columns: 1fr 40px; }
+    #sc-results .rsc-bar-label { grid-column: 1 / -1; }
+  }
+</style>

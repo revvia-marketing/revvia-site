@@ -1,0 +1,96 @@
+---
+import LandingLayout from '../../layouts/LandingLayout.astro';
+
+const BOOKING_URL = import.meta.env.PUBLIC_SNAPSHOT_BOOKING_URL;
+---
+<LandingLayout
+  title="Pick your time"
+  description="Your AI Visibility Snapshot request is in - book your 30-minute Zoom."
+  path="/ai-snapshot/thanks"
+  noindex={true}
+>
+  <section class="ty">
+    <p class="eyebrow">AI Visibility Snapshot</p>
+    <h1>One last step: pick your time.</h1>
+    <p class="sub">Choose a 30-minute slot below. We'll prepare your snapshot after your call is confirmed and walk you through it live.</p>
+
+    {BOOKING_URL ? (
+      <Fragment>
+        <link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css" />
+        <div id="calendly-inline" class="cal-embed"></div>
+        <p class="ty-note">Can't find a time that works? Reply to your confirmation email and we'll make one work.</p>
+        <script is:inline async src="https://assets.calendly.com/assets/external/widget.js"></script>
+      </Fragment>
+    ) : (
+      <div class="ty-fallback">
+        <p>We'll email you within one business day to schedule your call.</p>
+        <p>Prefer to talk now? Call <a href="tel:+17607822875">760-782-2875</a>.</p>
+      </div>
+    )}
+  </section>
+</LandingLayout>
+
+<script>
+  import { fireConversion } from '../../lib/conversion';
+
+  // The completed request form is the Lead - fire it once on load.
+  fireConversion('ai-snapshot');
+
+  const BOOKING_URL = import.meta.env.PUBLIC_SNAPSHOT_BOOKING_URL;
+  const ADS_ID = import.meta.env.PUBLIC_GOOGLE_ADS_ID;
+  const BOOKED_LABEL = import.meta.env.PUBLIC_GADS_LABEL_SNAPSHOT_BOOKED;
+
+  if (BOOKING_URL) {
+    // Inline Calendly with name/email prefilled via the JS API (never the URL).
+    (function initCalendly() {
+      const el = document.getElementById('calendly-inline');
+      if (!el) return;
+      if (!(window as any).Calendly) {
+        setTimeout(initCalendly, 120);
+        return;
+      }
+      let prefill: { name?: string; email?: string } = {};
+      try {
+        const c = JSON.parse(sessionStorage.getItem('rv_snapshot_contact') || '{}');
+        if (c && c.name) prefill.name = c.name;
+        if (c && c.email) prefill.email = c.email;
+      } catch (e) {}
+      (window as any).Calendly.initInlineWidget({ url: BOOKING_URL, parentElement: el, prefill });
+    })();
+
+    // Fire the booking events once when a time is actually scheduled.
+    let booked = false;
+    window.addEventListener('message', (e: MessageEvent) => {
+      if (typeof e.origin !== 'string' || e.origin.indexOf('calendly.com') === -1) return;
+      const data = e.data as { event?: string };
+      if (data && data.event === 'calendly.event_scheduled' && !booked) {
+        booked = true;
+        try {
+          if (typeof window.fbq === 'function') {
+            window.fbq('track', 'Schedule', { content_name: 'AI Snapshot Call' });
+          }
+        } catch (err) {}
+        try {
+          if (typeof window.gtag === 'function') {
+            window.gtag('event', 'book_appointment', { form_name: 'ai-snapshot-request' });
+            if (ADS_ID && BOOKED_LABEL) {
+              window.gtag('event', 'conversion', { send_to: ADS_ID + '/' + BOOKED_LABEL });
+            }
+          }
+        } catch (err) {}
+      }
+    });
+  }
+</script>
+
+<style>
+  .ty { max-width: 760px; margin: 0 auto; padding: 56px 16px 80px; }
+  .ty h1 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; letter-spacing: -0.02em; font-size: clamp(32px, 5.6vw, 50px); line-height: 1.05; margin: 14px 0 14px; }
+  .ty .sub { color: var(--muted); font-size: 18px; line-height: 1.6; max-width: 560px; }
+  .cal-embed { min-width: 320px; height: 720px; margin: 28px 0 10px; }
+  .ty-note { color: var(--muted-2); font-size: 14px; margin-top: 10px; }
+  .ty-fallback { background: var(--card); border: 1px solid var(--line-2); border-radius: 14px; padding: 26px; margin-top: 28px; }
+  .ty-fallback p { color: var(--muted); font-size: 16px; margin-bottom: 8px; }
+  .ty-fallback a { color: var(--m); font-weight: 600; }
+  @media (max-width: 640px) { .cal-embed { height: 1000px; } }
+</style>

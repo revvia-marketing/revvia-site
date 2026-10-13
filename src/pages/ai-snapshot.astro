@@ -1,0 +1,157 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+
+const revenueOptions = ['Under $1M', '$1M – $5M', '$5M – $20M', '$20M+'];
+---
+<LandingLayout
+  title="AI Visibility Snapshot - Free 30-Minute Zoom"
+  description="When customers ask ChatGPT and Google AI Mode who to hire, do they hear your name? Book a free 30-minute Zoom and we'll walk you through your AI Visibility Snapshot, live."
+  path="/ai-snapshot"
+>
+  <section class="lp">
+    <div class="lp-grid">
+      <div class="lp-copy">
+        <p class="eyebrow">AI Visibility Snapshot · 30-minute Zoom</p>
+        <h1>When customers ask AI who to hire, <span class="grad-text">do they hear your name?</span></h1>
+        <p class="sub">Book a free 30-minute Zoom. Before the call, we check how you and three competitors show up when people ask ChatGPT and Google AI Mode for a business like yours. Then we walk you through it, live.</p>
+
+        <div class="inside">
+          <p class="inside-h">On the call you'll see</p>
+          <ul>
+            <li>Whether ChatGPT and Google AI Mode mention you, and how they describe you</li>
+            <li>Which competitors show up instead, and why</li>
+            <li>The 3 fixes that would move you fastest</li>
+          </ul>
+        </div>
+
+        <p class="fineprint">The snapshot is reviewed live on the call. We prepare it after your call is confirmed.</p>
+      </div>
+
+      <div class="lp-formcol">
+        <form
+          id="ai-snapshot-form"
+          class="lp-form"
+          name="ai-snapshot-request"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          action="/ai-snapshot/thanks"
+        >
+          <input type="hidden" name="form-name" value="ai-snapshot-request" />
+          <p class="hp" hidden><label>Don't fill this out: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+
+          <p class="lp-form-h">Request your snapshot call</p>
+
+          <label class="field"><span>Name</span>
+            <input name="name" type="text" autocomplete="name" required placeholder="First & last" />
+          </label>
+          <label class="field"><span>Email</span>
+            <input name="email" type="email" autocomplete="email" required placeholder="you@business.com" />
+          </label>
+          <label class="field"><span>Phone</span>
+            <input name="phone" type="tel" autocomplete="tel" required placeholder="(760) 555-0123" />
+          </label>
+          <label class="field"><span>Business name</span>
+            <input name="business" type="text" autocomplete="organization" required placeholder="Your business" />
+          </label>
+          <label class="field"><span>Website</span>
+            <input name="website" type="text" autocomplete="url" inputmode="url" required placeholder="yourbusiness.com" />
+          </label>
+          <label class="field"><span>Your top 3 competitors</span>
+            <textarea name="competitors" rows="2" required placeholder="Names or websites"></textarea>
+          </label>
+          <label class="field"><span>What do you want to be found for?</span>
+            <input name="found_for" type="text" required placeholder="e.g. kitchen remodeling in Carlsbad" />
+          </label>
+          <label class="field"><span>Annual revenue</span>
+            <select name="revenue" required>
+              <option value="">Select one</option>
+              {revenueOptions.map((o) => <option>{o}</option>)}
+            </select>
+          </label>
+
+          <!-- src from ?src= (prefilled on load) + ad attribution (section 2c) -->
+          <input type="hidden" name="src" />
+          <input type="hidden" name="fbclid" />
+          <input type="hidden" name="gclid" />
+          <input type="hidden" name="fbc" />
+          <input type="hidden" name="fbp" />
+          <input type="hidden" name="utm_source" />
+          <input type="hidden" name="utm_medium" />
+          <input type="hidden" name="utm_campaign" />
+          <input type="hidden" name="utm_content" />
+          <input type="hidden" name="utm_term" />
+          <input type="hidden" name="landing_url" />
+          <input type="hidden" name="event_id" />
+
+          <button type="submit" class="lp-btn">Request my snapshot call →</button>
+          <p class="lp-error" data-error hidden>Something went wrong. Please try again.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</LandingLayout>
+
+<script>
+  import { wireLeadForm } from '../lib/conversion';
+
+  const form = document.getElementById('ai-snapshot-form') as HTMLFormElement | null;
+  if (form) {
+    // Prefill src from ?src= (e.g. scorecard) into the hidden field.
+    try {
+      const src = new URLSearchParams(window.location.search).get('src');
+      const el = form.querySelector('[name="src"]') as HTMLInputElement | null;
+      if (src && el) el.value = src;
+    } catch (e) {}
+
+    wireLeadForm(form, 'ai-snapshot', '/ai-snapshot/thanks', (f) => {
+      // Stash contact for Calendly prefill on the next page (never in the URL).
+      try {
+        const name = (f.querySelector('[name="name"]') as HTMLInputElement)?.value || '';
+        const email = (f.querySelector('[name="email"]') as HTMLInputElement)?.value || '';
+        sessionStorage.setItem('rv_snapshot_contact', JSON.stringify({ name, email }));
+      } catch (e) {}
+    });
+  }
+</script>
+
+<style>
+  .lp { max-width: 1120px; margin: 0 auto; padding: 36px 16px 72px; }
+  .lp-grid { display: grid; grid-template-columns: 1fr 0.92fr; gap: 48px; align-items: start; }
+  .lp-copy h1 {
+    font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; letter-spacing: -0.02em;
+    font-size: clamp(32px, 4.8vw, 52px); line-height: 1.05; margin: 14px 0 18px;
+  }
+  .lp-copy .sub { color: var(--muted); font-size: clamp(17px, 2vw, 20px); line-height: 1.6; max-width: 560px; }
+  .inside { margin: 30px 0 18px; }
+  .inside-h { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); font-weight: 700; margin-bottom: 12px; }
+  .inside ul { list-style: none; display: grid; gap: 12px; }
+  .inside li { color: #e6e8ee; padding-left: 28px; position: relative; font-size: 16px; line-height: 1.5; }
+  .inside li::before { content: ""; position: absolute; left: 0; top: 7px; width: 13px; height: 13px; border-radius: 4px; background: var(--grad); }
+  .fineprint { color: var(--muted-2); font-size: 14px; line-height: 1.6; border-left: 2px solid var(--line-2); padding-left: 14px; max-width: 520px; }
+
+  .lp-formcol { position: sticky; top: 24px; }
+  .lp-form {
+    background: var(--card); border: 1px solid var(--line-2); border-radius: 16px; padding: 26px;
+    display: grid; gap: 13px;
+  }
+  .lp-form-h { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; margin-bottom: 4px; }
+  .field { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
+  .field input, .field select, .field textarea {
+    background: #101119; border: 1px solid var(--line-2); border-radius: 10px; color: #f4f5f7;
+    padding: 12px 14px; font: 400 15px Inter, system-ui, sans-serif; width: 100%; box-sizing: border-box; resize: vertical;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--m); }
+  .lp-btn {
+    margin-top: 6px; background: var(--grad); color: #fff; border: 0; border-radius: 10px;
+    padding: 15px 22px; font: 600 16px Inter, system-ui, sans-serif; cursor: pointer; transition: transform 0.15s;
+  }
+  .lp-btn:hover { transform: translateY(-1px); }
+  .lp-btn:disabled { opacity: 0.6; cursor: wait; }
+  .lp-error { color: #ff7a7a; font-size: 14px; margin-top: 2px; }
+
+  @media (max-width: 860px) {
+    .lp-grid { grid-template-columns: 1fr; gap: 30px; }
+    .lp-formcol { position: static; }
+  }
+</style>

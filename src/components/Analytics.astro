@@ -1,21 +1,27 @@
 ---
 /**
- * GA4 + Meta Pixel, installed via environment variables only.
- * Nothing loads (no network beacons) unless the corresponding ID is set,
- * so local dev and previews stay clean. Privacy-forward consent default:
- * ad storage/personalization denied, analytics allowed.
+ * GA4 + Google Ads (gtag.js) + Meta Pixel, installed via environment variables.
+ * gtag.js loads once and configures GA4 and/or the Google Ads account on it.
+ * Nothing loads (no network beacons) unless the corresponding ID is set, so
+ * local dev and previews stay clean. In dev, a missing ID logs a single warning
+ * instead of failing silently. Privacy-forward consent default: ad storage and
+ * personalization denied, analytics allowed.
  */
 const GA4_ID = import.meta.env.PUBLIC_GA4_ID;
+const ADS_ID = import.meta.env.PUBLIC_GOOGLE_ADS_ID;
 const PIXEL_ID = import.meta.env.PUBLIC_META_PIXEL_ID;
+const DEV = import.meta.env.DEV;
+// gtag.js only needs one id in the loader URL; both are configured below.
+const gtagLoaderId = GA4_ID || ADS_ID;
 ---
 {
-  GA4_ID && (
+  gtagLoaderId && (
     <Fragment>
       <script
         async
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}
+        src={`https://www.googletagmanager.com/gtag/js?id=${gtagLoaderId}`}
       />
-      <script is:inline define:vars={{ GA4_ID }}>
+      <script is:inline define:vars={{ GA4_ID, ADS_ID }}>
         window.dataLayer = window.dataLayer || [];
         function gtag() {
           dataLayer.push(arguments);
@@ -29,7 +35,8 @@ const PIXEL_ID = import.meta.env.PUBLIC_META_PIXEL_ID;
           analytics_storage: 'granted',
         });
         gtag('js', new Date());
-        gtag('config', GA4_ID, { anonymize_ip: true });
+        if (GA4_ID) gtag('config', GA4_ID, { anonymize_ip: true });
+        if (ADS_ID) gtag('config', ADS_ID);
       </script>
     </Fragment>
   )
@@ -74,5 +81,14 @@ const PIXEL_ID = import.meta.env.PUBLIC_META_PIXEL_ID;
         />
       </noscript>
     </Fragment>
+  )
+}
+{
+  DEV && (!GA4_ID || !ADS_ID || !PIXEL_ID) && (
+    <script is:inline define:vars={{ GA4_ID, ADS_ID, PIXEL_ID }}>
+      if (!GA4_ID) console.warn('[analytics] PUBLIC_GA4_ID is not set - GA4 will not load.');
+      if (!ADS_ID) console.warn('[analytics] PUBLIC_GOOGLE_ADS_ID is not set - Google Ads conversions will not fire.');
+      if (!PIXEL_ID) console.warn('[analytics] PUBLIC_META_PIXEL_ID is not set - the Meta Pixel will not load.');
+    </script>
   )
 }

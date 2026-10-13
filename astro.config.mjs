@@ -59,7 +59,12 @@ export default defineConfig({
         !page.includes('/keystatic') &&
         !page.includes('/api/') &&
         !page.includes('/og-') &&
-        !page.includes('/ai-visibility/thanks'),
+        !page.includes('/ai-visibility/thanks') &&
+        // Lead-magnet confirmation pages + the guide are noindex.
+        !page.includes('/real-cost/thanks') &&
+        !page.includes('/scorecard/results') &&
+        !page.includes('/ai-snapshot/thanks') &&
+        !page.includes('/guides/'),
     }),
   ],
 });

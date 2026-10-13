@@ -1,0 +1,148 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+
+const revenueOptions = ['Under $1M', '$1M – $5M', '$5M – $20M', '$20M+'];
+---
+<LandingLayout
+  title="The Real Cost of Marketing Help in San Diego"
+  description="Free guide: a hire, an agency, or a fractional CMO - what each really costs in San Diego, what you get, and how to tell which one your business needs right now."
+  path="/real-cost"
+>
+  <section class="lp">
+    <div class="lp-grid">
+      <div class="lp-copy">
+        <p class="eyebrow">Free guide for San Diego business owners</p>
+        <h1>You need marketing help. <span class="grad-text">Which kind?</span></h1>
+        <p class="sub">A full-time hire, an agency, or a fractional CMO. Here's what each one really costs in San Diego, what you actually get, and how to tell which one your business needs right now.</p>
+
+        <div class="inside">
+          <p class="inside-h">What's inside</p>
+          <ul>
+            <li>The fully loaded cost of a San Diego marketing hire, using federal wage data</li>
+            <li>What agencies usually do (and the part they usually don't)</li>
+            <li>What a fractional CMO is, and when it's the smarter move</li>
+            <li>A one-page decision guide: which option fits your stage</li>
+          </ul>
+        </div>
+
+        <div class="trust">
+          <span>Founder-led</span>
+          <span>In person in San Diego</span>
+          <span>Month to month, no long-term contracts</span>
+        </div>
+
+        <div class="who">
+          <p><strong>Who's behind this.</strong> Revvia is a San Diego growth studio that runs strategy and execution for businesses too big for a freelancer and too small for the national agencies. <a href="/about">More about Revvia →</a></p>
+        </div>
+      </div>
+
+      <div class="lp-formcol">
+        <form
+          id="real-cost-form"
+          class="lp-form"
+          name="real-cost-guide"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          action="/real-cost/thanks"
+        >
+          <input type="hidden" name="form-name" value="real-cost-guide" />
+          <p class="hp" hidden><label>Don't fill this out: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+
+          <p class="lp-form-h">Get the free guide</p>
+
+          <label class="field"><span>Name</span>
+            <input name="name" type="text" autocomplete="name" required placeholder="First & last" />
+          </label>
+          <label class="field"><span>Email</span>
+            <input name="email" type="email" autocomplete="email" required placeholder="you@business.com" />
+          </label>
+          <label class="field"><span>Business name</span>
+            <input name="business" type="text" autocomplete="organization" required placeholder="Your business" />
+          </label>
+          <label class="field"><span>Annual revenue</span>
+            <select name="revenue" required>
+              <option value="">Select one</option>
+              {revenueOptions.map((o) => <option>{o}</option>)}
+            </select>
+          </label>
+          <label class="field"><span>Phone <em>(optional)</em></span>
+            <input name="phone" type="tel" autocomplete="tel" placeholder="(760) 555-0123" />
+          </label>
+
+          <!-- Ad attribution (section 2c), filled on submit -->
+          <input type="hidden" name="fbclid" />
+          <input type="hidden" name="gclid" />
+          <input type="hidden" name="fbc" />
+          <input type="hidden" name="fbp" />
+          <input type="hidden" name="utm_source" />
+          <input type="hidden" name="utm_medium" />
+          <input type="hidden" name="utm_campaign" />
+          <input type="hidden" name="utm_content" />
+          <input type="hidden" name="utm_term" />
+          <input type="hidden" name="landing_url" />
+          <input type="hidden" name="event_id" />
+
+          <button type="submit" class="lp-btn">Send me the guide →</button>
+          <p class="lp-fine">No spam. We'll email the guide and a few useful follow-ups. Unsubscribe anytime.</p>
+          <p class="lp-error" data-error hidden>Something went wrong. Please try again.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</LandingLayout>
+
+<script>
+  import { wireLeadForm } from '../lib/conversion';
+  const form = document.getElementById('real-cost-form') as HTMLFormElement | null;
+  if (form) wireLeadForm(form, 'real-cost', '/real-cost/thanks');
+</script>
+
+<style>
+  .lp { max-width: 1120px; margin: 0 auto; padding: 36px 16px 72px; }
+  .lp-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: start; }
+  .lp-copy h1 {
+    font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; letter-spacing: -0.02em;
+    font-size: clamp(34px, 5.4vw, 56px); line-height: 1.04; margin: 14px 0 18px;
+  }
+  .lp-copy .sub { color: var(--muted); font-size: clamp(17px, 2vw, 20px); line-height: 1.6; max-width: 560px; }
+  .inside { margin: 30px 0; }
+  .inside-h { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); font-weight: 700; margin-bottom: 12px; }
+  .inside ul { list-style: none; display: grid; gap: 12px; }
+  .inside li { color: #e6e8ee; padding-left: 28px; position: relative; font-size: 16px; line-height: 1.5; }
+  .inside li::before { content: ""; position: absolute; left: 0; top: 7px; width: 13px; height: 13px; border-radius: 4px; background: var(--grad); }
+  .trust { display: flex; flex-wrap: wrap; gap: 10px 22px; margin: 26px 0; }
+  .trust span { color: var(--muted); font-size: 14px; display: inline-flex; align-items: center; gap: 9px; }
+  .trust span::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--grad); }
+  .who { border-top: 1px solid var(--line); padding-top: 22px; }
+  .who p { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 540px; }
+  .who strong { color: #fff; }
+  .who a { color: var(--m); font-weight: 600; }
+
+  .lp-formcol { position: sticky; top: 24px; }
+  .lp-form {
+    background: var(--card); border: 1px solid var(--line-2); border-radius: 16px; padding: 28px;
+    display: grid; gap: 14px;
+  }
+  .lp-form-h { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; margin-bottom: 4px; }
+  .field { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
+  .field em { font-style: normal; opacity: 0.7; }
+  .field input, .field select {
+    background: #101119; border: 1px solid var(--line-2); border-radius: 10px; color: #f4f5f7;
+    padding: 13px 14px; font: 400 15px Inter, system-ui, sans-serif; width: 100%; box-sizing: border-box;
+  }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--m); }
+  .lp-btn {
+    margin-top: 6px; background: var(--grad); color: #fff; border: 0; border-radius: 10px;
+    padding: 15px 22px; font: 600 16px Inter, system-ui, sans-serif; cursor: pointer; transition: transform 0.15s;
+  }
+  .lp-btn:hover { transform: translateY(-1px); }
+  .lp-btn:disabled { opacity: 0.6; cursor: wait; }
+  .lp-fine { color: var(--muted-2); font-size: 12.5px; margin-top: 2px; }
+  .lp-error { color: #ff7a7a; font-size: 14px; margin-top: 2px; }
+
+  @media (max-width: 860px) {
+    .lp-grid { grid-template-columns: 1fr; gap: 32px; }
+    .lp-formcol { position: static; }
+  }
+</style>
