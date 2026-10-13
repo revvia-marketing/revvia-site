@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CTASection from '../components/CTASection.astro';
+import { breadcrumbSchema, faqPageSchema, type FaqItem } from '../lib/schema';
+
+const path = '/how-we-work';
+const description =
+  'How Revvia prices, contracts, measures, and reports results - month-to-month, you own your accounts, and every published result is verified.';
+
+// Each section renders a visible heading + body. The FAQPage JSON-LD is built
+// from the same body text (phrased as a question), so the structured data and
+// the visible copy never drift.
+const sections: { q: string; h: string; body: string }[] = [
+  {
+    q: "How does Revvia's pricing work?",
+    h: 'How pricing works',
+    body: "Engagements typically start from $3,500 per month. Pricing is a monthly base, plus a small percentage of ad spend, plus a growth bonus we only earn when we beat your agreed efficiency baseline. You pay ad platforms directly - we never mark up or invoice your ad spend. Pricing and scope are reviewed together at day 90 and day 180.",
+  },
+  {
+    q: "What's included in a Revvia agreement?",
+    h: "What's in the agreement",
+    body: "Month-to-month, with no long-term lock-in. Cancel with written notice per your agreement. Included: up to four strategy calls a month (more as needed) and the production tools we use to make your content. Not included: your own platform costs - website hosting, Shopify or WordPress, domains, and software you run.",
+  },
+  {
+    q: 'Do I own my ad accounts?',
+    h: 'You own your accounts',
+    body: "Your Google Ads, Meta Business Manager, GA4, website, CRM, and customer lists stay in your name. We're granted access, never ownership. If we part ways, everything stays with you.",
+  },
+  {
+    q: 'How does a Revvia engagement run?',
+    h: 'How an engagement runs',
+    body: "Tuning (days 1-90): tracking, foundations, and first campaigns. Rehearsal (days 91-180): the creative build, anchored by a brand video. Performance (day 181 on): scale what's working.",
+  },
+  {
+    q: 'How does Revvia measure results?',
+    h: 'How we measure results',
+    body: "We report to revenue, not impressions: blended MER, return on ad spend, cost per lead or acquisition, and attributed revenue. Each has limits - attribution is an estimate, and revenue isn't profit - so we show you how every number is built.",
+  },
+  {
+    q: 'What happens if a campaign underperforms?',
+    h: 'What happens when a campaign underperforms',
+    body: "We call a working session, show you the data, and fix, shift, or pause spend. We won't let you keep paying for a campaign that isn't working.",
+  },
+  {
+    q: 'How does Revvia verify case-study results?',
+    h: 'How we report results publicly',
+    body: "Every result in our case studies is verified against the client's own platform data and published with the client's approval. Many clients ask us to keep dollar figures private under NDA, so we often publish percentages and multiples over a defined window instead - and say so when we've withheld something.",
+  },
+  {
+    q: 'Who is Revvia not a fit for?',
+    h: "Who we're not a fit for",
+    body: "Businesses under roughly $300K in revenue, anyone looking for a single-channel vendor, and anyone who wants us to promise results before we've seen the data. If we're not the right fit, we'll tell you on the first call.",
+  },
+  {
+    q: 'Can I talk to a current Revvia client?',
+    h: 'Want to talk to a current client?',
+    body: "At proposal stage, we'll connect you with a current client in a business similar to yours.",
+  },
+];
+
+const faqs: FaqItem[] = sections.map((s) => ({ question: s.q, answer: s.body }));
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'How We Work', url: path },
+  ]),
+  faqPageSchema(faqs),
+];
+---
+<BaseLayout title="How We Work" description={description} path={path} schemas={schemas}>
+  <header class="page-hero">
+    <div class="page-hero-in">
+      <div class="eyebrow">How we work</div>
+      <h1>Clear terms. Verified results. <span class="grad-text">No surprises.</span></h1>
+      <p class="sub">Exactly how we price, contract, measure, and report - so you know what you're getting before you ever sign. Month-to-month, you own your accounts, and every published result is verified.</p>
+      <a href="/contact" class="btn btn-lg">Get a Growth Audit</a>
+    </div>
+  </header>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="hww">
+        {sections.map((s) => (
+          <div class="hww-sec">
+            <h2>{s.h}</h2>
+            <p>{s.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    heading="Ready when you are."
+    lead="Start with a growth audit - we'll show you exactly where your growth is leaking, with no commitment."
+  />
+</BaseLayout>
+
+<style>
+  .hww { max-width: 820px; display: grid; gap: 4px; }
+  .hww-sec { padding: 26px 0; border-top: 1px solid var(--line); }
+  .hww-sec:first-child { border-top: none; padding-top: 0; }
+  .hww-sec h2 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: clamp(22px, 3vw, 28px);
+    letter-spacing: -0.01em;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  .hww-sec p { font-size: 17px; color: #cfd3db; line-height: 1.6; max-width: 760px; }
+</style>

@@ -12,7 +12,6 @@ import { resolveCover } from '../lib/images';
 import {
   localBusinessSchema,
   faqPageSchema,
-  reviewSchema,
   type FaqItem,
 } from '../lib/schema';
 
@@ -33,9 +32,9 @@ const why = [
 ];
 
 const reviews = [
-  { p: "Tim and his team 'get it,' and Revvia has worked intimately with our team and product to build strategic growth and follow our lead in brand recognition and more. Looking forward to a successful year together.", who: 'Jamie Cohen', sub: 'Strategic Growth Partner' },
-  { p: "We've been working with Tim and his team for over two years now, and it's been a great experience. They've helped us grow our social media following significantly and have done an awesome job keeping our content fresh and engaging. It really feels like they care about our business and want to see us succeed.", who: 'Aubrey Lancon', sub: 'Two Years and Growing' },
-  { p: "Working with Revvia has been one of the best decisions we've made for our marketing. What really sets them apart is that they don't just bring great ideas to the table - they also listen. It's refreshing to work with a marketing company that truly feels like an extension of our own team.", who: 'Sam Dobel', sub: 'Drain Mob' },
+  { p: "Tim and his team 'get it,' and Revvia has worked intimately with our team and product to build strategic growth and follow our lead in brand recognition and more. Looking forward to a successful year together.", who: 'Jamie Cohen', sub: 'COO, Voyage Air Guitar' },
+  { p: "We've been working with Tim and his team for over two years now, and it's been a great experience. They've helped us grow our social media following significantly and have done an awesome job keeping our content fresh and engaging. It really feels like they care about our business and want to see us succeed.", who: 'Aubrey Lancon', sub: 'COO, WOT Marine' },
+  { p: "Working with Revvia has been one of the best decisions we've made for our marketing. What really sets them apart is that they don't just bring great ideas to the table - they also listen. It's refreshing to work with a marketing company that truly feels like an extension of our own team.", who: 'Sam Dobel', sub: 'Operations Manager, Drain Mob' },
 ];
 
 const faqs: FaqItem[] = [
@@ -47,17 +46,17 @@ const faqs: FaqItem[] = [
   { question: "Does Revvia work with healthcare practices and medical offices?", answer: "Yes. Revvia works with medical practices and healthcare offices, including HIPAA-compliant advertising and lead tracking, schema architecture, and AI visibility built for how patients now search." },
   { question: "Who do you work with?", answer: "Founder-led and growing businesses across home services, B2B and industrial, healthcare and professional practices, and consumer brands - typically $300K to $8M in revenue, here in Southern California. Too big for a freelancer, too small for the national agencies." },
   { question: "Where is Revvia located and what areas does it serve?", answer: "Revvia is based in Carlsbad and serves San Diego County, North County San Diego, Orange County, and the rest of Southern California - full-stack and in person." },
-  { question: "How does your pricing work?", answer: "A monthly base plus a small percentage of ad spend, plus a growth bonus we only earn when we beat your efficiency baseline. Month-to-month, with pricing that stays the same. We win when you win." },
+  { question: "How does your pricing work?", answer: "Engagements typically start from $3,500 per month. It's a monthly base plus a small percentage of ad spend, plus a growth bonus we only earn when we beat your efficiency baseline. Month-to-month, with pricing that stays the same. We win when you win." },
   { question: "Am I locked into a long contract?", answer: "No. Every engagement is month-to-month. We earn the relationship each month - no multi-year lock-ins and no hidden fees." },
+  { question: "What happens if I want to cancel?", answer: "Engagements are month-to-month. Cancel with written notice per your agreement - no long-term lock-in." },
+  { question: "Do I own my ad accounts and data?", answer: "Yes. Your Google Ads, Meta, analytics, website, CRM, and customer lists stay in your name. We're granted access, never ownership.", href: "/how-we-work", linkLabel: "More on how we work" },
+  { question: "How do you verify the results in your case studies?", answer: "Every published result is checked against the client's own platform data - Shopify, ServiceTitan, ad platforms, and the like - and published with their approval. When a client keeps figures private under NDA, we say so.", href: "/how-we-work", linkLabel: "More on how we work" },
+  { question: "Can I talk to a current client?", answer: "Yes. At proposal stage, we'll connect you with a current client in a business similar to yours." },
   { question: "Do you really produce everything in-house?", answer: "Yes. Photo, video, and creative are produced by our own team - on location and in person, not outsourced or art-directed over Slack." },
   { question: "How do we get started?", answer: "Start with a growth audit. We'll show you exactly where your growth is leaking, with no commitment - then you decide what's next." },
 ];
 
-const schemas = [
-  localBusinessSchema(),
-  faqPageSchema(faqs),
-  ...reviewSchema(reviews),
-];
+const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
 ---
 <BaseLayout
   title="Revvia - San Diego Full-Service Growth Studio"

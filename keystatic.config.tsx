@@ -159,6 +159,10 @@ export default config({
           { label: 'Transform (before → after hero card)' }
         ),
         date: fields.date({ label: 'Date', defaultValue: { kind: 'today' } }),
+        updated: fields.date({
+          label: 'Last updated',
+          description: 'Shown as "Last updated <month year>" and used as the Article dateModified.',
+        }),
         coverImage: fields.image({
           label: 'Cover image',
           directory: 'src/assets/case-studies',
@@ -170,6 +174,17 @@ export default config({
             label: fields.text({ label: 'Label', multiline: true }),
           }),
           { label: 'Stats', itemLabel: (props) => props.fields.value.value || 'Stat' }
+        ),
+        verification: fields.object(
+          {
+            metric: fields.text({ label: 'Metric' }),
+            window: fields.text({ label: 'Window' }),
+            baseline: fields.text({ label: 'Baseline', multiline: true }),
+            dataSource: fields.text({ label: 'Data source / method', multiline: true }),
+            context: fields.text({ label: 'Context', multiline: true }),
+            line: fields.text({ label: 'Verification line', multiline: true }),
+          },
+          { label: 'How this result was verified' }
         ),
         ctaHeading: fields.text({ label: 'Closing CTA heading' }),
         ctaLead: fields.text({ label: 'Closing CTA lead', multiline: true }),

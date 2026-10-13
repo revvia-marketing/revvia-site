@@ -7,6 +7,8 @@
 import {
   SITE_URL,
   SITE_NAME,
+  ORG_NAME,
+  ORG_ALTERNATE,
   NAP,
   SOCIALS,
   DEFAULT_DESCRIPTION,
@@ -42,7 +44,8 @@ export function organizationSchema() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     '@id': ORG_ID,
-    name: SITE_NAME,
+    name: ORG_NAME,
+    alternateName: [...ORG_ALTERNATE],
     legalName: NAP.legalName,
     url: SITE_URL,
     logo: LOGO_URL,
@@ -109,7 +112,8 @@ export function localBusinessSchema() {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
     '@id': LOCALBUSINESS_ID,
-    name: SITE_NAME,
+    name: ORG_NAME,
+    alternateName: [...ORG_ALTERNATE],
     legalName: NAP.legalName,
     description: NAP.description,
     url: SITE_URL,
@@ -141,7 +145,13 @@ export function localBusinessSchema() {
   };
 }
 
-export type FaqItem = { question: string; answer: string };
+export type FaqItem = {
+  question: string;
+  answer: string;
+  /** Optional nav link rendered under the answer (not part of the JSON-LD). */
+  href?: string;
+  linkLabel?: string;
+};
 
 export function faqPageSchema(items: FaqItem[]) {
   return {
@@ -277,28 +287,6 @@ export function collectionPageSchema(opts: {
     }));
   }
   return node;
-}
-
-/**
- * Review nodes for the testimonials shown on a page (homepage). Each references
- * the Organization via itemReviewed @id, so the graph ties the review to the
- * entity. Emit ONLY on pages where the review text is visible, so the visible
- * copy and the structured data never drift. `who` = author, `p` = review body.
- */
-export function reviewSchema(reviews: readonly { who: string; p: string }[]) {
-  return reviews.map((r) => ({
-    '@context': 'https://schema.org',
-    '@type': 'Review',
-    itemReviewed: { '@id': ORG_ID },
-    author: { '@type': 'Person', name: r.who },
-    reviewBody: r.p,
-    reviewRating: {
-      '@type': 'Rating',
-      ratingValue: 5,
-      bestRating: 5,
-      worstRating: 1,
-    },
-  }));
 }
 
 export function itemListSchema(opts: {

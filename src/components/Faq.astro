@@ -9,12 +9,22 @@ interface Props { items: FaqItem[]; openFirst?: boolean; }
 const { items, openFirst = false } = Astro.props;
 ---
 <div class="faq">
+  {/* An optional per-item link (e.g. "More on how we work ->") renders under the
+      answer; it is navigation, not part of the FAQPage answer text / JSON-LD. */}
   {
     items.map((item, i) => (
       <details open={openFirst && i === 0}>
         <summary>{item.question}</summary>
         <p>{item.answer}</p>
+        {item.href && (
+          <p class="faq-more"><a class="grad-text" href={item.href}>{item.linkLabel ?? 'Learn more'} →</a></p>
+        )}
       </details>
     ))
   }
 </div>
+
+<style>
+  .faq-more { margin-top: 10px; }
+  .faq-more a { font-weight: 600; font-size: 14.5px; }
+</style>

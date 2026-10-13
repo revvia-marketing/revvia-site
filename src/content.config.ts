@@ -48,10 +48,22 @@ const caseStudies = defineCollection({
       })
       .optional(),
     date: z.coerce.date().optional(),
+    updated: z.coerce.date().optional(),
     coverImage: z.string().optional(),
     stats: z
       .array(z.object({ value: z.string(), label: z.string() }))
       .default([]),
+    // "How this result was verified" box (rendered under the headline result).
+    verification: z
+      .object({
+        metric: z.string().optional(),
+        window: z.string().optional(),
+        baseline: z.string().optional(),
+        dataSource: z.string().optional(),
+        context: z.string().optional(),
+        line: z.string().optional(),
+      })
+      .optional(),
     ctaHeading: z.string().optional(),
     ctaLead: z.string().optional(),
     metaTitle: z.string().optional(),

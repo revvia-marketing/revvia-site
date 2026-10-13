@@ -52,6 +52,7 @@ const schemas = [
       <div class="story">
         <p>Revvia started in early 2020 as First Door Marketing, built to keep churches and nonprofits alive through the pandemic - when their doors were closed and their support was disappearing. The brief was simple: <strong>do whatever it takes</strong> to connect these organizations with the people looking for them. We stood up a fractional CMO function and went to work. While most struggled, our clients set records - donations and online attendance climbed.</p>
         <p>When businesses reopened in 2022, they came to those same nonprofit clients frustrated: five figures a month on marketing, and nothing moving. We were introduced, we ran the same playbook, and it worked - big time. Inside six months, <strong>every business client had grown revenue at least 50% year over year.</strong></p>
+        <p class="src-note">Documented; details available on request.</p>
         <p>That's when Revvia became Revvia. And the insight that started it still runs everything: don't act like a marketing company. Be the client's Chief Marketing Officer and their whole team, and obsess over the only thing that matters - revenue.</p>
         <div class="pull grad-text">Tim started this as a pastor. He still says he answers to a higher power than your checkbook.</div>
         <p>That's why the work is honest, the contracts are month to month, and there are no confusing charges or hidden fees. And if we're not the right fit for your brand, <strong>you'll hear it on the first call.</strong></p>
@@ -91,8 +92,36 @@ const schemas = [
           <p>Tim Holt is the founder and CEO of Revvia, a production-led, full-service growth studio in North County San Diego serving home services, B2B, healthcare, and consumer businesses.</p>
           <p>He started taking on marketing work as a side gig in 2014 and turned it into Revvia in 2020 - back when he was still pastoring a church. That's where his north star comes from: he likes to say he answers to a higher power than your checkbook.</p>
           <p>It's not just a line. Tim built Revvia around proof instead of promises - real revenue, real customers, receipts you can check - because he'd rather show a founder the work than sell them a story. His campaigns have driven more than a billion impressions for brands and nonprofits, but the number he actually cares about is the one on your P&amp;L.</p>
+          <p class="src-note">Documented; details available on request.</p>
           <p>A lifelong Southern Californian, Tim still does a lot of the building himself, working shoulder-to-shoulder with the founders he partners with. When he's off the clock, he's surfing or playing guitar. He and his wife Meghan live in North County San Diego with their five kids - Declan, Ronan, Sawyer, Johnny, and Haven.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">The company</div>
+      <h2 class="sec">The facts, on the record.</h2>
+      <dl class="facts">
+        <div><dt>Legal entity</dt><dd>First Door, LLC, doing business as Revvia Marketing</dd></div>
+        <div><dt>Founded</dt><dd>2020, as First Door Marketing</dd></div>
+        <div><dt>Founder &amp; CEO</dt><dd>Tim Holt</dd></div>
+        <div><dt>Office</dt><dd>5927 Priestly Dr. #212, Carlsbad, CA</dd></div>
+        <div><dt>Serving</dt><dd>San Diego County, Orange County, and Southern California</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="psec">
+    <div class="wrap">
+      <div class="eyebrow blk">The team</div>
+      <h2 class="sec">The people on your account.</h2>
+      <div class="team">
+        <div class="tcard"><div class="tname">Tim Holt</div><div class="trole grad-text">Founder &amp; CEO</div></div>
+        <div class="tcard"><div class="tname">Kennedi</div><div class="trole grad-text">Creative Director</div></div>
+        <div class="tcard"><div class="tname">Abby Moreno</div><div class="trole grad-text">Marketing Associate</div></div>
+        <div class="tcard"><div class="tname">Hudson Nilhas</div><div class="trole grad-text">Scheduling Assistant</div></div>
       </div>
     </div>
   </section>
@@ -136,6 +165,21 @@ const schemas = [
   .founder-title { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin: 4px 0 18px; display: inline-block; }
   .founder-bio p { font-size: 17px; color: #cfd3db; margin-bottom: 16px; }
   @media (max-width: 760px) { .founder-grid { grid-template-columns: 1fr; gap: 22px; } .founder-photo { max-width: 320px; } }
+
+  .src-note { font-size: 13px; color: var(--muted-2); margin: -8px 0 20px; font-style: italic; }
+
+  .facts { display: grid; gap: 0; max-width: 760px; border-top: 1px solid var(--line); margin-top: 8px; }
+  .facts > div { display: grid; grid-template-columns: 180px 1fr; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .facts dt { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); font-weight: 700; }
+  .facts dd { margin: 0; font-size: 16px; color: #cfd3db; }
+  @media (max-width: 560px) { .facts > div { grid-template-columns: 1fr; gap: 4px; } }
+
+  .team { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 8px; }
+  .tcard { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+  .tcard .tname { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #fff; }
+  .tcard .trole { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; margin-top: 6px; display: inline-block; }
+  @media (max-width: 760px) { .team { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 420px) { .team { grid-template-columns: 1fr; } }
 
   .vals { background: var(--bg-2); }
   .vcard { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px; }

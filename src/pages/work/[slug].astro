@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import CTASection from '../../components/CTASection.astro';
+import Verification from '../../components/Verification.astro';
 import { Image } from 'astro:assets';
 import { resolveImage, resolveCover } from '../../lib/images';
 import { articleSchema, breadcrumbSchema } from '../../lib/schema';
@@ -37,6 +38,7 @@ const schemas = [
     url,
     image: cover ? cover.src : '/og/revvia-og.png',
     datePublished: d.date ? d.date.toISOString().slice(0, 10) : undefined,
+    dateModified: d.updated ? d.updated.toISOString().slice(0, 10) : undefined,
     author: 'Revvia',
   }),
   breadcrumbSchema(crumbs),
@@ -89,6 +91,21 @@ const schemas = [
       )
     }
 
+    {d.verification && (
+      <Verification
+        metric={d.verification.metric}
+        window={d.verification.window}
+        baseline={d.verification.baseline}
+        dataSource={d.verification.dataSource}
+        context={d.verification.context}
+        line={d.verification.line}
+      />
+    )}
+
+    {d.updated && (
+      <p class="cs-updated">Last updated: {d.updated.toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' })}</p>
+    )}
+
     {cover && (
       <figure class="cs-cover">
         <Image src={cover} alt={`${d.client} - Revvia case study`} widths={[480, 800, 1080]} sizes="(max-width: 1080px) 100vw, 1080px" />
@@ -135,6 +152,8 @@ const schemas = [
     .stat:nth-child(2) { border-right: none; }
     .stat:nth-child(1), .stat:nth-child(2) { border-bottom: 1px solid var(--line); }
   }
+
+  .cs-updated { margin: 14px 0 0; font-size: 13px; color: var(--muted-2); font-style: italic; }
 
   .cs-cover { margin: 34px 0 0; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); }
   .cs-cover :global(img) { width: 100%; height: auto; display: block; }

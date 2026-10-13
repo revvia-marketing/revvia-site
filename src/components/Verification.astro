@@ -1,0 +1,85 @@
+---
+/**
+ * "How this result was verified" box - rendered directly under a case study's
+ * headline result. Fields come from the case study's `verification` frontmatter
+ * (see content.config.ts). Rows with no value are omitted. The verification
+ * line is the standing statement about how the figure was checked.
+ */
+interface Props {
+  metric?: string;
+  window?: string;
+  baseline?: string;
+  dataSource?: string;
+  context?: string;
+  line?: string;
+}
+const { metric, window: win, baseline, dataSource, context, line } = Astro.props;
+
+const rows = (
+  [
+    ['Metric', metric],
+    ['Window', win],
+    ['Baseline', baseline],
+    ['Data source', dataSource],
+    ['Context', context],
+  ] as const
+).filter(([, value]) => Boolean(value));
+---
+{(rows.length > 0 || line) && (
+  <section class="verify" aria-label="How this result was verified">
+    <h2 class="verify-head">How this result was verified</h2>
+    {rows.length > 0 && (
+      <dl class="verify-grid">
+        {rows.map(([label, value]) => (
+          <div class="row"><dt>{label}</dt><dd>{value}</dd></div>
+        ))}
+      </dl>
+    )}
+    {line && <p class="verify-line">{line}</p>}
+  </section>
+)}
+
+<style>
+  .verify {
+    margin: 30px 0 0;
+    padding: 26px 28px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+  }
+  .verify-head {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: #fff;
+    margin: 0 0 16px;
+    letter-spacing: -0.01em;
+  }
+  .verify-grid { display: grid; gap: 0; margin: 0; }
+  .verify-grid .row {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 16px;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+  }
+  .verify-grid dt {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted-2);
+    font-weight: 700;
+  }
+  .verify-grid dd { margin: 0; font-size: 15.5px; color: #cfd3db; line-height: 1.5; }
+  .verify-line {
+    margin: 16px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  @media (max-width: 560px) {
+    .verify-grid .row { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>

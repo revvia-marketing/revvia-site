@@ -10,6 +10,12 @@ export const SITE_URL = (
 
 export const SITE_NAME = 'Revvia';
 export const LEGAL_NAME = 'First Door, LLC';
+/**
+ * Full organization name (the DBA) and its alternates, for structured data.
+ * The display brand across the UI stays "Revvia" (SITE_NAME).
+ */
+export const ORG_NAME = 'Revvia Marketing';
+export const ORG_ALTERNATE = ['Revvia', 'First Door Marketing'] as const;
 export const TAGLINE = 'Marketing how it should be.';
 export const DEFAULT_DESCRIPTION =
   'Revvia is a San Diego, production-led, full-service growth studio - full-stack and in person, run by the founder. We serve home services, B2B and industrial, healthcare and professional practices, and consumer brands. Revenue over impressions, month-to-month.';
@@ -122,7 +128,7 @@ export const EXPERTISE_TOPICS = [
  */
 export const SEGMENTS = [
   { label: 'Home services and trades', blurb: 'Revvia works with construction, plumbing, and contracting businesses - brand, video, search, AI visibility, and paid media that bring in qualified jobs.', href: '/work/steady-builders' },
-  { label: 'B2B and industrial', blurb: 'Revvia works with manufacturers, fabricators, fulfillment operations, and engineering firms that sell to other businesses.', href: '/journal/tmc-engineering' },
+  { label: 'B2B and industrial', blurb: 'Revvia works with manufacturers, fabricators, fulfillment operations, and engineering firms that sell to other businesses.', href: null },
   { label: 'Healthcare and professional practices', blurb: 'Revvia works with medical practices and professional services firms, with HIPAA-compliant advertising and lead tracking for healthcare.', href: '/work/coastal-internal-medicine' },
   { label: 'DTC and ecommerce', blurb: 'Revvia works with consumer brands across retail and wholesale - paid media, in-house content, and retention.', href: '/work/peter-grimm' },
   { label: 'Education and specialty', blurb: 'Revvia works with schools, nonprofits, and niche consumer services.', href: null },
@@ -133,6 +139,7 @@ export const CTA = { label: 'Get a Growth Audit', href: '/contact' } as const;
 /** Footer link set (primary links + Contact). */
 export const FOOTER_LINKS = [
   ...NAV_LINKS,
+  { label: 'How We Work', href: '/how-we-work' },
   { label: 'Contact', href: '/contact' },
 ] as const;
 
