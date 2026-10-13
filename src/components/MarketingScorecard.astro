@@ -23,6 +23,7 @@
         <li>Your results are shown instantly and emailed to you</li>
       </ul>
       <button type="button" class="rsc-btn" data-action="start">Start the scorecard →</button>
+      <p class="rsc-micro">10 questions · about 3 minutes · instant results</p>
     </div>
 
     <!-- QUESTIONS (rendered by script) -->
@@ -111,6 +112,7 @@
         <input type="hidden" name="event_id" />
 
         <button type="submit" class="rsc-btn rsc-submit">See my score →</button>
+        <ul class="rsc-reassure"><li>Instant results</li><li>No spam</li><li>Phone optional</li></ul>
         <p class="rsc-fine">No spam. We'll send your results and a few useful follow-ups. Unsubscribe anytime.</p>
         <p class="rsc-error" data-error hidden>Something went wrong sending your results. Please try again.</p>
       </form>
@@ -365,7 +367,11 @@
     padding: 13px 14px; font: 400 15px Inter, system-ui, sans-serif; width: 100%; box-sizing: border-box;
   }
   .rsc-field input:focus, .rsc-field select:focus { outline: none; border-color: var(--rsc-pink); }
-  .rsc-fine { color: var(--rsc-muted); font-size: 13px; margin: 14px 0 0; }
+  .rsc-micro { color: var(--rsc-muted); font-size: 13.5px; margin: 14px 0 0; }
+  .rsc-reassure { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 14px 0 0; padding: 0; }
+  .rsc-reassure li { color: var(--rsc-muted); font-size: 13px; display: inline-flex; align-items: center; gap: 7px; }
+  .rsc-reassure li::before { content: "\2713"; color: #fe9c1c; font-weight: 700; }
+  .rsc-fine { color: var(--rsc-muted); font-size: 13px; margin: 10px 0 0; }
   .rsc-error { color: #ff7a7a; font-size: 14px; margin: 10px 0 0; }
   @media (max-width: 640px) {
     .rsc { padding: 32px 16px 56px; }

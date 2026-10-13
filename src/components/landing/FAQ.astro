@@ -1,0 +1,48 @@
+---
+/**
+ * Accessible FAQ accordion (<details>/<summary>) + FAQPage JSON-LD generated
+ * from the same `items` array, so the visible Q&A and the structured data never
+ * drift. Uses the site's shared faqPageSchema builder.
+ */
+import { faqPageSchema, type FaqItem } from '../../lib/schema';
+interface Props { items: FaqItem[]; heading?: string; tone?: 'base' | 'alt'; }
+const { items, heading = 'Questions, answered.', tone = 'base' } = Astro.props;
+const schema = faqPageSchema(items);
+---
+<section class:list={['lp-section', { alt: tone === 'alt' }]}>
+  <div class="lp-wrap lp-faq-wrap">
+    <div class="lp-sec-head">
+      <div class="eyebrow">FAQ</div>
+      <h2>{heading}</h2>
+    </div>
+    <div class="lp-faq">
+      {items.map((item) => (
+        <details>
+          <summary>{item.question}</summary>
+          <p>{item.answer}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+<style>
+  .lp-faq-wrap { max-width: 760px; }
+  .lp-faq details {
+    border: 1px solid var(--line-2); border-radius: 12px; background: var(--card);
+    padding: 0 20px; margin-bottom: 12px;
+  }
+  .lp-faq summary {
+    cursor: pointer; list-style: none; padding: 18px 0; font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700; font-size: 16.5px; color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  }
+  .lp-faq summary::-webkit-details-marker { display: none; }
+  .lp-faq summary::after {
+    content: "+"; color: var(--m); font-size: 22px; font-weight: 400; line-height: 1; flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  .lp-faq details[open] summary::after { transform: rotate(45deg); }
+  .lp-faq p { color: var(--muted); font-size: 15.5px; line-height: 1.6; padding: 0 0 20px; margin: 0; }
+  .lp-faq summary:focus-visible { outline: 2px solid var(--m); outline-offset: 3px; border-radius: 6px; }
+</style>

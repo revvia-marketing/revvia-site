@@ -1,0 +1,47 @@
+---
+/**
+ * Three numbered steps, in a row on desktop (joined by a thin gradient line),
+ * stacked on mobile. `steps` is an array of one-sentence strings.
+ */
+interface Props { heading?: string; steps: string[]; tone?: 'base' | 'alt'; }
+const { heading = 'Three simple steps.', steps, tone = 'alt' } = Astro.props;
+---
+<section class:list={['lp-section', { alt: tone === 'alt' }]}>
+  <div class="lp-wrap">
+    <div class="lp-sec-head">
+      <div class="eyebrow">How it works</div>
+      <h2>{heading}</h2>
+    </div>
+    <ol class="hiw">
+      {steps.map((s, i) => (
+        <li class="hiw-step">
+          <span class="hiw-num" aria-hidden="true">{i + 1}</span>
+          <p>{s}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .hiw { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; position: relative; max-width: 940px; margin: 0 auto; }
+  /* gradient connector line behind the number badges (desktop) */
+  .hiw::before {
+    content: ""; position: absolute; top: 24px; left: 16%; right: 16%; height: 2px;
+    background: var(--grad); opacity: 0.5; z-index: 0;
+  }
+  .hiw-step { text-align: center; position: relative; z-index: 1; }
+  .hiw-num {
+    display: inline-flex; width: 48px; height: 48px; border-radius: 50%; align-items: center; justify-content: center;
+    background: var(--grad); color: #fff; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 20px;
+    margin-bottom: 16px; box-shadow: 0 0 0 6px var(--bg-2);
+  }
+  .hiw-step p { color: var(--muted); font-size: 16px; line-height: 1.55; max-width: 260px; margin: 0 auto; }
+  @media (max-width: 768px) {
+    .hiw { grid-template-columns: 1fr; gap: 24px; max-width: 420px; }
+    .hiw::before { display: none; }
+    .hiw-step { display: grid; grid-template-columns: 48px 1fr; gap: 16px; text-align: left; align-items: center; }
+    .hiw-num { margin-bottom: 0; }
+    .hiw-step p { margin: 0; max-width: none; }
+  }
+</style>

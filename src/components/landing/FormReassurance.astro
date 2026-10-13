@@ -1,0 +1,20 @@
+---
+/** A line of 2-3 small check items, shown under a form's submit button. */
+interface Props { items: string[]; }
+const { items } = Astro.props;
+---
+<ul class="form-reassure">
+  {items.map((i) => <li>{i}</li>)}
+</ul>
+
+<style>
+  .form-reassure {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 14px 0 0; padding: 0;
+  }
+  .form-reassure li {
+    color: var(--muted); font-size: 13px; display: inline-flex; align-items: center; gap: 7px;
+  }
+  .form-reassure li::before {
+    content: "\2713"; color: #fe9c1c; font-weight: 700; font-size: 13px;
+  }
+</style>

@@ -1,0 +1,95 @@
+---
+/**
+ * Full-time hire vs. Agency vs. Fractional CMO (Revvia) - qualitative only, no
+ * prices. Table on desktop, stacked cards on mobile (same data, rendered twice,
+ * toggled by CSS). Footnote links to the form.
+ */
+interface Props { heading: string; sub?: string; tone?: 'base' | 'alt'; }
+const { heading, sub, tone = 'base' } = Astro.props;
+
+const options = ['Full-time marketing hire', 'Marketing agency', 'Fractional CMO (Revvia)'];
+const rows = [
+  { label: 'Who sets strategy', vals: ["Your hire, if they're senior enough", 'Usually you', 'A senior marketing lead'] },
+  { label: 'Who does the work', vals: ['One person, many hats', 'A specialist in one channel', 'Strategy and the team that executes'] },
+  { label: 'Commitment', vals: ['Salary, benefits, hiring risk', 'Often a long contract', 'Month to month'] },
+  { label: 'Ramp time', vals: ['Months to hire and train', 'Weeks', 'Weeks'] },
+  { label: 'Best for', vals: ['$20M+ with a team to manage', 'One clear channel need', 'Growing businesses that need it all, owned'] },
+];
+---
+<section class:list={['lp-section', { alt: tone === 'alt' }]}>
+  <div class="lp-wrap">
+    <div class="lp-sec-head">
+      <div class="eyebrow">Compare</div>
+      <h2>{heading}</h2>
+      {sub && <p>{sub}</p>}
+    </div>
+
+    <!-- Desktop table -->
+    <div class="ct-table-wrap">
+      <table class="ct-table">
+        <thead>
+          <tr>
+            <th scope="col"><span class="sr-only">Attribute</span></th>
+            {options.map((o, i) => (
+              <th scope="col" class:list={{ 'ct-featured': i === 2 }}>{o}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr>
+              <th scope="row">{r.label}</th>
+              {r.vals.map((v, i) => (
+                <td class:list={{ 'ct-featured': i === 2 }}>{v}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Mobile stacked cards -->
+    <div class="ct-cards">
+      {options.map((o, i) => (
+        <div class:list={['ct-card', { 'ct-featured': i === 2 }]}>
+          <h3>{o}</h3>
+          <dl>
+            {rows.map((r) => (
+              <div><dt>{r.label}</dt><dd>{r.vals[i]}</dd></div>
+            ))}
+          </dl>
+        </div>
+      ))}
+    </div>
+
+    <p class="ct-foot">Our recommendation, not a study. <a href="#form" data-cta>The full guide has the San Diego wage data.</a></p>
+  </div>
+</section>
+
+<style>
+  .ct-table-wrap { overflow-x: auto; }
+  .ct-table { width: 100%; border-collapse: collapse; min-width: 680px; }
+  .ct-table th, .ct-table td { text-align: left; padding: 15px 16px; border-bottom: 1px solid var(--line); font-size: 15px; vertical-align: top; }
+  .ct-table thead th { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; color: #fff; font-size: 15px; }
+  .ct-table tbody th { color: var(--muted-2); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; width: 180px; }
+  .ct-table td { color: #d7dae2; }
+  .ct-table .ct-featured { background: rgba(214, 36, 143, 0.08); }
+  .ct-table thead th.ct-featured { background: rgba(214, 36, 143, 0.14); border-radius: 10px 10px 0 0; color: #fff; }
+
+  .ct-cards { display: none; }
+  .ct-card { background: var(--card); border: 1px solid var(--line-2); border-radius: 14px; padding: 20px; margin-bottom: 14px; }
+  .ct-card.ct-featured { border-color: var(--m); }
+  .ct-card h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #fff; margin-bottom: 12px; }
+  .ct-card dl { margin: 0; display: grid; gap: 10px; }
+  .ct-card dl > div { display: grid; grid-template-columns: 110px 1fr; gap: 12px; }
+  .ct-card dt { color: var(--muted-2); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; }
+  .ct-card dd { margin: 0; color: #d7dae2; font-size: 14.5px; }
+
+  .ct-foot { text-align: center; color: var(--muted-2); font-size: 13.5px; margin-top: 18px; }
+  .ct-foot a { color: var(--m); text-decoration: underline; text-underline-offset: 3px; }
+
+  @media (max-width: 760px) {
+    .ct-table-wrap { display: none; }
+    .ct-cards { display: block; }
+  }
+</style>

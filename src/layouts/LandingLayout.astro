@@ -55,6 +55,34 @@ const year = new Date().getFullYear();
     <script>
       import { initAttribution } from '../lib/attribution';
       initAttribution();
+
+      // CTA buttons (data-cta, href="#form" / "#scorecard"): smooth-scroll to
+      // the single form/quiz and move focus into its first visible field.
+      document.addEventListener('click', (e) => {
+        const t = e.target as HTMLElement;
+        const a = t.closest ? t.closest('a[data-cta]') : null;
+        if (!a) return;
+        const href = a.getAttribute('href') || '';
+        if (!href.startsWith('#')) return;
+        const target = document.querySelector(href);
+        if (!target) return;
+        e.preventDefault();
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+        const fields = target.querySelectorAll(
+          'input:not([type=hidden]):not([disabled]), select, textarea, button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        const field = Array.from(fields).find((el) => (el as HTMLElement).offsetParent !== null) as HTMLElement | undefined;
+        if (field) setTimeout(() => { try { field.focus({ preventScroll: true }); } catch (err) {} }, reduce ? 0 : 450);
+      });
+
+      // Inline validation on blur (not on every keystroke).
+      document.addEventListener('focusout', (e) => {
+        const el = e.target as HTMLInputElement;
+        if (!el || !el.matches || !el.matches('input, select, textarea')) return;
+        if (!el.hasAttribute('required')) return;
+        el.classList.toggle('field-invalid', !el.checkValidity());
+      }, true);
     </script>
   </body>
 </html>

@@ -1,0 +1,66 @@
+---
+/**
+ * Mobile-only (<768px) bottom CTA bar. Hidden until the hero has scrolled out
+ * of view, and hidden again while the form/quiz (`target`) is on screen
+ * (IntersectionObserver). The page must include a `#lp-hero-sentinel` element
+ * right after the hero. The button scrolls to `target` (data-cta -> focus).
+ */
+interface Props { label: string; target?: string; }
+const { label, target = '#form' } = Astro.props;
+---
+<div class="lp-sticky" id="lp-sticky" data-target={target} aria-hidden="true">
+  <a class="lp-sticky-btn" href={target} data-cta>{label}</a>
+</div>
+
+<script>
+  (() => {
+    const bar = document.getElementById('lp-sticky');
+    if (!bar) return;
+    const target = bar.getAttribute('data-target') || '#form';
+    const sentinel = document.getElementById('lp-hero-sentinel');
+    const formEl = document.querySelector(target);
+    let heroPassed = false;
+    let formVisible = false;
+
+    const update = () => {
+      const show = heroPassed && !formVisible;
+      bar.classList.toggle('show', show);
+      bar.setAttribute('aria-hidden', show ? 'false' : 'true');
+    };
+
+    if (sentinel && 'IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        const e = entries[0];
+        heroPassed = !e.isIntersecting && e.boundingClientRect.top < 0;
+        update();
+      }).observe(sentinel);
+    } else {
+      // Fallback: reveal after a bit of scrolling.
+      window.addEventListener('scroll', () => { heroPassed = window.scrollY > 500; update(); }, { passive: true });
+    }
+
+    if (formEl && 'IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        formVisible = entries[0].isIntersecting;
+        update();
+      }, { threshold: 0.12 }).observe(formEl);
+    }
+  })();
+</script>
+
+<style>
+  .lp-sticky {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 90;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: rgba(10, 10, 12, 0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--line-2);
+    transform: translateY(120%); transition: transform 0.25s ease;
+  }
+  .lp-sticky.show { transform: translateY(0); }
+  .lp-sticky-btn {
+    display: block; text-align: center; background: var(--grad); color: #fff; border-radius: 10px;
+    padding: 15px 20px; font: 600 16px Inter, system-ui, sans-serif;
+  }
+  @media (min-width: 768px) { .lp-sticky { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .lp-sticky { transition: none; } }
+</style>

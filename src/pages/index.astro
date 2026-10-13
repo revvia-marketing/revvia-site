@@ -9,6 +9,7 @@ import Comparison from '../components/Comparison.astro';
 import BrandStrip from '../components/BrandStrip.astro';
 import WhoWeServe from '../components/WhoWeServe.astro';
 import { resolveCover } from '../lib/images';
+import { TESTIMONIALS, RESULTS } from '../lib/proof';
 import {
   localBusinessSchema,
   faqPageSchema,
@@ -31,11 +32,9 @@ const why = [
   { t: 'Built for your size', d: 'Right-sized for $300K-$8M brands - too big for a freelancer, too small to be a rounding error at a national agency. Senior attention either way.' },
 ];
 
-const reviews = [
-  { p: "Tim and his team 'get it,' and Revvia has worked intimately with our team and product to build strategic growth and follow our lead in brand recognition and more. Looking forward to a successful year together.", who: 'Jamie Cohen', sub: 'COO, Voyage Air Guitar' },
-  { p: "We've been working with Tim and his team for over two years now, and it's been a great experience. They've helped us grow our social media following significantly and have done an awesome job keeping our content fresh and engaging. It really feels like they care about our business and want to see us succeed.", who: 'Aubrey Lancon', sub: 'COO, WOT Marine' },
-  { p: "Working with Revvia has been one of the best decisions we've made for our marketing. What really sets them apart is that they don't just bring great ideas to the table - they also listen. It's refreshing to work with a marketing company that truly feels like an extension of our own team.", who: 'Sam Dobel', sub: 'Operations Manager, Drain Mob' },
-];
+// Testimonials - single source of truth in src/lib/proof.ts (shared with the
+// landing pages so the published quotes never drift).
+const reviews = TESTIMONIALS;
 
 const faqs: FaqItem[] = [
   { question: "What does Revvia do?", answer: "We're a San Diego, full-service, production-led growth studio. We run paid media, SEO and AI visibility (GEO), brand and in-house video, email and SMS retention, and clean tracking - all under one roof, in person." },
@@ -135,8 +134,8 @@ const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
           mediaStyle="background:linear-gradient(145deg,#0e1a26,#12222e 70%,#0a1016)"
           tag="Home services · North County"
           name="Steady Builders"
-          stat="$1M+ in proposals"
-          label="Attributed proposal-stage revenue in the first two months of advertising - from 25 years of word-of-mouth."
+          stat={RESULTS['steady-builders'].stat}
+          label={RESULTS['steady-builders'].label}
         />
         <CaseCard
           href="/work/coastal-internal-medicine"
@@ -144,8 +143,8 @@ const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
           mediaStyle="background:linear-gradient(145deg,#0a1f22,#0d2b2b 70%,#071417)"
           tag="Healthcare · Vista, CA"
           name="Coastal Internal Medicine"
-          stat="#1 in AI + search"
-          label="Highest AI visibility of any North County internal medicine practice; #1 organic for 'internist Vista.'"
+          stat={RESULTS['coastal-internal-medicine'].stat}
+          label={RESULTS['coastal-internal-medicine'].label}
         />
         <CaseCard
           href="/work/drain-mob"
@@ -153,8 +152,8 @@ const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
           mediaStyle="background:linear-gradient(145deg,#0b1526,#102038 70%,#080d18)"
           tag="Home services · San Diego"
           name="Drain Mob"
-          stat="+33% in June"
-          label="Year-over-year revenue up in the month plumbing normally contracts."
+          stat={RESULTS['drain-mob'].stat}
+          label={RESULTS['drain-mob'].label}
         />
         <CaseCard
           href="/work/peter-grimm"
@@ -162,8 +161,8 @@ const schemas = [localBusinessSchema(), faqPageSchema(faqs)];
           media="pg"
           tag="Consumer · Shopify"
           name="Peter Grimm"
-          stat="3.6×"
-          label="Monthly revenue growth in six months - rebuilt mid-migration."
+          stat={RESULTS['peter-grimm'].stat}
+          label={RESULTS['peter-grimm'].label}
         />
       </div>
     </div>

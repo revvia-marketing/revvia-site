@@ -1,6 +1,27 @@
 ---
 import LandingLayout from '../layouts/LandingLayout.astro';
 import MarketingScorecard from '../components/MarketingScorecard.astro';
+import LogoStrip from '../components/landing/LogoStrip.astro';
+import ProblemCards from '../components/landing/ProblemCards.astro';
+import AssetPreview from '../components/landing/AssetPreview.astro';
+import HowItWorks from '../components/landing/HowItWorks.astro';
+import CompareTable from '../components/landing/CompareTable.astro';
+import ProofStats from '../components/landing/ProofStats.astro';
+import Testimonials from '../components/landing/Testimonials.astro';
+import FounderBlock from '../components/landing/FounderBlock.astro';
+import FAQ from '../components/landing/FAQ.astro';
+import FinalCTA from '../components/landing/FinalCTA.astro';
+import StickyMobileCTA from '../components/landing/StickyMobileCTA.astro';
+import type { FaqItem } from '../lib/schema';
+
+const faqs: FaqItem[] = [
+  { question: 'How long does it take?', answer: 'About 3 minutes.' },
+  { question: 'Do I need any numbers handy?', answer: 'No. Your best guess is fine.' },
+  { question: 'What do you do with my answers?', answer: 'We use them to send your results and a few useful follow-ups. We never sell or share your info.' },
+  { question: 'Will someone call me?', answer: 'Only if you ask. Phone is optional.' },
+  { question: 'What if I score high?', answer: 'Great. The results show where the next gains are.' },
+  { question: 'Who is this for?', answer: 'Owners of growing businesses, usually doing $1M or more a year.' },
+];
 ---
 <LandingLayout
   title="The 10-Minute Marketing Scorecard"
@@ -8,4 +29,60 @@ import MarketingScorecard from '../components/MarketingScorecard.astro';
   path="/scorecard"
 >
   <MarketingScorecard />
+
+  <div id="lp-hero-sentinel" aria-hidden="true"></div>
+
+  <LogoStrip />
+
+  <ProblemCards
+    eyebrow="The hard part"
+    heading="You can't fix what you can't see."
+    cards={[
+      { icon: 'search', bold: "You're not sure what's working.", text: "Leads come in, but you can't say from where." },
+      { icon: 'clock', bold: 'Marketing happens in bursts.', text: 'Busy months crowd it out, then you start over.' },
+      { icon: 'users', bold: 'Everyone has an opinion.', text: 'Agencies, friends, and the internet all say different things.' },
+    ]}
+  />
+
+  <AssetPreview
+    variant="scorecard"
+    tone="alt"
+    bullets={[
+      'Your score out of 20',
+      "Where you're strong in 5 areas",
+      'Your single biggest gap and what to do about it',
+    ]}
+    buttonLabel="Start the scorecard ↑"
+    buttonTarget="#scorecard"
+  />
+
+  <HowItWorks
+    tone="base"
+    steps={[
+      'Answer 10 quick questions.',
+      'See your score and biggest gap instantly.',
+      'Get a short plan by email. Talk to us only if you want to.',
+    ]}
+  />
+
+  <CompareTable
+    tone="alt"
+    heading="What most low scores have in common."
+    sub="The gap is usually ownership, not effort. Here's how owners close it."
+  />
+
+  <ProofStats
+    heading="What it looks like when marketing has an owner."
+    include={['steady-builders', 'coastal-internal-medicine', 'drain-mob', 'peter-grimm']}
+  />
+
+  <Testimonials heading="What clients say." layout="row" tone="alt" />
+
+  <FounderBlock tone="base" />
+
+  <FAQ items={faqs} tone="alt" />
+
+  <FinalCTA heading="Three minutes to see where you stand." buttonLabel="Start the scorecard ↑" target="#scorecard" />
+
+  <StickyMobileCTA label="Take the scorecard" target="#scorecard" />
 </LandingLayout>

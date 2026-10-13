@@ -1,7 +1,30 @@
 ---
 import LandingLayout from '../layouts/LandingLayout.astro';
+import LogoStrip from '../components/landing/LogoStrip.astro';
+import ProblemCards from '../components/landing/ProblemCards.astro';
+import AssetPreview from '../components/landing/AssetPreview.astro';
+import HowItWorks from '../components/landing/HowItWorks.astro';
+import ProofStats from '../components/landing/ProofStats.astro';
+import Testimonials from '../components/landing/Testimonials.astro';
+import FounderBlock from '../components/landing/FounderBlock.astro';
+import FAQ from '../components/landing/FAQ.astro';
+import FinalCTA from '../components/landing/FinalCTA.astro';
+import StickyMobileCTA from '../components/landing/StickyMobileCTA.astro';
+import FormReassurance from '../components/landing/FormReassurance.astro';
+import { RESULTS } from '../lib/proof';
+import type { FaqItem } from '../lib/schema';
 
 const revenueOptions = ['Under $1M', '$1M – $5M', '$5M – $20M', '$20M+'];
+const coastal = RESULTS['coastal-internal-medicine'];
+
+const faqs: FaqItem[] = [
+  { question: 'Is it really free?', answer: 'Yes. The call and the snapshot are free.' },
+  { question: 'Why a call instead of a PDF?', answer: 'AI results need context. In 30 minutes we can show you what\'s happening and what to fix first.' },
+  { question: 'What do I need to prepare?', answer: 'Nothing. Your website and three competitors are enough.' },
+  { question: 'Will you try to sell me?', answer: "We'll tell you what we'd fix. If it makes sense to work together, we'll say so. If not, we'll say that too." },
+  { question: 'What if I need to reschedule?', answer: 'Use the link in your Calendly confirmation.' },
+  { question: 'Who is this for?', answer: 'Owners of growing businesses, usually $1M or more a year, who want to be found by customers searching with AI.' },
+];
 ---
 <LandingLayout
   title="AI Visibility Snapshot - Free 30-Minute Zoom"
@@ -24,10 +47,17 @@ const revenueOptions = ['Under $1M', '$1M – $5M', '$5M – $20M', '$20M+'];
           </ul>
         </div>
 
+        <a class="hero-cta-mobile" href="#form" data-cta>Request my call ↓</a>
+
+        <a class="hero-stat" href={coastal.href} target="_blank" rel="noopener">
+          <span class="hero-stat-v grad-text num">{coastal.stat}</span>
+          <span class="hero-stat-l">{coastal.name} <span aria-hidden="true">↗</span></span>
+        </a>
+
         <p class="fineprint">The snapshot is reviewed live on the call. We prepare it after your call is confirmed.</p>
       </div>
 
-      <div class="lp-formcol">
+      <div class="lp-formcol" id="form">
         <form
           id="ai-snapshot-form"
           class="lp-form"
@@ -42,32 +72,33 @@ const revenueOptions = ['Under $1M', '$1M – $5M', '$5M – $20M', '$20M+'];
 
           <p class="lp-form-h">Request your snapshot call</p>
 
-          <label class="field"><span>Name</span>
-            <input name="name" type="text" autocomplete="name" required placeholder="First & last" />
+          <label class="field"><span>Name <span class="req" aria-hidden="true">*</span></span>
+            <input name="name" type="text" autocomplete="name" required aria-required="true" placeholder="First & last" />
           </label>
-          <label class="field"><span>Email</span>
-            <input name="email" type="email" autocomplete="email" required placeholder="you@business.com" />
+          <label class="field"><span>Email <span class="req" aria-hidden="true">*</span></span>
+            <input name="email" type="email" autocomplete="email" required aria-required="true" placeholder="you@business.com" />
           </label>
-          <label class="field"><span>Phone</span>
-            <input name="phone" type="tel" autocomplete="tel" required placeholder="(760) 555-0123" />
+          <label class="field"><span>Phone <span class="req" aria-hidden="true">*</span></span>
+            <input name="phone" type="tel" autocomplete="tel" required aria-required="true" placeholder="(760) 555-0123" />
           </label>
-          <label class="field"><span>Business name</span>
-            <input name="business" type="text" autocomplete="organization" required placeholder="Your business" />
+          <label class="field"><span>Business name <span class="req" aria-hidden="true">*</span></span>
+            <input name="business" type="text" autocomplete="organization" required aria-required="true" placeholder="Your business" />
           </label>
-          <label class="field"><span>Website</span>
-            <input name="website" type="text" autocomplete="url" inputmode="url" required placeholder="yourbusiness.com" />
+          <label class="field"><span>Website <span class="req" aria-hidden="true">*</span></span>
+            <input name="website" type="text" autocomplete="url" inputmode="url" required aria-required="true" placeholder="yourbusiness.com" />
           </label>
-          <label class="field"><span>Your top 3 competitors</span>
-            <textarea name="competitors" rows="2" required placeholder="Names or websites"></textarea>
+          <label class="field"><span>Your top 3 competitors <span class="req" aria-hidden="true">*</span></span>
+            <textarea name="competitors" rows="2" required aria-required="true" placeholder="Names or websites"></textarea>
           </label>
-          <label class="field"><span>What do you want to be found for?</span>
-            <input name="found_for" type="text" required placeholder="e.g. kitchen remodeling in Carlsbad" />
+          <label class="field"><span>What do you want to be found for? <span class="req" aria-hidden="true">*</span></span>
+            <input name="found_for" type="text" required aria-required="true" placeholder="e.g. kitchen remodeling in Carlsbad" />
           </label>
-          <label class="field"><span>Annual revenue</span>
-            <select name="revenue" required>
+          <label class="field"><span>Annual revenue <span class="req" aria-hidden="true">*</span></span>
+            <select name="revenue" required aria-required="true">
               <option value="">Select one</option>
               {revenueOptions.map((o) => <option>{o}</option>)}
             </select>
+            <small class="field-help">Helps us send what fits your stage.</small>
           </label>
 
           <!-- src from ?src= (prefilled on load) + ad attribution (section 2c) -->
@@ -85,11 +116,64 @@ const revenueOptions = ['Under $1M', '$1M – $5M', '$5M – $20M', '$20M+'];
           <input type="hidden" name="event_id" />
 
           <button type="submit" class="lp-btn">Request my snapshot call →</button>
+          <FormReassurance items={['Free 30-minute Zoom', 'Built for your business', "Honest if we're not a fit"]} />
           <p class="lp-error" data-error hidden>Something went wrong. Please try again.</p>
         </form>
       </div>
     </div>
   </section>
+
+  <div id="lp-hero-sentinel" aria-hidden="true"></div>
+
+  <LogoStrip />
+
+  <ProblemCards
+    eyebrow="How people search now"
+    heading="Your next customer might ask AI first."
+    cards={[
+      { icon: 'search', bold: 'They ask, AI answers.', text: 'People ask ChatGPT and Google AI Mode who to hire, and get a short list.' },
+      { icon: 'eye', bold: "You can't see that list.", text: 'There\'s no ranking report for AI answers, so most owners never check.' },
+      { icon: 'users', bold: 'Your competitors might be on it.', text: "If they show up and you don't, you never even get the call." },
+    ]}
+  />
+
+  <AssetPreview
+    variant="snapshot"
+    tone="alt"
+    bullets={[
+      'Whether ChatGPT and Google AI Mode mention you, and how they describe you',
+      'Which competitors show up instead, and why',
+      'The 3 fixes that would move you fastest',
+      'We build it after you book, and walk you through it live.',
+    ]}
+    buttonLabel="Request my call ↓"
+    buttonTarget="#form"
+  />
+
+  <HowItWorks
+    tone="base"
+    steps={[
+      'Request your call and pick a time.',
+      'We build your snapshot before the call.',
+      '30-minute Zoom: we walk you through it live, plus your 3 fastest fixes.',
+    ]}
+  />
+
+  <ProofStats
+    heading="What it looks like when you get found."
+    tone="alt"
+    include={['coastal-internal-medicine', 'steady-builders', 'drain-mob', 'peter-grimm']}
+  />
+
+  <Testimonials heading="What clients say." layout="row" />
+
+  <FounderBlock tone="alt" />
+
+  <FAQ items={faqs} />
+
+  <FinalCTA heading="Find out if AI recommends you." buttonLabel="Request my snapshot call ↓" target="#form" tone="alt" />
+
+  <StickyMobileCTA label="Request my call" target="#form" />
 </LandingLayout>
 
 <script>
@@ -97,7 +181,6 @@ const revenueOptions = ['Under $1M', '$1M – $5M', '$5M – $20M', '$20M+'];
 
   const form = document.getElementById('ai-snapshot-form') as HTMLFormElement | null;
   if (form) {
-    // Prefill src from ?src= (e.g. scorecard) into the hidden field.
     try {
       const src = new URLSearchParams(window.location.search).get('src');
       const el = form.querySelector('[name="src"]') as HTMLInputElement | null;
@@ -105,7 +188,6 @@ const revenueOptions = ['Under $1M', '$1M – $5M', '$5M – $20M', '$20M+'];
     } catch (e) {}
 
     wireLeadForm(form, 'ai-snapshot', '/ai-snapshot/thanks', (f) => {
-      // Stash contact for Calendly prefill on the next page (never in the URL).
       try {
         const name = (f.querySelector('[name="name"]') as HTMLInputElement)?.value || '';
         const email = (f.querySelector('[name="email"]') as HTMLInputElement)?.value || '';
@@ -116,8 +198,8 @@ const revenueOptions = ['Under $1M', '$1M – $5M', '$5M – $20M', '$20M+'];
 </script>
 
 <style>
-  .lp { max-width: 1120px; margin: 0 auto; padding: 36px 16px 72px; }
-  .lp-grid { display: grid; grid-template-columns: 1fr 0.92fr; gap: 48px; align-items: start; }
+  .lp { max-width: 1120px; margin: 0 auto; padding: 36px 16px 56px; }
+  .lp-grid { display: grid; grid-template-columns: 1fr 0.95fr; gap: 48px; align-items: start; }
   .lp-copy h1 {
     font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; letter-spacing: -0.02em;
     font-size: clamp(32px, 4.8vw, 52px); line-height: 1.05; margin: 14px 0 18px;
@@ -128,6 +210,14 @@ const revenueOptions = ['Under $1M', '$1M – $5M', '$5M – $20M', '$20M+'];
   .inside ul { list-style: none; display: grid; gap: 12px; }
   .inside li { color: #e6e8ee; padding-left: 28px; position: relative; font-size: 16px; line-height: 1.5; }
   .inside li::before { content: ""; position: absolute; left: 0; top: 7px; width: 13px; height: 13px; border-radius: 4px; background: var(--grad); }
+  .hero-cta-mobile { display: none; }
+  .hero-stat {
+    display: inline-flex; align-items: baseline; gap: 12px; margin: 4px 0 20px;
+    border: 1px solid var(--line-2); border-radius: 12px; padding: 12px 18px; background: var(--card);
+  }
+  .hero-stat-v { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 24px; line-height: 1; }
+  .hero-stat-l { font-size: 13px; color: var(--muted); }
+  .hero-stat-l span { color: var(--m); }
   .fineprint { color: var(--muted-2); font-size: 14px; line-height: 1.6; border-left: 2px solid var(--line-2); padding-left: 14px; max-width: 520px; }
 
   .lp-formcol { position: sticky; top: 24px; }
@@ -147,11 +237,21 @@ const revenueOptions = ['Under $1M', '$1M – $5M', '$5M – $20M', '$20M+'];
     padding: 15px 22px; font: 600 16px Inter, system-ui, sans-serif; cursor: pointer; transition: transform 0.15s;
   }
   .lp-btn:hover { transform: translateY(-1px); }
-  .lp-btn:disabled { opacity: 0.6; cursor: wait; }
+  .lp-btn:disabled { opacity: 0.75; cursor: wait; }
+  .lp-btn:disabled::before {
+    content: ""; display: inline-block; width: 14px; height: 14px; margin-right: 8px; vertical-align: -2px;
+    border: 2px solid rgba(255,255,255,0.5); border-top-color: #fff; border-radius: 50%; animation: lp-spin 0.7s linear infinite;
+  }
+  @keyframes lp-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .lp-btn:disabled::before { animation: none; } }
   .lp-error { color: #ff7a7a; font-size: 14px; margin-top: 2px; }
 
   @media (max-width: 860px) {
-    .lp-grid { grid-template-columns: 1fr; gap: 30px; }
+    .lp-grid { grid-template-columns: 1fr; gap: 28px; }
     .lp-formcol { position: static; }
+    .hero-cta-mobile {
+      display: inline-block; background: var(--grad); color: #fff; border-radius: 10px;
+      padding: 14px 24px; font: 600 16px Inter, system-ui, sans-serif; margin-top: 4px;
+    }
   }
 </style>

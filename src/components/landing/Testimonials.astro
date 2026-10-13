@@ -1,0 +1,58 @@
+---
+/**
+ * Published testimonials, copied exactly from the homepage source
+ * (src/lib/proof.ts), with ★★★★★ as published. `include` selects by author
+ * name (default all); `layout` is a row of cards or a single card.
+ */
+import { testimonials } from '../../lib/proof';
+interface Props {
+  include?: string[];
+  layout?: 'row' | 'single';
+  heading?: string;
+  tone?: 'base' | 'alt';
+}
+const { include, layout = 'row', heading, tone = 'base' } = Astro.props;
+const items = testimonials(include);
+---
+{layout === 'single' ? (
+  items.slice(0, 1).map((r) => (
+    <div class="t-single">
+      <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+      <p>&ldquo;{r.p}&rdquo;</p>
+      <div class="who"><b>{r.who}</b> - {r.sub}</div>
+    </div>
+  ))
+) : (
+  <section class:list={['lp-section', { alt: tone === 'alt' }]}>
+    <div class="lp-wrap">
+      {heading && (
+        <div class="lp-sec-head">
+          <div class="eyebrow">What clients say</div>
+          <h2>{heading}</h2>
+        </div>
+      )}
+      <div class="t-grid">
+        {items.map((r) => (
+          <div class="t-card">
+            <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <p>&ldquo;{r.p}&rdquo;</p>
+            <div class="who"><b>{r.who}</b> - {r.sub}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .stars { color: #fe9c1c; letter-spacing: 2px; font-size: 15px; margin-bottom: 14px; }
+  .t-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .t-card, .t-single {
+    background: var(--card); border: 1px solid var(--line-2); border-radius: 14px; padding: 24px;
+  }
+  .t-card p, .t-single p { color: #e6e8ee; font-size: 15px; line-height: 1.6; margin-bottom: 16px; }
+  .who { font-size: 14px; color: var(--muted); }
+  .who b { color: #fff; }
+  .t-single { margin-top: 22px; }
+  @media (max-width: 900px) { .t-grid { grid-template-columns: 1fr; } }
+</style>
