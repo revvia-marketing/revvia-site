@@ -25,6 +25,20 @@ const BOOKING_URL =
   process.env.PUBLIC_SNAPSHOT_BOOKING_URL ||
   'https://revvia.com/contact';
 
+/** Append UTM tags so Calendly records which lead magnet the booking came from. */
+function withUtm(url, source) {
+  try {
+    const u = new URL(url);
+    u.searchParams.set('utm_source', source);
+    u.searchParams.set('utm_medium', 'email');
+    u.searchParams.set('utm_campaign', 'lead-magnet');
+    return u.toString();
+  } catch {
+    const sep = url.includes('?') ? '&' : '?';
+    return `${url}${sep}utm_source=${encodeURIComponent(source)}&utm_medium=email&utm_campaign=lead-magnet`;
+  }
+}
+
 function esc(s) {
   return String(s == null ? '' : s)
     .replace(/&/g, '&amp;')
@@ -70,16 +84,17 @@ function buildEmail(formName, data) {
 
   if (formName === 'real-cost-guide') {
     const guide = 'https://revvia.com/guides/real-cost';
+    const book = withUtm(BOOKING_URL, 'real-cost');
     return {
       subject: 'Your guide: Hire, Agency, or Fractional?',
-      text: `Hi ${firstNamePlain(data.name)},\n\nThanks for grabbing the guide. Read the full version here:\n${guide}\n\nIt breaks down what a full-time hire, an agency, and a fractional CMO really cost in San Diego, and which one fits your stage.\n\nWhen you want a second opinion on your situation, grab a time with me:\n${BOOKING_URL}\n\n- Tim Holt, Revvia`,
+      text: `Hi ${firstNamePlain(data.name)},\n\nThanks for grabbing the guide. Read the full version here:\n${guide}\n\nIt breaks down what a full-time hire, an agency, and a fractional CMO really cost in San Diego, and which one fits your stage.\n\nWhen you want a second opinion on your situation, grab a time with me:\n${book}\n\n- Tim Holt, Revvia`,
       html: shell(
         `<p>Hi ${hi},</p>
          <p>Thanks for grabbing the guide. Here's the full version:</p>
          <p>${button(guide, 'Read the guide')}</p>
          <p>It breaks down what a full-time hire, an agency, and a fractional CMO really cost in San Diego, and how to tell which one fits your stage right now.</p>
          <p>When you want a second opinion on your situation, grab a time with me:</p>
-         <p>${button(BOOKING_URL, 'Book a call')}</p>
+         <p>${button(book, 'Book a call')}</p>
          <p>- Tim Holt, Revvia</p>`
       ),
     };
@@ -89,30 +104,32 @@ function buildEmail(formName, data) {
     const score = esc(data.score);
     const tier = esc(data.tier);
     const gap = esc(data.weakest_area);
+    const book = withUtm(BOOKING_URL, 'scorecard');
     return {
       subject: `Your Marketing Scorecard: ${score}/20`,
-      text: `Hi ${firstNamePlain(data.name)},\n\nThanks for taking the scorecard. You scored ${data.score}/20 - ${data.tier}.\n\nYour biggest gap right now: ${data.weakest_area}.\n\nThat's the fastest place to find growth. Want to talk through how to close it? Grab a time:\n${BOOKING_URL}\n\n- Tim Holt, Revvia`,
+      text: `Hi ${firstNamePlain(data.name)},\n\nThanks for taking the scorecard. You scored ${data.score}/20 - ${data.tier}.\n\nYour biggest gap right now: ${data.weakest_area}.\n\nThat's the fastest place to find growth. Want to talk through how to close it? Grab a time:\n${book}\n\n- Tim Holt, Revvia`,
       html: shell(
         `<p>Hi ${hi},</p>
          <p>Thanks for taking the scorecard. Here's where you landed:</p>
          <p style="font-size:22px;font-weight:800;color:#0a0a0c;margin:6px 0;">${score}/20 &mdash; ${tier}</p>
          <p>Your biggest gap right now: <strong>${gap}</strong>. That's usually the fastest place to find growth.</p>
          <p>Want to talk through how to close it? Grab a time:</p>
-         <p>${button(BOOKING_URL, 'Book a call')}</p>
+         <p>${button(book, 'Book a call')}</p>
          <p>- Tim Holt, Revvia</p>`
       ),
     };
   }
 
   if (formName === 'ai-snapshot-request') {
+    const book = withUtm(SNAPSHOT_URL, 'ai-snapshot');
     return {
       subject: "Your AI Visibility Snapshot - let's lock a time",
-      text: `Hi ${firstNamePlain(data.name)},\n\nThanks for requesting your AI Visibility Snapshot.\n\nThe next step is a quick 30-minute Zoom where I walk you through how you and your competitors show up when people ask ChatGPT and Google AI Mode for a business like yours.\n\nPick a time here:\n${SNAPSHOT_URL}\n\nI'll build your snapshot before we talk, using the competitors you shared.\n\n- Tim Holt, Revvia`,
+      text: `Hi ${firstNamePlain(data.name)},\n\nThanks for requesting your AI Visibility Snapshot.\n\nThe next step is a quick 30-minute Zoom where I walk you through how you and your competitors show up when people ask ChatGPT and Google AI Mode for a business like yours.\n\nPick a time here:\n${book}\n\nI'll build your snapshot before we talk, using the competitors you shared.\n\n- Tim Holt, Revvia`,
       html: shell(
         `<p>Hi ${hi},</p>
          <p>Thanks for requesting your AI Visibility Snapshot.</p>
          <p>The next step is a quick 30-minute Zoom where I walk you through how you and your competitors show up when people ask ChatGPT and Google AI Mode for a business like yours.</p>
-         <p>${button(SNAPSHOT_URL, 'Pick your time')}</p>
+         <p>${button(book, 'Pick your time')}</p>
          <p>I'll build your snapshot before we talk, using the competitors you shared.</p>
          <p>- Tim Holt, Revvia</p>`
       ),
