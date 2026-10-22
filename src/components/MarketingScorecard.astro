@@ -82,8 +82,8 @@
             </select>
           </label>
           <label class="rsc-field">
-            <span>Phone <em>(optional)</em></span>
-            <input name="phone" type="tel" autocomplete="tel" placeholder="(760) 555-0123" />
+            <span>Phone</span>
+            <input name="phone" type="tel" autocomplete="tel" required aria-required="true" placeholder="(760) 555-0123" />
           </label>
         </div>
 
@@ -112,7 +112,7 @@
         <input type="hidden" name="event_id" />
 
         <button type="submit" class="rsc-btn rsc-submit">See my score →</button>
-        <ul class="rsc-reassure"><li>Instant results</li><li>No spam</li><li>Phone optional</li></ul>
+        <ul class="rsc-reassure"><li>Instant results</li><li>No spam</li></ul>
         <p class="rsc-fine">No spam. We'll send your results and a few useful follow-ups. Unsubscribe anytime.</p>
         <p class="rsc-error" data-error hidden>Something went wrong sending your results. Please try again.</p>
       </form>

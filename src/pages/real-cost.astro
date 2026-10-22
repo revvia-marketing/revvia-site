@@ -95,8 +95,8 @@ const faqs: FaqItem[] = [
             </select>
             <small class="field-help">Helps us send what fits your stage.</small>
           </label>
-          <label class="field"><span>Phone <em>(optional)</em></span>
-            <input name="phone" type="tel" autocomplete="tel" placeholder="(760) 555-0123" />
+          <label class="field"><span>Phone <span class="req" aria-hidden="true">*</span></span>
+            <input name="phone" type="tel" autocomplete="tel" required aria-required="true" placeholder="(760) 555-0123" />
           </label>
 
           <!-- Ad attribution (section 2c), filled on submit -->
