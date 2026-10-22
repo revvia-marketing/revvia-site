@@ -39,6 +39,19 @@ export default defineConfig({
       '/journal/kuhlman-scott-architects',
     '/post/he-left-the-hospital-to-give-you-something-most-doctors-can-t-time':
       '/journal/coastal-internal-medicine',
+    // Remaining old Wix URLs still indexed in Search Console. Any other
+    // /post/* falls through to the catch-all in netlify.toml.
+    '/blog': '/journal/',
+    '/post/how-a-family-s-love-of-the-water-built-one-of-north-county-s-most-trusted-boat-shops':
+      '/journal/built-in-san-diego/',
+    '/post/the-fixer-how-david-hirschfeld-built-a-career-out-of-solving-problems-nobody-else-could-see':
+      '/journal/built-in-san-diego/',
+    '/post/meet-tim-holt-of-revvia-digital-marketing-expert': '/about/',
+    '/post/a-beginner-s-guide-to-understanding-aerial-photography-services': '/work/photography/',
+    '/book-online': '/contact/',
+    '/adsconnect': '/services/',
+    '/adsconnect-1': '/services/',
+    '/seoconnect': '/services/',
     '/faq': '/#faq',
     // EverSun case study removed - keep the old URL from 404ing.
     '/work/eversun': '/work',

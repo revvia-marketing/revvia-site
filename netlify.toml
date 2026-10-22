@@ -7,6 +7,14 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Catch-all for any other old Wix blog post. Netlify checks _redirects (the
+# specific /post/... rules from astro.config.mjs) before these, so this only
+# catches posts with no specific rule.
+[[redirects]]
+  from = "/post/*"
+  to = "/journal/"
+  status = 301
+
 # Security + caching niceties (optional, safe defaults)
 [[headers]]
   for = "/_astro/*"
