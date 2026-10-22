@@ -1,6 +1,7 @@
 ---
 import LandingLayout from '../../layouts/LandingLayout.astro';
 import ScorecardResults from '../../components/ScorecardResults.astro';
+import Testimonials from '../../components/landing/Testimonials.astro';
 ---
 <LandingLayout
   title="Your Marketing Scorecard"
@@ -9,4 +10,45 @@ import ScorecardResults from '../../components/ScorecardResults.astro';
   noindex={true}
 >
   <ScorecardResults />
+
+  <section class="sc-book">
+    <div class="sc-book-in">
+      <h2>Rather just grab a time? Book your call now.</h2>
+      <link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css" />
+      <div id="sc-cal" class="sc-cal"></div>
+      <script is:inline async src="https://assets.calendly.com/assets/external/widget.js"></script>
+    </div>
+  </section>
+
+  <Testimonials heading="What clients say." layout="row" tone="base" />
 </LandingLayout>
+
+<script is:inline>
+  (function initCal() {
+    var el = document.getElementById('sc-cal');
+    if (!el) return;
+    if (!window.Calendly) { setTimeout(initCal, 120); return; }
+    var prefill = {};
+    try {
+      var d = JSON.parse(sessionStorage.getItem('rv_scorecard') || '{}');
+      if (d && d.name) prefill.name = d.name;
+      if (d && d.email) prefill.email = d.email;
+    } catch (e) {}
+    window.Calendly.initInlineWidget({
+      url: 'https://calendly.com/tim-revvia/discovery-call-revvia',
+      parentElement: el,
+      prefill: prefill,
+    });
+  })();
+</script>
+
+<style>
+  .sc-book { background: var(--bg-2); padding: 56px 0 24px; border-top: 1px solid var(--line); }
+  .sc-book-in { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+  .sc-book-in h2 {
+    font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; letter-spacing: -0.02em;
+    font-size: clamp(24px, 3.4vw, 32px); text-align: center; margin-bottom: 22px; color: #fff;
+  }
+  .sc-cal { min-width: 320px; height: 680px; }
+  @media (max-width: 640px) { .sc-cal { height: 1000px; } }
+</style>

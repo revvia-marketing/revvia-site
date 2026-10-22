@@ -14,7 +14,7 @@ import StickyMobileCTA from '../components/landing/StickyMobileCTA.astro';
 import FormReassurance from '../components/landing/FormReassurance.astro';
 import type { FaqItem } from '../lib/schema';
 
-const revenueOptions = ['Under $1M', '$1M – $5M', '$5M – $20M', '$20M+'];
+const revenueOptions = ['Under $350K', '$350K - $1M', '$1M - $5M', '$5M - $20M', '$20M+'];
 
 const faqs: FaqItem[] = [
   { question: 'Is the guide really free?', answer: 'Yes. Fill out the form and you can read it right away.' },
@@ -47,7 +47,7 @@ const faqs: FaqItem[] = [
           </ul>
         </div>
 
-        <a class="hero-cta-mobile" href="#form" data-cta>Get the guide ↓</a>
+        <a class="hero-cta-mobile" href="#form" data-cta>Get the guide →</a>
 
         <div class="trust">
           <span>Founder-led</span>
@@ -144,7 +144,7 @@ const faqs: FaqItem[] = [
       'A one-page decision guide: which option fits your stage',
       'Reads in about 8 minutes.',
     ]}
-    buttonLabel="Send me the guide ↓"
+    buttonLabel="Send me the guide →"
     buttonTarget="#form"
   />
 
@@ -173,7 +173,7 @@ const faqs: FaqItem[] = [
 
   <FAQ items={faqs} tone="alt" />
 
-  <FinalCTA heading="Know which kind of help you need." buttonLabel="Get the free guide ↓" target="#form" />
+  <FinalCTA heading="Know which kind of help you need." buttonLabel="Get the free guide →" target="#form" />
 
   <StickyMobileCTA label="Get the free guide" target="#form" />
 </LandingLayout>

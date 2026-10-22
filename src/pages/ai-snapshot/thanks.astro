@@ -1,5 +1,7 @@
 ---
 import LandingLayout from '../../layouts/LandingLayout.astro';
+import ProofStats from '../../components/landing/ProofStats.astro';
+import Testimonials from '../../components/landing/Testimonials.astro';
 
 const BOOKING_URL = import.meta.env.PUBLIC_SNAPSHOT_BOOKING_URL;
 ---
@@ -28,6 +30,14 @@ const BOOKING_URL = import.meta.env.PUBLIC_SNAPSHOT_BOOKING_URL;
       </div>
     )}
   </section>
+
+  <ProofStats
+    heading="What it looks like when you get found."
+    include={['coastal-internal-medicine', 'steady-builders', 'drain-mob', 'peter-grimm']}
+    tone="alt"
+  />
+
+  <Testimonials heading="What clients say." layout="row" />
 </LandingLayout>
 
 <script>

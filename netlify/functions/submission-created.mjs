@@ -22,8 +22,7 @@ const SNAPSHOT_URL =
   process.env.PUBLIC_SNAPSHOT_BOOKING_URL || 'https://revvia.com/ai-snapshot';
 const BOOKING_URL =
   process.env.BOOKING_URL ||
-  process.env.PUBLIC_SNAPSHOT_BOOKING_URL ||
-  'https://revvia.com/contact';
+  'https://calendly.com/tim-revvia/discovery-call-revvia';
 
 /** Append UTM tags so Calendly records which lead magnet the booking came from. */
 function withUtm(url, source) {

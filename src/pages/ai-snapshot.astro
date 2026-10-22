@@ -14,7 +14,7 @@ import FormReassurance from '../components/landing/FormReassurance.astro';
 import { RESULTS } from '../lib/proof';
 import type { FaqItem } from '../lib/schema';
 
-const revenueOptions = ['Under $1M', '$1M – $5M', '$5M – $20M', '$20M+'];
+const revenueOptions = ['Under $350K', '$350K - $1M', '$1M - $5M', '$5M - $20M', '$20M+'];
 const coastal = RESULTS['coastal-internal-medicine'];
 
 const faqs: FaqItem[] = [
@@ -47,7 +47,7 @@ const faqs: FaqItem[] = [
           </ul>
         </div>
 
-        <a class="hero-cta-mobile" href="#form" data-cta>Request my call ↓</a>
+        <a class="hero-cta-mobile" href="#form" data-cta>Request my call →</a>
 
         <a class="hero-stat" href={coastal.href} target="_blank" rel="noopener">
           <span class="hero-stat-v grad-text num">{coastal.stat}</span>
@@ -87,8 +87,8 @@ const faqs: FaqItem[] = [
           <label class="field"><span>Website <span class="req" aria-hidden="true">*</span></span>
             <input name="website" type="text" autocomplete="url" inputmode="url" required aria-required="true" placeholder="yourbusiness.com" />
           </label>
-          <label class="field"><span>Your top 3 competitors <span class="req" aria-hidden="true">*</span></span>
-            <textarea name="competitors" rows="2" required aria-required="true" placeholder="Names or websites"></textarea>
+          <label class="field"><span>Your top 3 competitors <em>(optional)</em></span>
+            <textarea name="competitors" rows="2" placeholder="Names or websites"></textarea>
           </label>
           <label class="field"><span>What do you want to be found for? <span class="req" aria-hidden="true">*</span></span>
             <input name="found_for" type="text" required aria-required="true" placeholder="e.g. kitchen remodeling in Carlsbad" />
@@ -146,7 +146,7 @@ const faqs: FaqItem[] = [
       'The 3 fixes that would move you fastest',
       'We build it after you book, and walk you through it live.',
     ]}
-    buttonLabel="Request my call ↓"
+    buttonLabel="Request my call →"
     buttonTarget="#form"
   />
 
@@ -167,11 +167,15 @@ const faqs: FaqItem[] = [
 
   <Testimonials heading="What clients say." layout="row" />
 
+  <div class="lp-midcta">
+    <a class="lp-midcta-btn" href="#form" data-cta>Request my snapshot call →</a>
+  </div>
+
   <FounderBlock tone="alt" />
 
   <FAQ items={faqs} />
 
-  <FinalCTA heading="Find out if AI recommends you." buttonLabel="Request my snapshot call ↓" target="#form" tone="alt" />
+  <FinalCTA heading="Find out if AI recommends you." buttonLabel="Request my snapshot call →" target="#form" tone="alt" />
 
   <StickyMobileCTA label="Request my call" target="#form" />
 </LandingLayout>
@@ -219,6 +223,10 @@ const faqs: FaqItem[] = [
   .hero-stat-l { font-size: 13px; color: var(--muted); }
   .hero-stat-l span { color: var(--m); }
   .fineprint { color: var(--muted-2); font-size: 14px; line-height: 1.6; border-left: 2px solid var(--line-2); padding-left: 14px; max-width: 520px; }
+
+  .lp-midcta { text-align: center; padding: 0 16px 8px; }
+  .lp-midcta-btn { display: inline-block; background: var(--grad); color: #fff; border-radius: 10px; padding: 14px 28px; font: 600 16px Inter, system-ui, sans-serif; transition: transform 0.15s; }
+  .lp-midcta-btn:hover { transform: translateY(-2px); }
 
   .lp-formcol { position: sticky; top: 24px; }
   .lp-form {

@@ -75,9 +75,10 @@
             <span>Annual revenue</span>
             <select name="revenue" required>
               <option value="">Select one</option>
-              <option>Under $1M</option>
-              <option>$1M – $5M</option>
-              <option>$5M – $20M</option>
+              <option>Under $350K</option>
+              <option>$350K - $1M</option>
+              <option>$1M - $5M</option>
+              <option>$5M - $20M</option>
               <option>$20M+</option>
             </select>
           </label>
@@ -265,6 +266,8 @@
           gapTitle: CATS[r.weakest].gap,
           gapCopy: CATS[r.weakest].copy,
           aiUnknown: r.aiUnknown,
+          name: form.querySelector('[name="name"]')?.value || "",
+          email: form.querySelector('[name="email"]')?.value || "",
           ts: Date.now(),
         }));
       } catch (err) {}
