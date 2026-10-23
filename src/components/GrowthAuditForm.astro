@@ -17,6 +17,7 @@ const {
   heading,
   subheading,
 } = Astro.props;
+import AttributionFields from './AttributionFields.astro';
 ---
 <div class="form-shell" data-form-shell>
   <form
@@ -30,6 +31,7 @@ const {
   >
     <!-- Netlify needs the form name echoed as a hidden field -->
     <input type="hidden" name="form-name" value={formName} />
+    <AttributionFields />
 
     {heading && <div class="ft">{heading}</div>}
     {subheading && <div class="fsub">{subheading}</div>}
@@ -141,6 +143,13 @@ const {
           btn.textContent = 'Sending…';
         }
 
+        // Ad attribution into the hidden fields; returns the event_id shared
+        // by the browser Pixel event and the server-side Conversions API.
+        let eventId = '';
+        try {
+          if (window.rvTrack) eventId = window.rvTrack.fill(form);
+        } catch (err) {}
+
         const data = new FormData(form);
         try {
           await fetch('/', {
@@ -154,15 +163,19 @@ const {
 
         // Conversion events (no-ops if GA4 / Pixel aren't configured).
         try {
-          if (typeof window.gtag === 'function') {
-            window.gtag('event', 'generate_lead', {
-              currency: 'USD',
-              value: 1,
-              form_name: form.getAttribute('name') || 'growth-audit',
-            });
-          }
-          if (typeof window.fbq === 'function') {
-            window.fbq('track', 'Lead', { content_name: 'Growth Audit' });
+          if (window.rvTrack) {
+            window.rvTrack.lead('growth-audit', eventId, form);
+          } else {
+            if (typeof window.gtag === 'function') {
+              window.gtag('event', 'generate_lead', {
+                currency: 'USD',
+                value: 1,
+                form_name: form.getAttribute('name') || 'growth-audit',
+              });
+            }
+            if (typeof window.fbq === 'function') {
+              window.fbq('track', 'Lead', { content_name: 'Growth Audit' });
+            }
           }
         } catch (err) {
           /* analytics must never block the success state */

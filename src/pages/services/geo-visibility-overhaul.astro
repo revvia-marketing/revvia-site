@@ -37,6 +37,7 @@ const schemas = [
   ]),
   faqPageSchema(faqs),
 ];
+import AttributionFields from '../../components/AttributionFields.astro';
 ---
 <BaseLayout
   title="GEO Visibility Overhaul"
@@ -185,6 +186,7 @@ const schemas = [
 
       <form id="scorecard-form" class="form-card" name="geo-scorecard-request" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/services/geo-visibility-overhaul?submitted=true">
         <input type="hidden" name="form-name" value="geo-scorecard-request" />
+        <AttributionFields />
         <input type="hidden" name="request-type" value="full-citation-scorecard" />
         <input type="hidden" name="lead-source" value="geo-readiness-widget" />
         <input type="hidden" name="readiness-score" id="sc-score" value="" />
@@ -229,6 +231,7 @@ const schemas = [
 
       <form id="contact-form" class="form-card" name="geo-landing-contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/services/geo-visibility-overhaul?submitted=true">
         <input type="hidden" name="form-name" value="geo-landing-contact" />
+        <AttributionFields />
         <input type="hidden" name="lead-source" value="geo-landing-page" />
         <p class="hp" aria-hidden="true"><label>Leave blank <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
         <div class="form-row">
@@ -425,8 +428,10 @@ const schemas = [
   }
 
   async function submitNetlify(form) {
+    if (form.querySelector('[name="bot-field"]')?.value) return; // honeypot tripped
+    let eventId = '';
+    try { if (window.rvTrack) eventId = window.rvTrack.fill(form); } catch {}
     const data = new FormData(form);
-    if (data.get('bot-field')) return; // honeypot tripped
     const name = form.getAttribute('name') || 'geo-landing-contact';
     const body = new URLSearchParams();
     for (const [k, v] of data.entries()) body.append(k, String(v));
@@ -434,11 +439,15 @@ const schemas = [
       await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() });
     } catch { /* show success anyway so the lead can follow up */ }
     try {
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'generate_lead', { currency: 'USD', value: 1, form_name: name });
-      }
-      if (typeof window.fbq === 'function') {
-        window.fbq('track', 'Lead', { content_name: name === 'geo-scorecard-request' ? 'GEO Scorecard' : 'GEO Contact' });
+      if (window.rvTrack) {
+        window.rvTrack.lead(name === 'geo-scorecard-request' ? 'geo-scorecard-request' : 'geo-landing-contact', eventId, form);
+      } else {
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'generate_lead', { currency: 'USD', value: 1, form_name: name });
+        }
+        if (typeof window.fbq === 'function') {
+          window.fbq('track', 'Lead', { content_name: name === 'geo-scorecard-request' ? 'GEO Scorecard' : 'GEO Contact' });
+        }
       }
     } catch { /* analytics never blocks success */ }
     form.querySelectorAll('input, textarea, button').forEach((el) => { el.disabled = true; });

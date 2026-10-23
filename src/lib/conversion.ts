@@ -9,7 +9,14 @@
  */
 import { fillAttribution } from './attribution';
 
+/** Landing-page offers: conversion fires on their own confirmation page. */
 export type ConvKey = 'real-cost' | 'scorecard' | 'ai-snapshot';
+/** In-page site forms: conversion fires right after a successful submit. */
+export type SiteFormKey =
+  | 'growth-audit'
+  | 'ai-visibility-audit'
+  | 'geo-scorecard-request'
+  | 'geo-landing-contact';
 
 const ADS_ID = import.meta.env.PUBLIC_GOOGLE_ADS_ID as string | undefined;
 const LABELS: Record<ConvKey, string | undefined> = {
@@ -34,7 +41,50 @@ const FORM_NAME: Record<ConvKey, string> = {
   'ai-snapshot': 'ai-snapshot-request',
 };
 
+/** Every in-page sales form counts as one Google Ads "Lead – Contact Form". */
+const CONTACT_LABEL = import.meta.env.PUBLIC_GADS_LABEL_CONTACT as
+  | string
+  | undefined;
+
+const SITE_FORM_OFFER: Record<SiteFormKey, string> = {
+  'growth-audit': 'Growth Audit',
+  'ai-visibility-audit': 'AI Visibility Audit',
+  'geo-scorecard-request': 'GEO Scorecard',
+  'geo-landing-contact': 'GEO Contact',
+};
+
 const CONV_TTL_MS = 30 * 60 * 1000;
+
+type UserData = { email?: string; phone?: string };
+
+/** E.164 for US numbers (what Google enhanced conversions expects). */
+function e164(raw: string): string {
+  const d = String(raw || '').replace(/\D/g, '');
+  if (d.length === 10) return '+1' + d;
+  if (d.length === 11 && d.startsWith('1')) return '+' + d;
+  return d ? '+' + d : '';
+}
+
+function userDataFromForm(form?: HTMLFormElement | null): UserData {
+  if (!form) return {};
+  const v = (n: string) =>
+    (form.querySelector<HTMLInputElement>(`[name="${n}"]`)?.value || '').trim();
+  return { email: v('email').toLowerCase(), phone: v('phone') };
+}
+
+/** Google Ads enhanced conversions: gtag hashes these before sending. */
+function setGoogleUserData(u: UserData): void {
+  try {
+    if (typeof window.gtag !== 'function') return;
+    const ud: Record<string, string> = {};
+    if (u.email) ud.email = u.email;
+    const ph = e164(u.phone || '');
+    if (ph) ud.phone_number = ph;
+    if (Object.keys(ud).length) window.gtag('set', 'user_data', ud);
+  } catch {
+    /* ignore */
+  }
+}
 
 declare global {
   interface Window {
@@ -44,18 +94,26 @@ declare global {
 }
 
 /** Record a pending conversion right before navigating to the confirmation page. */
-export function markConversion(key: ConvKey, eventId: string): void {
+export function markConversion(
+  key: ConvKey,
+  eventId: string,
+  form?: HTMLFormElement | null
+): void {
   try {
+    // email/phone ride along (same-origin, removed the moment the conversion
+    // fires) so the thanks page can send Google enhanced-conversion data.
+    const u = userDataFromForm(form);
     sessionStorage.setItem(
       'rv_conv',
-      JSON.stringify({ page: key, event_id: eventId, ts: Date.now() })
+      JSON.stringify({ page: key, event_id: eventId, ts: Date.now(), u })
     );
   } catch {
     /* ignore */
   }
 }
 
-function fireAll(key: ConvKey, eventId: string): void {
+function fireAll(key: ConvKey, eventId: string, u: UserData = {}): void {
+  setGoogleUserData(u);
   try {
     if (typeof window.fbq === 'function') {
       window.fbq(
@@ -91,7 +149,12 @@ function fireAll(key: ConvKey, eventId: string): void {
  * page. No-op (and fires nothing) on refresh, back, direct visit, or expiry.
  */
 export function fireConversion(key: ConvKey): void {
-  let data: { page?: string; event_id?: string; ts?: number } | null = null;
+  let data: {
+    page?: string;
+    event_id?: string;
+    ts?: number;
+    u?: UserData;
+  } | null = null;
   try {
     const raw = sessionStorage.getItem('rv_conv');
     if (!raw) return;
@@ -115,7 +178,7 @@ export function fireConversion(key: ConvKey): void {
     const ready =
       typeof window.fbq === 'function' && typeof window.gtag === 'function';
     if (ready || Date.now() - start > 5000) {
-      fireAll(key, eventId);
+      fireAll(key, eventId, data?.u || {});
     } else {
       setTimeout(poll, 200);
     }
@@ -157,7 +220,7 @@ export function wireLeadForm(
         body: new URLSearchParams(new FormData(form) as never).toString(),
       });
       if (!res.ok) throw new Error('Bad response ' + res.status);
-      markConversion(key, eventId);
+      markConversion(key, eventId, form);
       if (beforeNavigate) {
         try {
           beforeNavigate(form);
@@ -174,4 +237,65 @@ export function wireLeadForm(
       }
     }
   });
+}
+
+/**
+ * Fire the lead conversion for an in-page site form (no confirmation page):
+ * Meta Lead (eventID = event_id, deduped against the server-side Conversions
+ * API event sent by netlify/functions/submission-created.mjs), Google Ads
+ * "Lead – Contact Form" with enhanced conversions, and GA4 generate_lead.
+ */
+export function trackSiteLead(
+  key: SiteFormKey,
+  eventId: string,
+  form?: HTMLFormElement | null
+): void {
+  setGoogleUserData(userDataFromForm(form));
+  try {
+    if (typeof window.fbq === 'function') {
+      window.fbq(
+        'track',
+        'Lead',
+        { content_name: SITE_FORM_OFFER[key] },
+        eventId ? { eventID: eventId } : undefined
+      );
+    }
+  } catch {
+    /* ignore */
+  }
+  try {
+    if (typeof window.gtag === 'function') {
+      if (ADS_ID && CONTACT_LABEL) {
+        window.gtag('event', 'conversion', {
+          send_to: `${ADS_ID}/${CONTACT_LABEL}`,
+          transaction_id: eventId,
+        });
+      }
+      window.gtag('event', 'generate_lead', {
+        currency: 'USD',
+        value: 1,
+        form_name: key,
+        lead_source: key,
+      });
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
+/**
+ * Expose the helpers to the site's `is:inline` form scripts (which can't
+ * import modules). Inline submit handlers call window.rvTrack.fill(form)
+ * before posting and window.rvTrack.lead(key, eventId, form) after.
+ */
+export function installTrackingGlobal(): void {
+  try {
+    (window as unknown as { rvTrack: unknown }).rvTrack = {
+      fill: (form: HTMLFormElement) => fillAttribution(form),
+      lead: (key: SiteFormKey, eventId: string, form?: HTMLFormElement) =>
+        trackSiteLead(key, eventId, form),
+    };
+  } catch {
+    /* ignore */
+  }
 }

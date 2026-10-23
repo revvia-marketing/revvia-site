@@ -5,7 +5,7 @@
  * Nothing loads (no network beacons) unless the corresponding ID is set, so
  * local dev and previews stay clean. In dev, a missing ID logs a single warning
  * instead of failing silently. Privacy-forward consent default: ad storage and
- * personalization denied, analytics allowed.
+ * personalization granted for US visitors, denied in the EEA/UK/CH.
  */
 const GA4_ID = import.meta.env.PUBLIC_GA4_ID;
 const ADS_ID = import.meta.env.PUBLIC_GOOGLE_ADS_ID;
@@ -27,16 +27,34 @@ const gtagLoaderId = GA4_ID || ADS_ID;
           dataLayer.push(arguments);
         }
         window.gtag = gtag;
-        // Privacy-forward default: deny ad storage, allow analytics.
+        // Consent defaults. Revvia serves US businesses and the site has no
+        // consent banner, so storage is granted by default (US privacy law is
+        // opt-out). Visitors in the EEA, UK and Switzerland, where opt-in
+        // consent is required, stay denied. With ad storage denied everywhere
+        // (the old default), Google Ads could not link a thank-you-page
+        // conversion back to the ad click.
         gtag('consent', 'default', {
           ad_storage: 'denied',
           ad_user_data: 'denied',
           ad_personalization: 'denied',
+          analytics_storage: 'denied',
+          region: [
+            'AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU',
+            'IS','IE','IT','LV','LI','LT','LU','MT','NL','NO','PL','PT','RO',
+            'SK','SI','ES','SE','GB','CH',
+          ],
+        });
+        gtag('consent', 'default', {
+          ad_storage: 'granted',
+          ad_user_data: 'granted',
+          ad_personalization: 'granted',
           analytics_storage: 'granted',
         });
         gtag('js', new Date());
         if (GA4_ID) gtag('config', GA4_ID, { anonymize_ip: true });
-        if (ADS_ID) gtag('config', ADS_ID);
+        // allow_enhanced_conversions: lead forms set hashed email/phone
+        // (gtag('set','user_data',...)) right before each conversion.
+        if (ADS_ID) gtag('config', ADS_ID, { allow_enhanced_conversions: true });
       </script>
     </Fragment>
   )

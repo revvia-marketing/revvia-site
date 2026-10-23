@@ -15,6 +15,86 @@
 //                                 scorecard emails (defaults to the snapshot
 //                                 Calendly, then to the contact page)
 //   PUBLIC_SNAPSHOT_BOOKING_URL - the 30-min AI-snapshot Calendly link
+//
+// Meta Conversions API (server-side Lead, deduped with the browser Pixel via
+// the form's event_id). Skipped quietly if either is missing:
+//   META_CAPI_TOKEN             - Conversions API access token (secret)
+//   PUBLIC_META_PIXEL_ID        - the Pixel/dataset id (already set for the site)
+//   META_TEST_EVENT_CODE        - optional; set only while testing in Events Manager
+
+import { createHash } from 'node:crypto';
+
+/** Forms that fire a browser Pixel `Lead`; the server sends the same event. */
+const CAPI_LEAD_FORMS = {
+  'real-cost-guide': 'Real Cost Guide',
+  'marketing-scorecard': 'Marketing Scorecard',
+  'ai-snapshot-request': 'AI Snapshot Request',
+  'growth-audit': 'Growth Audit',
+  'ai-visibility-audit': 'AI Visibility Audit',
+  'geo-scorecard-request': 'GEO Scorecard',
+  'geo-landing-contact': 'GEO Contact',
+};
+
+function sha256(v) {
+  const s = String(v == null ? '' : v).trim().toLowerCase();
+  return s ? createHash('sha256').update(s).digest('hex') : undefined;
+}
+
+function digits(v) {
+  let d = String(v || '').replace(/\D/g, '');
+  if (d.length === 10) d = '1' + d; // US numbers need the country code
+  return d;
+}
+
+/** Send one server-side Lead to Meta. Never throws. */
+async function sendMetaLead(formName, data, payload) {
+  const token = process.env.META_CAPI_TOKEN;
+  const pixel = process.env.PUBLIC_META_PIXEL_ID || process.env.META_PIXEL_ID;
+  const offer = CAPI_LEAD_FORMS[formName];
+  if (!token || !pixel || !offer) return;
+  try {
+    const nameParts = String(data.name || '').trim().split(/\s+/);
+    const user_data = {
+      em: sha256(data.email) ? [sha256(data.email)] : undefined,
+      ph: digits(data.phone) ? [sha256(digits(data.phone))] : undefined,
+      fn: sha256(nameParts[0]) ? [sha256(nameParts[0])] : undefined,
+      ln: nameParts.length > 1 ? [sha256(nameParts[nameParts.length - 1])] : undefined,
+      fbc: data.fbc || undefined,
+      fbp: data.fbp || undefined,
+      client_ip_address: data.ip || undefined,
+      client_user_agent: data.user_agent || undefined,
+      country: [sha256('us')],
+    };
+    const created = Date.parse(payload.created_at || '') || Date.now();
+    const body = {
+      data: [
+        {
+          event_name: 'Lead',
+          event_time: Math.floor(created / 1000),
+          event_id: data.event_id || payload.id || undefined,
+          action_source: 'website',
+          event_source_url: data.landing_url || data.referrer || 'https://revvia.com/',
+          user_data,
+          custom_data: {
+            content_name: offer,
+            form_name: formName,
+            lead_source: data.utm_source || (data.gclid ? 'google' : data.fbclid ? 'meta' : 'organic'),
+          },
+        },
+      ],
+    };
+    if (process.env.META_TEST_EVENT_CODE) body.test_event_code = process.env.META_TEST_EVENT_CODE;
+    const res = await fetch(
+      `https://graph.facebook.com/v21.0/${pixel}/events?access_token=${encodeURIComponent(token)}`,
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+    );
+    if (!res.ok) {
+      console.error('[submission-created] Meta CAPI error', res.status, await res.text().catch(() => ''));
+    }
+  } catch (err) {
+    console.error('[submission-created] Meta CAPI exception', err);
+  }
+}
 
 const FROM_EMAIL = process.env.FROM_EMAIL || 'tim@revvia.com';
 const FROM_NAME = 'Tim Holt, Revvia';
@@ -180,13 +260,15 @@ export const handler = async (event) => {
     const formName = payload.form_name || data['form-name'];
     const to = data.email || payload.email;
 
-    if (!formName || !to) return { statusCode: 200, body: 'no-op' };
+    if (!formName) return { statusCode: 200, body: 'no-op' };
 
-    const email = buildEmail(formName, data);
-    if (!email) return { statusCode: 200, body: 'ignored' };
+    // Server-side Meta Lead runs for every lead form, independent of email.
+    const capi = sendMetaLead(formName, data, payload);
 
-    await sendViaSendGrid({ to, ...email });
-    return { statusCode: 200, body: 'sent' };
+    const email = to ? buildEmail(formName, data) : null;
+    if (email) await sendViaSendGrid({ to, ...email });
+    await capi;
+    return { statusCode: 200, body: email ? 'sent' : 'ignored' };
   } catch (err) {
     // Never fail the submission because of the auto-responder.
     console.error('[submission-created] error', err);
