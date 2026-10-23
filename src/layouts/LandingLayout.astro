@@ -54,7 +54,9 @@ const year = new Date().getFullYear();
 
     <script>
       import { initAttribution } from '../lib/attribution';
+      import { installTrackingGlobal } from '../lib/conversion';
       initAttribution();
+      installTrackingGlobal();
 
       // CTA buttons (data-cta, href="#form" / "#scorecard"): smooth-scroll to
       // the single form/quiz and move focus into its first visible field.

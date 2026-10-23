@@ -61,5 +61,13 @@ const baseSchemas = [organizationSchema(), websiteSchema(), personSchema()];
       <slot />
     </main>
     <Footer />
+    <script>
+      // Site-wide ad attribution + the window.rvTrack helpers the inline
+      // form scripts use (see src/lib/attribution.ts, conversion.ts).
+      import { initAttribution } from '../lib/attribution';
+      import { installTrackingGlobal } from '../lib/conversion';
+      initAttribution();
+      installTrackingGlobal();
+    </script>
   </body>
 </html>
