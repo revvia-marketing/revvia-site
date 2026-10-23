@@ -20,6 +20,7 @@ const { formName, label, noun, locationLabel, locationPlaceholder, successPath }
   Astro.props;
 const id = formName;
 const Noun = noun === 'brand' ? 'Brand' : 'Business';
+import AttributionFields from './AttributionFields.astro';
 ---
 <div class="form-shell" data-feature-shell>
   <form
@@ -35,6 +36,7 @@ const Noun = noun === 'brand' ? 'Brand' : 'Business';
     <!-- Netlify needs the form name echoed as a hidden field -->
     <input type="hidden" name="form-name" value={formName} />
     <input type="hidden" name="publication" value={label} />
+    <AttributionFields />
 
     <div class="form-row">
       <div class="field">
@@ -132,6 +134,10 @@ const Noun = noun === 'brand' ? 'Brand' : 'Business';
           btn.textContent = 'Sending…';
         }
 
+        try {
+          if (window.rvTrack) window.rvTrack.fill(form);
+        } catch (err) {}
+
         const data = new FormData(form);
         try {
           await fetch('/', {
@@ -153,7 +159,9 @@ const Noun = noun === 'brand' ? 'Brand' : 'Business';
             });
           }
           if (typeof window.fbq === 'function') {
-            window.fbq('track', 'Lead', { content_name: 'Feature: ' + pub });
+            // Custom event, NOT Lead: feature requests are editorial, and
+            // counting them as Lead would muddy Meta's lead optimization.
+            window.fbq('trackCustom', 'FeatureRequest', { content_name: 'Feature: ' + pub });
           }
         } catch (err) {
           /* analytics must never block the success state */
