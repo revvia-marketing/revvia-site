@@ -29,6 +29,7 @@ const schemas = [
     })),
   }),
 ];
+import AttributionFields from '../../components/AttributionFields.astro';
 ---
 <BaseLayout
   title="Journal"
@@ -89,6 +90,7 @@ const schemas = [
         data-subscribe
       >
         <input type="hidden" name="form-name" value="newsletter" />
+        <AttributionFields />
         <p class="hp" aria-hidden="true"><label>Leave blank: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
         <label class="sr-only" for="sub-email">Email address</label>
         <input id="sub-email" type="email" name="email" placeholder="you@brand.com" autocomplete="email" required />
@@ -142,12 +144,16 @@ const schemas = [
       e.preventDefault();
       if (form.querySelector('[name="bot-field"]')?.value) return;
       const btn = form.querySelector('button[type="submit"]');
+      try { if (window.rvTrack) window.rvTrack.fill(form); } catch (err) {}
       try {
         await fetch('/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams(new FormData(form)).toString(),
         });
+      } catch (err) {}
+      try {
+        if (typeof window.gtag === 'function') window.gtag('event', 'sign_up', { method: 'newsletter' });
       } catch (err) {}
       if (btn) btn.textContent = "You're in.";
       form.querySelector('input[type="email"]').value = '';
