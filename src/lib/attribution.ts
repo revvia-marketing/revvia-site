@@ -171,9 +171,11 @@ export function collectAttribution(): Record<string, string> {
   // URLs deliberately exclude the query string (no PII/click-ids in them).
   // landing_url = the page the form was submitted on (kept for back-compat);
   // first_landing = where this visitor first arrived from the ad / referrer.
+  // traffic_referrer = the external site that sent them (Netlify reserves
+  // the field name "referrer" for the submitting page, so it can't be used).
   out.landing_url = window.location.origin + window.location.pathname;
   out.first_landing = getAttr('first_landing') || out.landing_url;
-  out.referrer = ssGet('referrer') || '';
+  out.traffic_referrer = ssGet('referrer') || '';
   out.event_id = uuid();
   return out;
 }
