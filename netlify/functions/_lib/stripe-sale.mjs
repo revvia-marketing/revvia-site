@@ -71,6 +71,88 @@ export function planFromSession(session) {
   return { code, name, monthly: 0 };
 }
 
+export function sessionLineItems(session) {
+  const raw = session?.line_items;
+  if (Array.isArray(raw)) return raw;
+  if (raw && Array.isArray(raw.data)) return raw.data;
+  return [];
+}
+
+function cents(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+function isRecurringItem(item) {
+  const price = item?.price;
+  if (!price || typeof price !== 'object') return false;
+  if (price.recurring) return true;
+  return price.type === 'recurring';
+}
+
+function isSetupItem(item) {
+  if (isRecurringItem(item)) return false;
+  const desc = String(item?.description || item?.price?.nickname || '').toLowerCase();
+  if (desc.includes('setup')) return true;
+  return item?.price?.type === 'one_time';
+}
+
+function lineListCents(item) {
+  const sub = cents(item?.amount_subtotal);
+  if (sub != null) return sub;
+  const unit = cents(item?.price?.unit_amount);
+  const qty = Number(item?.quantity) || 1;
+  if (unit != null) return unit * qty;
+  return cents(item?.amount_total) ?? 0;
+}
+
+/**
+ * What the buyer actually paid for setup, from line items when Stripe sent
+ * them and otherwise from amount_total minus the plan's monthly price.
+ */
+export function describeCharges(session, plan = planFromSession(session)) {
+  const sessionDiscount = cents(session?.total_details?.amount_discount) ?? 0;
+  const items = sessionLineItems(session);
+  const monthlyList = plan?.monthly ? plan.monthly * 100 : 0;
+  if (items.length) {
+    const setup = items.filter(isSetupItem);
+    const recurring = items.filter(isRecurringItem);
+    const monthlyCents = recurring.reduce((sum, item) => sum + (cents(item.amount_total) ?? 0), 0) || monthlyList;
+    if (!setup.length) {
+      return { known: false, waived: false, listCents: 0, dueCents: null, discountCents: sessionDiscount, monthlyCents };
+    }
+    const listCents = setup.reduce((sum, item) => sum + lineListCents(item), 0);
+    const dueCents = setup.reduce((sum, item) => sum + (cents(item.amount_total) ?? lineListCents(item)), 0);
+    const lineDiscount = setup.reduce((sum, item) => sum + (cents(item.amount_discount) ?? 0), 0);
+    return {
+      known: true,
+      waived: dueCents === 0 && listCents > 0,
+      listCents,
+      dueCents,
+      discountCents: lineDiscount || sessionDiscount,
+      monthlyCents,
+    };
+  }
+
+  const total = cents(session?.amount_total);
+  if (total == null || !monthlyList) {
+    return { known: false, waived: false, listCents: 0, dueCents: null, discountCents: sessionDiscount, monthlyCents: monthlyList };
+  }
+  const dueCents = total - monthlyList;
+  if (dueCents < 0) {
+    return { known: false, waived: false, listCents: 0, dueCents: null, discountCents: sessionDiscount, monthlyCents: monthlyList };
+  }
+  const listCents = dueCents + sessionDiscount;
+  return {
+    known: true,
+    waived: dueCents === 0,
+    listCents,
+    dueCents,
+    discountCents: sessionDiscount,
+    monthlyCents: monthlyList,
+  };
+}
+
 export function promotionRefs(session) {
   const discounts = Array.isArray(session?.discounts) ? session.discounts : [];
   const codes = [];
@@ -96,9 +178,12 @@ export function customerName(session) {
 
 /**
  * Handle one verified Stripe event. Idempotent on event id when `store` is set.
- * `lookupPromo` returns the human code or '' . Mail failures throw so Stripe retries.
+ * `lookupPromo` returns the human code or ''.
+ * A non-retryable mail result (SendGrid 4xx other than 408/429) is logged and
+ * saved, and the event is accepted so Stripe does not retry it forever.
+ * A transient mail failure throws so the caller can return 500.
  */
-export async function processStripeEvent({ event, store, env, send, lookupPromo, emailsFor }) {
+export async function processStripeEvent({ event, store, env, send, lookupPromo, lookupLines, emailsFor }) {
   if (event?.type !== 'checkout.session.completed') return { action: 'ignore' };
   const session = event?.data?.object;
   if (!isAiVisibilitySession(session)) return { action: 'ignore' };
@@ -111,12 +196,30 @@ export async function processStripeEvent({ event, store, env, send, lookupPromo,
   if (!state || !Array.isArray(state.sent)) state = { status: 'pending', sent: [] };
 
   const promo = String((await lookupPromo(session)) || '').trim();
-  const emails = emailsFor(session, promo, env);
+  let priced = session;
+  if (typeof lookupLines === 'function' && !sessionLineItems(session).length) {
+    try {
+      const lines = await lookupLines(session);
+      if (Array.isArray(lines) && lines.length) priced = { ...session, line_items: { data: lines } };
+    } catch (err) {
+      console.error('[stripe-webhook] line items lookup failed', err?.name || 'error');
+    }
+  }
+  const emails = emailsFor(priced, promo, env);
+  let rejected = null;
   for (const email of emails) {
     const stamp = `${email.to}|${email.subject}`;
     if (state.sent.includes(stamp)) continue;
     const result = await send(email);
     if (!result?.ok) {
+      if (result?.retryable === false) {
+        rejected = result;
+        state.status = 'mail_rejected';
+        state.mailStatus = result.status || 0;
+        console.error('[stripe-webhook] non-retryable mail failure', state.mailStatus);
+        if (store) await store.set(key, state);
+        continue;
+      }
       if (store) await store.set(key, state);
       const err = new Error('mail');
       err.code = 'mail';
@@ -124,6 +227,12 @@ export async function processStripeEvent({ event, store, env, send, lookupPromo,
     }
     state.sent.push(stamp);
     if (store) await store.set(key, state);
+  }
+  if (rejected) {
+    state.status = 'mail_rejected';
+    state.mailStatus = rejected.status || state.mailStatus || 0;
+    if (store) await store.set(key, state);
+    return { action: 'accepted' };
   }
   state.status = 'sent';
   if (store) await store.set(key, state);

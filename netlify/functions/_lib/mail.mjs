@@ -36,12 +36,21 @@ export async function sendPlain({ to, subject, text, env = process.env, fetchImp
       }),
     });
     if (!res.ok) {
-      console.error('[mail] send failed', res.status);
-      return { ok: false };
+      const retryable = res.status >= 500 || res.status === 429 || res.status === 408;
+      let hint = '';
+      try {
+        const data = await res.json();
+        const message = data?.errors?.[0]?.message;
+        if (typeof message === 'string') hint = message.slice(0, 160);
+      } catch {
+        /* response body is optional */
+      }
+      console.error('[mail] send failed', res.status, retryable ? 'retryable' : 'non-retryable', hint);
+      return { ok: false, status: res.status, retryable };
     }
-    return { ok: true };
+    return { ok: true, status: res.status };
   } catch (err) {
     console.error('[mail] send failed', err?.name || 'error');
-    return { ok: false };
+    return { ok: false, retryable: true };
   }
 }

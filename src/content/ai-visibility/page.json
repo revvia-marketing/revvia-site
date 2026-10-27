@@ -188,6 +188,6 @@
     "seePlans": "See plans",
     "back": "Back to Revvia AI Visibility",
     "paidHeading": "You're in. Welcome to Revvia AI Visibility {Plan}.",
-    "paidBody": "Your payment went through, and Stripe is emailing your receipt. Within 1 business day you'll get an email from tim@revvia.com with a short intake form: your business facts and access to your Google Business Profile. Setup is delivered within {setupDays} days of your completed intake, or your $497 back. Nothing to schedule."
+    "paidBody": "Your payment went through, and Stripe is emailing your receipt. An email from tim@revvia.com with a short intake form arrives right away: your business facts and access to your Google Business Profile. Setup is delivered within {setupDays} days of your completed intake, or your $497 back. Nothing to schedule."
   }
 }

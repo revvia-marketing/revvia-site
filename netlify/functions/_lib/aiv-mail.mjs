@@ -4,6 +4,7 @@ import {
   customFieldValue,
   customerEmail,
   customerName,
+  describeCharges,
   formatAddress,
   formatDollars,
   planFromSession,
@@ -51,10 +52,13 @@ export function saleFromSession(session, promo, env = process.env) {
   const upper = code.toUpperCase();
   const configured = String(env.FOUNDING_PROMO_CODE || '').trim().toUpperCase();
   const founding = upper === 'FOUNDING10' || Boolean(configured && upper === configured);
+  const setup = describeCharges(session, plan);
   return {
     plan,
     promo: code || 'none',
     founding,
+    setup,
+    setupWaived: setup.known ? setup.waived : founding,
     amount: formatDollars(session?.amount_total),
     customerName: name || 'there',
     firstName: firstName(name),
@@ -65,6 +69,26 @@ export function saleFromSession(session, promo, env = process.env) {
     customerId: stripeId(session?.customer, 'cus_'),
     subscriptionId: stripeId(session?.subscription, 'sub_'),
   };
+}
+
+/** Paid setup keeps the $497 refund promise. A waived setup uses the page's founding line. */
+export function guaranteeSentence(waived) {
+  if (waived) {
+    return `Setup is delivered within ${SETUP_DAYS} days of your completed intake and manager access. If your setup was waived through the founding offer, there's no setup fee to refund.`;
+  }
+  return `Setup is delivered within ${SETUP_DAYS} days of your completed intake, or you get your $497 setup fee back.`;
+}
+
+function dollars(cents) {
+  return `$${formatDollars(cents)}`;
+}
+
+function setupPhrase(setup) {
+  if (!setup?.known) return 'not on the checkout session';
+  if (setup.waived) {
+    return setup.listCents > 0 ? `waived (${dollars(setup.listCents)} not charged)` : 'waived';
+  }
+  return dollars(setup.dueCents);
 }
 
 export function welcomeEmail(sale, env = process.env) {
@@ -89,7 +113,7 @@ It asks for:
 
 It also asks you to add me as a Manager on your Google Business Profile so I can make the updates for you. The form walks you through it. It takes about 2 minutes, and you can remove me at any time.
 
-Setup is delivered within ${SETUP_DAYS} days of your completed intake, or you get your $497 setup fee back. The clock starts when the form comes in, so the sooner you send it, the sooner you'll see changes.
+${guaranteeSentence(sale.setupWaived)} The clock starts when the form comes in, so the sooner you send it, the sooner you'll see changes.
 
 To update your card, see invoices, or cancel, use your private billing link:
 
@@ -106,9 +130,9 @@ If anything on the form is unclear, just reply to this email.`;
 }
 
 export function saleAlertEmail(sale, env = process.env) {
-  const planLine = sale.plan.monthly
-    ? `${sale.plan.name} ($${sale.plan.monthly}/mo + $497 setup)`
-    : sale.plan.name;
+  const monthlyCents = sale.setup?.monthlyCents || (sale.plan.monthly ? sale.plan.monthly * 100 : 0);
+  const planLine = monthlyCents ? `${sale.plan.name} (${dollars(monthlyCents)}/mo)` : sale.plan.name;
+  const discount = sale.setup?.discountCents > 0 ? `\nDiscount: ${dollars(sale.setup.discountCents)}` : '';
   const customerUrl = sale.customerId
     ? `https://dashboard.stripe.com/customers/${sale.customerId}`
     : 'not available';
@@ -124,8 +148,9 @@ export function saleAlertEmail(sale, env = process.env) {
   const body = `New AI Visibility checkout.
 
 Plan: ${planLine}
+Setup: ${setupPhrase(sale.setup)}
 Promo code: ${sale.promo}
-Amount paid today: $${sale.amount}
+Amount paid today: $${sale.amount}${discount}
 Customer: ${sale.customerName}
 Email: ${sale.email || 'none'}
 Business website: ${sale.website}
@@ -243,7 +268,7 @@ function extraFields(data) {
 
 export function intakeNotifyEmail(data) {
   const pairs = INTAKE_FIELDS.map(([key, label]) => [label, data?.[key]]);
-  const body = `New AI Visibility intake. Reminders stop for this email.
+  const body = `New AI Visibility intake.
 
 ${lines([...pairs, ...extraFields(data)])}`;
   const business = data?.business_name || data?.name || 'new client';
@@ -254,12 +279,18 @@ ${lines([...pairs, ...extraFields(data)])}`;
   };
 }
 
+function foundingIntake(data) {
+  const raw = data?.founding_offer;
+  const value = Array.isArray(raw) ? raw[raw.length - 1] : raw;
+  return String(value || '').trim().toLowerCase() === 'yes';
+}
+
 export function intakeConfirmationEmail(data) {
   const name = firstName(data?.name);
   const business = String(data?.business_name || 'your business').trim();
   const body = `Hi ${name},
 
-I have your intake for ${business}. Setup is delivered within ${SETUP_DAYS} days of your completed intake and manager access, or you get your $497 setup fee back.
+I have your intake for ${business}. ${guaranteeSentence(foundingIntake(data))}
 
 If anything looks off, just reply.`;
   return {

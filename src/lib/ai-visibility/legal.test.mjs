@@ -31,21 +31,27 @@ describe('AI Visibility legal copy', () => {
 
   it('quotes the AI Visibility guarantee, founding offer, and 90-day check retention', () => {
     const faq = (question) => page.faq.find((item) => item.question === question).answer;
+    const guarantee = fill(faq('So what do you guarantee?'), days).replace(/^That /, '');
     for (const text of [
-      fill(faq('So what do you guarantee?'), days),
-      fill(page.riskItems[0].body, days),
+      guarantee,
+      fill(page.riskItems[0].body, days).replace(/ This covers our work, not what AI assistants say\.$/, ''),
       page.riskItems[3].title,
-      page.riskSmall,
+      'If your setup was waived through the founding offer, there\'s no setup fee to refund.',
+      'We don\'t promise calls, leads, revenue, or rankings, because no one can.',
       page.foundingLine,
-      faq("What's the founding offer?"),
+      'with their approval',
       page.renewalDisclosure,
       "There's no six-month agreement. Service runs through the month you paid for.",
       'AI answers vary from run to run and change as the assistants update.',
     ]) {
       assert.equal(terms.includes(text), true, text);
     }
+    assert.equal(terms.includes('Yes, anytime, online'), false);
+    assert.equal(terms.includes('The setup fee and the monthly fees are non-refundable'), false);
     assert.match(terms, /end of the current billing period/);
-    assert.match(terms, /monthly fees are non-refundable/);
+    assert.match(terms, /[Mm]onthly fees are non-refundable/);
+    assert.equal(page.thanks.paidBody.includes('1 business day'), false);
+    assert.match(page.thanks.paidBody, /right away/);
     assert.match(privacy, /OpenAI/);
     assert.match(privacy, /Perplexity/);
     assert.match(privacy, /Anthropic/);
@@ -57,5 +63,6 @@ describe('AI Visibility legal copy', () => {
     assert.match(intake, /name="aiv-intake"/);
     assert.match(intake, /tim@revvia.com/);
     assert.equal(intake.includes(page.foundingLine), true);
+    assert.equal(intake.includes('Our first 10 clients get the $497 setup waived'), false);
   });
 });

@@ -2,7 +2,7 @@ import { sendPlain } from './_lib/mail.mjs';
 import { verifyStripeSignature } from './_lib/stripe-sign.mjs';
 import { saleEmails } from './_lib/aiv-mail.mjs';
 import { openBlobStore } from './_lib/store.mjs';
-import { processStripeEvent, promotionRefs } from './_lib/stripe-sale.mjs';
+import { processStripeEvent, promotionRefs, sessionLineItems } from './_lib/stripe-sale.mjs';
 
 /**
  * Stripe webhook for Revvia AI Visibility.
@@ -50,41 +50,63 @@ export async function lookupPromoCode(session, env = process.env, fetchImpl = fe
   return codes.join(', ');
 }
 
-export async function handleStripeWebhook(req, { env = process.env, fetchImpl = fetch, store, send = sendPlain } = {}) {
-  if (req.method !== 'POST') return text('Method not allowed', 405);
-  const raw = await req.text();
-  const header = req.headers.get('stripe-signature') || '';
-  const verified = verifyStripeSignature(raw, header, env.STRIPE_WEBHOOK_SECRET || '');
-  if (!verified.ok) return text('Invalid signature', 400);
-
-  let event;
+export async function lookupSessionLineItems(session, env = process.env, fetchImpl = fetch) {
+  const present = sessionLineItems(session);
+  if (present.length) return present;
+  const id = session?.id;
+  const key = stripeKey(env);
+  if (!key || typeof id !== 'string' || !/^cs_[A-Za-z0-9]+$/.test(id)) return [];
   try {
-    event = JSON.parse(raw);
-  } catch {
-    return text('Invalid payload', 400);
+    const res = await fetchImpl(
+      `https://api.stripe.com/v1/checkout/sessions/${encodeURIComponent(id)}/line_items?limit=10`,
+      {
+        headers: { Authorization: `Bearer ${key}` },
+        signal: AbortSignal.timeout(8000),
+      },
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data?.data) ? data.data : [];
+  } catch (err) {
+    console.error('[stripe-webhook] line items lookup failed', err?.name || 'error');
+    return [];
   }
+}
 
-  const blob = store === undefined ? await openBlobStore('ai-visibility-events') : store;
-  const result = await processStripeEvent({
-    event,
-    store: blob,
-    env,
-    send: (email) => send({ ...email, env, fetchImpl }),
-    lookupPromo: (session) => lookupPromoCode(session, env, fetchImpl),
-    emailsFor: saleEmails,
-  });
-  return text(result.action || 'ok', 200);
+export async function handleStripeWebhook(req, { env = process.env, fetchImpl = fetch, store, send = sendPlain } = {}) {
+  try {
+    if (req.method !== 'POST') return text('Method not allowed', 405);
+    const raw = await req.text();
+    const header = req.headers.get('stripe-signature') || '';
+    const verified = verifyStripeSignature(raw, header, env.STRIPE_WEBHOOK_SECRET || '');
+    if (!verified.ok) return text('Invalid signature', 400);
+
+    let event;
+    try {
+      event = JSON.parse(raw);
+    } catch {
+      return text('Invalid payload', 400);
+    }
+
+    const blob = store === undefined ? await openBlobStore('ai-visibility-events') : store;
+    const result = await processStripeEvent({
+      event,
+      store: blob,
+      env,
+      send: (email) => send({ ...email, env, fetchImpl }),
+      lookupPromo: (session) => lookupPromoCode(session, env, fetchImpl),
+      lookupLines: (session) => lookupSessionLineItems(session, env, fetchImpl),
+      emailsFor: saleEmails,
+    });
+    return text(result.action || 'ok', 200);
+  } catch (err) {
+    console.error('[stripe-webhook]', err?.code || err?.name || 'error');
+    return text('Retry', 500);
+  }
 }
 
 function text(body, status) {
   return new Response(body, { status, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } });
 }
 
-export default async (req) => {
-  try {
-    return await handleStripeWebhook(req);
-  } catch (err) {
-    console.error('[stripe-webhook]', err?.code || err?.name || 'error');
-    return text('Retry', 500);
-  }
-};
+export default async (req) => handleStripeWebhook(req);
