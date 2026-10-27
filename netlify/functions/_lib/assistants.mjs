@@ -4,9 +4,9 @@
  *
  * OpenAI: Responses API + web_search
  *   https://developers.openai.com/api/docs/guides/tools-web-search
- * Perplexity: Sonar chat completions at /v1/sonar (search is built in).
- * The old /chat/completions path was retired. If /v1/sonar is gone, one
- * follow-up uses the Agent API (effort, not the Sonar model id):
+ * Perplexity: Agent API at /v1/responses (alias of /v1/agent).
+ * Sonar chat completions are retired. `sonar` maps to effort `fast`,
+ * not to a model id. /v1/sonar returns 403 chat_completions_not_available.
  * https://docs.perplexity.ai/docs/agent-api/migrate-from-sonar/how-to
  * Anthropic: Messages API + web_search_20250305
  *   https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool
@@ -91,19 +91,20 @@ export function openAiAnswer(data, model) {
 export function perplexityAnswer(data, model) {
   const citations = [];
   const chunks = [];
+  if (typeof data?.output_text === 'string' && data.output_text.trim()) chunks.push(data.output_text);
   const message = data?.choices?.[0]?.message?.content;
-  if (typeof message === 'string' && message.trim()) chunks.push(message);
-  else if (typeof data?.output_text === 'string' && data.output_text.trim()) chunks.push(data.output_text);
+  if (!chunks.length && typeof message === 'string' && message.trim()) chunks.push(message);
   collectUrls(data?.citations, citations);
   collectUrls(data?.search_results, citations);
   for (const item of data?.output || []) {
-    if (!chunks.length) {
+    if (!chunks.length && item?.type === 'message') {
       for (const part of item.content || []) {
         if ((part.type === 'output_text' || part.type === 'text') && part.text) chunks.push(part.text);
       }
     }
-    collectUrls(item.search_results || item.citations, citations);
-    for (const part of item.content || []) collectUrls(part.annotations, citations);
+    collectUrls(item?.results, citations);
+    collectUrls(item?.search_results || item?.citations, citations);
+    for (const part of item?.content || []) collectUrls(part.annotations, citations);
   }
   return {
     text: chunks.join('\n').trim(),
@@ -125,8 +126,16 @@ function anthropicAnswer(data, model) {
 }
 
 export const OPENAI_RESPONSES_URL = 'https://api.openai.com/v1/responses';
-export const PERPLEXITY_SONAR_URL = 'https://api.perplexity.ai/v1/sonar';
-export const PERPLEXITY_AGENT_URL = 'https://api.perplexity.ai/v1/agent';
+export const PERPLEXITY_RESPONSES_URL = 'https://api.perplexity.ai/v1/responses';
+
+/** Sonar chat-completions slugs, mapped to Agent API effort presets. */
+const SONAR_EFFORT = {
+  sonar: 'fast',
+  'sonar-pro': 'fast',
+  'sonar-reasoning-pro': 'low',
+  'sonar-deep-research': 'high',
+};
+const EFFORT_NAMES = new Set(['fast', 'low', 'medium', 'high', 'xhigh']);
 
 function located(city) {
   const loc = place(city);
@@ -149,21 +158,29 @@ export function openAiBody({ model, question, city }) {
   };
 }
 
-export function perplexitySonarBody({ model, question, city }) {
-  return {
-    model,
-    messages: [{ role: 'user', content: question }],
-    web_search_options: { user_location: located(city) },
-  };
-}
-
-/** Agent API uses effort, not the Sonar model id. Fast turns web search on. */
-export function perplexityAgentBody({ question, city }) {
-  return {
-    effort: 'fast',
+/**
+ * Agent API body. `sonar` is an effort preset (`fast`), not a model id.
+ * A provider/model slug such as `openai/gpt-5.6-sol` is sent as `model`
+ * and still includes web_search, which a direct model does not enable alone.
+ */
+export function perplexityResponsesBody({ model, question, city }) {
+  const configured = String(model || '').trim();
+  const key = configured.toLowerCase();
+  const body = {
     input: question,
     tools: [{ type: 'web_search', user_location: located(city) }],
   };
+  if (SONAR_EFFORT[key]) body.effort = SONAR_EFFORT[key];
+  else if (EFFORT_NAMES.has(key) || /^[a-z]+@/.test(key)) body.effort = configured;
+  else if (configured.includes('/')) body.model = configured;
+  else body.effort = 'fast';
+  return body;
+}
+
+/** /v1/sonar answers this when Sonar chat completions are retired. */
+export function retiredSonarError(err) {
+  const type = err?.body?.error?.type || err?.body?.type || '';
+  return err?.status === 403 && type === 'chat_completions_not_available';
 }
 
 function tagError(err, provider, model) {
@@ -192,31 +209,21 @@ async function askOpenAI({ question, city, timeoutMs, env }) {
 }
 
 async function askPerplexity({ question, city, timeoutMs, env }) {
-  const model = env.PERPLEXITY_MODEL;
-  const signal = AbortSignal.timeout(timeoutMs);
-  const headers = {
-    Authorization: `Bearer ${env.PERPLEXITY_API_KEY}`,
-    'Content-Type': 'application/json',
-  };
+  const configured = env.PERPLEXITY_MODEL;
+  const body = perplexityResponsesBody({ model: configured, question, city });
+  const called = body.effort || body.model || configured;
   try {
-    try {
-      const data = await postJson(PERPLEXITY_SONAR_URL, {
-        headers,
-        signal,
-        body: perplexitySonarBody({ model, question, city }),
-      });
-      return perplexityAnswer(data, model);
-    } catch (err) {
-      if (err.status !== 404 && err.status !== 410) throw err;
-      const data = await postJson(PERPLEXITY_AGENT_URL, {
-        headers,
-        signal,
-        body: perplexityAgentBody({ question, city }),
-      });
-      return perplexityAnswer(data, model);
-    }
+    const data = await postJson(PERPLEXITY_RESPONSES_URL, {
+      headers: {
+        Authorization: `Bearer ${env.PERPLEXITY_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      signal: AbortSignal.timeout(timeoutMs),
+      body,
+    });
+    return perplexityAnswer(data, called);
   } catch (err) {
-    throw tagError(err, 'perplexity', model);
+    throw tagError(err, 'perplexity', called);
   }
 }
 

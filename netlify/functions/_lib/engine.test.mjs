@@ -41,22 +41,30 @@ describe('check engine', () => {
     assert.notEqual(hashIp('203.0.113.9', 'salt'), hashIp('203.0.113.10', 'salt'));
   });
 
-  it('scores a failed assistant as not available and caches the city and trade', async () => {
+  it('scores a failed assistant as not available and re-asks only that assistant', async () => {
     const store = createMemoryStore();
     const now = new Date('2026-10-27T15:00:00Z');
     let calls = 0;
+    const asked = [];
     const ask = async (call) => {
       calls += 1;
+      asked.push(call.assistant);
       return answerFor(call);
     };
     const started = await acceptCheck({ store, env, input, ip: '198.51.100.8', now, bank });
     await executeJob({ store, env, checkId: started.checkId, ask, now, bank });
     const status = await readStatus(store, started.checkId, now);
     assert.equal(status.status, 'complete');
+    assert.equal(status.result.cached, false);
     assert.equal(status.result.byAssistant.claude.named, null);
     assert.equal(status.result.byAssistant.claude.status, 'error');
     assert.equal(status.result.namedCount, 1);
     assert.equal(calls, 24);
+    const cachedRows = Object.entries(store.snapshot())
+      .filter(([key]) => key.startsWith('cache:v2:'))
+      .flatMap(([, value]) => value.answers);
+    assert.equal(cachedRows.length, 16);
+    assert.equal(cachedRows.some((row) => row.error || row.assistant === 'claude'), false);
 
     const second = await acceptCheck({
       store,
@@ -66,11 +74,98 @@ describe('check engine', () => {
       now,
       bank,
     });
+    assert.equal(second.cached, false);
+    assert.equal(second.status, 'running');
+    await executeJob({ store, env, checkId: second.checkId, ask, now, bank });
+    assert.equal(calls, 32);
+    assert.equal(asked.slice(24).every((name) => name === 'claude'), true);
+    const again = await readStatus(store, second.checkId, now);
+    assert.equal(again.result.cached, false);
+    assert.equal(JSON.stringify(again).includes('Harbor Plumbing is'), false);
+  });
+
+  it('reuses a city and trade only when every provider answered', async () => {
+    const store = createMemoryStore();
+    const now = new Date('2026-10-27T17:00:00Z');
+    let calls = 0;
+    const ask = async () => {
+      calls += 1;
+      return { text: 'Harbor Plumbing is the one to call.', citations: [], model: 'test', error: null };
+    };
+    const started = await acceptCheck({ store, env, input, ip: '198.51.100.11', now, bank });
+    await executeJob({ store, env, checkId: started.checkId, ask, now, bank });
+    assert.equal(calls, 24);
+    const second = await acceptCheck({
+      store,
+      env,
+      input: { ...input, business: 'Other Plumbing' },
+      ip: '198.51.100.12',
+      now,
+      bank,
+    });
+    assert.equal(second.status, 'complete');
     assert.equal(second.cached, true);
     assert.equal(calls, 24);
     const again = await readStatus(store, second.checkId, now);
     assert.equal(again.result.cached, true);
-    assert.equal(JSON.stringify(again).includes('Harbor Plumbing is'), false);
+    assert.deepEqual(again.result.failedAssistants, []);
+  });
+
+  it('drops a cache entry that contains a failure and asks again', async () => {
+    const store = createMemoryStore();
+    const now = new Date('2026-10-27T18:00:00Z');
+    const tiny = [{
+      trade: 'Plumbing',
+      pro: 'plumber',
+      tradeNoun: 'plumbing',
+      job: 'a leak',
+      templates: ['Who fixes drains in {city}?'],
+    }];
+    const row = {
+      assistant: 'chatgpt',
+      questionIndex: 0,
+      question: 'Who fixes drains in Mesa, AZ?',
+      text: 'Harbor Plumbing is the one to call.',
+      citations: [],
+      model: 'test',
+      timestamp: now.toISOString(),
+      latencyMs: 1,
+      error: null,
+    };
+    await store.set('cache:mesa az::Plumbing', {
+      storedAt: now.toISOString(),
+      answers: [{ ...row, text: 'stale failure', error: 'timeout' }],
+    });
+    await store.set('cache:v2:mesa az::Plumbing', {
+      version: 2,
+      storedAt: now.toISOString(),
+      city: 'Mesa, AZ',
+      trade: 'Plumbing',
+      answers: [row, { ...row, assistant: 'perplexity', text: '', error: 'error' }],
+    });
+    const seen = [];
+    const started = await acceptCheck({ store, env, input, ip: '198.51.100.40', now, bank: tiny });
+    assert.equal(started.cached, false);
+    assert.equal(store.snapshot()['cache:mesa az::Plumbing'], undefined);
+    await executeJob({
+      store,
+      env,
+      checkId: started.checkId,
+      now,
+      bank: tiny,
+      ask: async (call) => {
+        seen.push(`${call.assistant}:${call.questionIndex}`);
+        return { text: 'Fresh.', citations: [], model: 'test', error: null };
+      },
+    });
+    assert.equal(seen.includes('chatgpt:0'), false);
+    assert.deepEqual(seen.sort(), ['claude:0', 'perplexity:0']);
+    const status = await readStatus(store, started.checkId, now);
+    assert.equal(status.result.cached, false);
+    const saved = store.snapshot()['cache:v2:mesa az::Plumbing'].answers;
+    assert.equal(saved.length, 3);
+    assert.equal(saved.every((item) => !item.error), true);
+    assert.equal(saved.some((item) => item.text === 'stale failure'), false);
   });
 
   it('returns redacted provider failures and a per-provider summary', async () => {

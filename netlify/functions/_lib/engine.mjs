@@ -46,8 +46,97 @@ function dayKey(hash, now) {
 function capKey(now) {
   return `cap:${now.toISOString().slice(0, 10)}`;
 }
+const CACHE_VERSION = 'v2';
+
 function cacheKey(city, trade) {
+  return `cache:${CACHE_VERSION}:${normalize(city)}::${trade}`;
+}
+
+function legacyCacheKey(city, trade) {
   return `cache:${normalize(city)}::${trade}`;
+}
+
+function answerSucceeded(row) {
+  return Boolean(row) && !row.error && row.assistant && Number.isInteger(row.questionIndex);
+}
+
+function cellKey(assistant, questionIndex) {
+  return `${assistant}:${questionIndex}`;
+}
+
+function freshSuccesses(cached, now, ttl) {
+  const rows = Array.isArray(cached?.answers) ? cached.answers : [];
+  const out = [];
+  for (const row of rows) {
+    if (!answerSucceeded(row)) continue;
+    const at = Date.parse(row.timestamp || '');
+    if (!Number.isFinite(at) || now.getTime() - at >= ttl) continue;
+    out.push(row);
+  }
+  return out;
+}
+
+function covers(answers, rendered) {
+  if (!rendered.length) return false;
+  const have = new Set(answers.map((row) => cellKey(row.assistant, row.questionIndex)));
+  return ASSISTANTS.every((assistant) => rendered.every((question) => have.has(cellKey(assistant, question.index))));
+}
+
+function oldestIso(answers, fallback) {
+  let oldest = null;
+  for (const row of answers || []) {
+    const at = Date.parse(row?.timestamp || '');
+    if (!Number.isFinite(at)) continue;
+    if (oldest == null || at < oldest) oldest = at;
+  }
+  return oldest == null ? fallback : new Date(oldest).toISOString();
+}
+
+async function readReusable(store, city, trade, now, ttl) {
+  await store.del(legacyCacheKey(city, trade));
+  const key = cacheKey(city, trade);
+  const cached = await store.get(key);
+  const reusable = freshSuccesses(cached, now, ttl);
+  const stored = Array.isArray(cached?.answers) ? cached.answers : [];
+  const dirty = stored.length !== reusable.length || stored.some((row) => row?.error);
+  if (cached && dirty) {
+    if (reusable.length) {
+      await store.set(key, {
+        version: 2,
+        storedAt: cached.storedAt || now.toISOString(),
+        city,
+        trade,
+        answers: reusable,
+      });
+    } else {
+      await store.del(key);
+    }
+  }
+  return reusable;
+}
+
+async function saveSuccesses(store, city, trade, previous, latest, now, ttl) {
+  const map = new Map();
+  for (const row of freshSuccesses({ answers: previous }, now, ttl)) {
+    map.set(cellKey(row.assistant, row.questionIndex), row);
+  }
+  for (const row of latest || []) {
+    if (!answerSucceeded(row)) continue;
+    map.set(cellKey(row.assistant, row.questionIndex), row);
+  }
+  const answers = [...map.values()];
+  const key = cacheKey(city, trade);
+  if (!answers.length) {
+    await store.del(key);
+    return;
+  }
+  await store.set(key, {
+    version: 2,
+    storedAt: now.toISOString(),
+    city,
+    trade,
+    answers,
+  });
 }
 
 async function count(store, key) {
@@ -81,11 +170,12 @@ export async function acceptCheck({ store, env, input, ip, now = new Date(), ban
   const entry = questionsFor(bank, input.trade);
   if (!entry) return { ok: false, kind: 'invalid', fields: { trade: 'Choose a trade from the list.' } };
 
-  const cached = await store.get(cacheKey(input.city, input.trade));
   const ttl = num(env.CHECK_CACHE_TTL_HOURS, 24) * 3600000;
-  const cacheFresh = cached && now.getTime() - Date.parse(cached.storedAt) < ttl;
+  const reusable = await readReusable(store, input.city, input.trade, now, ttl);
+  const rendered = renderSet(entry, input.city);
+  const fullHit = covers(reusable, rendered);
 
-  if (!cacheFresh && (await count(store, capKey(now))) >= num(env.CHECK_DAILY_CAP, 100)) {
+  if (!fullHit && (await count(store, capKey(now))) >= num(env.CHECK_DAILY_CAP, 100)) {
     await bump(store, hour);
     await bump(store, day);
     return { ok: false, kind: 'rate' };
@@ -112,8 +202,15 @@ export async function acceptCheck({ store, env, input, ip, now = new Date(), ban
   await store.set('index', index);
   await prune(store, now);
 
-  if (cacheFresh) {
-    await finishJob({ store, job, answers: cached.answers, fromCache: cached, now, bank });
+  if (fullHit) {
+    await finishJob({
+      store,
+      job,
+      answers: reusable,
+      fromCache: { storedAt: oldestIso(reusable, now.toISOString()) },
+      now,
+      bank,
+    });
     return { ok: true, checkId: id, status: 'complete', cached: true };
   }
 
@@ -140,12 +237,22 @@ export async function executeJob({ store, env, checkId, ask, now = new Date(), b
   }
   const entry = questionsFor(bank, job.trade);
   const rendered = renderSet(entry, job.city);
-  for (const assistant of ASSISTANTS) await store.set(`prog:${checkId}:${assistant}`, 'asking');
+  const ttl = num(env.CHECK_CACHE_TTL_HOURS, 24) * 3600000;
+  const reusable = await readReusable(store, job.city, job.trade, now, ttl);
+  const reused = new Map(reusable.map((row) => [cellKey(row.assistant, row.questionIndex), row]));
+  for (const assistant of ASSISTANTS) {
+    const pending = rendered.some((question) => !reused.has(cellKey(assistant, question.index)));
+    await store.set(`prog:${checkId}:${assistant}`, pending ? 'asking' : 'done');
+  }
 
+  let asked = 0;
   const groups = await Promise.all(
     ASSISTANTS.map(async (assistant) => {
       const rows = await Promise.all(
         rendered.map(async (question) => {
+          const hit = reused.get(cellKey(assistant, question.index));
+          if (hit) return hit;
+          asked += 1;
           const started = Date.now();
           try {
             const result = await ask({
@@ -203,16 +310,12 @@ export async function executeJob({ store, env, checkId, ask, now = new Date(), b
     })
   );
   const answers = groups.flat();
-  const anyOk = ASSISTANTS.some((assistant) => answers.filter((row) => row.assistant === assistant).every((row) => !row.error) && answers.some((row) => row.assistant === assistant));
-  if (anyOk) {
-    await store.set(cacheKey(job.city, job.trade), {
-      storedAt: now.toISOString(),
-      city: job.city,
-      trade: job.trade,
-      answers,
-    });
-  }
-  await finishJob({ store, job, answers, fromCache: null, now, bank });
+  await saveSuccesses(store, job.city, job.trade, reusable, answers, now, ttl);
+  const everySuccess = answers.length > 0 && answers.every((row) => !row.error);
+  const fromCache = asked === 0 && everySuccess
+    ? { storedAt: oldestIso(answers, now.toISOString()) }
+    : null;
+  await finishJob({ store, job, answers, fromCache, now, bank });
   return { failures, summary: runSummary(answers, Date.now() - startedAt) };
 }
 
@@ -225,11 +328,13 @@ async function finishJob({ store, job, answers, fromCache, now, bank }) {
     answers,
   });
   const failedAll = scored.assistantsOk === 0;
-  const collectedAt = fromCache?.storedAt || now.toISOString();
+  const everySuccess = (answers || []).length > 0 && (answers || []).every((row) => !row.error);
+  const reused = Boolean(fromCache) && everySuccess;
+  const collectedAt = reused ? (fromCache.storedAt || now.toISOString()) : now.toISOString();
   const next = {
     ...job,
     status: failedAll ? 'failed' : 'complete',
-    cached: Boolean(fromCache),
+    cached: reused,
     cacheStoredAt: fromCache?.storedAt || null,
     answers,
     result: failedAll
@@ -244,12 +349,12 @@ async function finishJob({ store, job, answers, fromCache, now, bank }) {
           failedAssistants: scored.failedAssistants,
           byAssistant: scored.byAssistant,
           collectedAt,
-          cached: Boolean(fromCache),
-          cacheAgeHours: fromCache ? Math.max(0, (now.getTime() - Date.parse(fromCache.storedAt)) / 3600000) : 0,
+          cached: reused,
+          cacheAgeHours: reused ? Math.max(0, (now.getTime() - Date.parse(fromCache.storedAt)) / 3600000) : 0,
         },
   };
   await store.set(`job:${job.id}`, next);
-  if (fromCache) {
+  if (reused) {
     for (const assistant of ASSISTANTS) {
       const rows = answers.filter((row) => row.assistant === assistant);
       const failed = rows.length === 0 || rows.some((row) => row.error);
