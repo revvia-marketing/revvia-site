@@ -1,6 +1,7 @@
 import { appendCheckoutParams, checkoutParams, clientReferenceId, messageMatchVisible, randomId } from '../lib/ai-visibility/ids.mjs';
 import { prefillFromQuery } from '../lib/ai-visibility/validate.mjs';
 import { createTurnstileSession, takeTurnstileToken } from '../lib/ai-visibility/turnstile-client.mjs';
+import { assistantLabel, footerAnswerCount } from '../lib/ai-visibility/result-copy.mjs';
 
 const ASSISTANTS = ['chatgpt', 'perplexity', 'claude'];
 
@@ -200,7 +201,7 @@ function plain(template, values) {
 }
 
 function labelOf(name) {
-  return name[0].toUpperCase() + name.slice(1);
+  return assistantLabel(name);
 }
 
 function progressHtml(strings, values) {
@@ -231,7 +232,8 @@ function resultHtml(strings, result, values) {
     : '';
   const hours = result.cached ? String(Math.max(0, Math.round(Number(result.cacheAgeHours) || 0))) : '';
   const cachedNote = result.cached ? fill(strings.cachedNote, { ...values, hours }) : '';
-  const honesty = fill(strings.honesty, { ...values, cachedNote, 'raw:cachedNote': true });
+  const answers = footerAnswerCount(counts);
+  const honesty = fill(strings.honesty, { ...values, cachedNote, answers, 'raw:cachedNote': true });
   const under = named > 0 ? `<p class="aiv-break">${fill(strings.resultUnder, { X: named })}</p>` : '';
   return `<div class="aiv-result"><h3>${fill(headline, { ...values, X: named })}</h3><ul class="aiv-status">${lines}</ul>${under}${partial}${possible}<p class="aiv-honesty">${honesty} <a href="/ai-visibility/methodology/">${esc(strings.honestyLink)}</a></p></div>`;
 }
@@ -339,7 +341,9 @@ async function runCheck(form, config) {
       const state = progress[name];
       if (!row || !state) continue;
       const assistant = labelOf(name);
-      row.textContent = plain(state === 'done' || state === 'error' ? strings.done : strings.asking, { assistant });
+      row.textContent = state === 'error'
+        ? `${assistant}: ${strings.notAvailable}`
+        : plain(state === 'done' ? strings.done : strings.asking, { assistant });
     }
     if (status.status === 'complete' || status.status === 'failed') {
       clearInterval(timer);

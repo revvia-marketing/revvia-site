@@ -22,13 +22,18 @@ export default async (req) => {
     return new Response('', { status: 204 });
   }
   try {
-    await executeJob({
+    const started = Date.now();
+    const report = await executeJob({
       store,
       env: process.env,
       checkId,
       bank: loadQuestionBank(),
       ask: (call) => askAssistant({ ...call, env: process.env }),
     });
+    for (const failure of report?.failures || []) {
+      console.error('[check] provider failed', failure);
+    }
+    console.error('[check] run summary', { checkId, ...(report?.summary || {}), durationMs: Date.now() - started });
   } catch (err) {
     console.error('[check] background failed', err?.name || 'error');
     const job = await store.get(`job:${checkId}`);
