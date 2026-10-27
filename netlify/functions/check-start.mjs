@@ -5,27 +5,9 @@ import { askAssistant } from './_lib/assistants.mjs';
 import { loadQuestionBank } from './_lib/bank.mjs';
 import { missingCheckEnv } from '../../src/lib/ai-visibility/env.mjs';
 import { validateCheckInput } from '../../src/lib/ai-visibility/validate.mjs';
+import { verifyTurnstileToken } from './_lib/turnstile.mjs';
 
 export const config = { path: '/api/check/start' };
-
-async function verifyTurnstile(token, ip) {
-  const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret || !token) return false;
-  const body = new URLSearchParams({ secret, response: token });
-  if (ip) body.set('remoteip', ip);
-  try {
-    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-      method: 'POST',
-      body,
-      signal: AbortSignal.timeout(8000),
-    });
-    const data = await res.json().catch(() => ({}));
-    return Boolean(data.success);
-  } catch (err) {
-    console.error('[check] turnstile verify failed', err?.name || 'error');
-    return false;
-  }
-}
 
 export default async (req) => {
   if (req.method !== 'POST') return json({ ok: false, kind: 'disabled' }, 405);
@@ -48,11 +30,10 @@ export default async (req) => {
   if (!parsed.ok) return json({ ok: false, kind: 'invalid', fields: parsed.fields }, 400);
 
   const ip = clientIp(req);
-  const human = await verifyTurnstile(body.turnstileToken, ip);
-  if (!human) {
-    console.error('[check] turnstile rejected');
-    return json({ ok: false, kind: 'failed' });
-  }
+  const human = await verifyTurnstileToken(body.turnstileToken, ip, {
+    secret: process.env.TURNSTILE_SECRET_KEY,
+  });
+  if (!human) return json({ ok: false, kind: 'failed' });
 
   const store = await openCheckStore();
   if (!store) return json({ ok: false, kind: 'disabled' });
