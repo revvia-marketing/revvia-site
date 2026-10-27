@@ -73,6 +73,8 @@ export default defineConfig({
         !page.includes('/api/') &&
         !page.includes('/og-') &&
         !page.includes('/ai-visibility/thanks') &&
+        !page.includes('/ai-visibility/intake') &&
+        !page.includes('/unsubscribe') &&
         // Lead-magnet confirmation pages + the guide are noindex.
         !page.includes('/real-cost/thanks') &&
         !page.includes('/scorecard/results') &&

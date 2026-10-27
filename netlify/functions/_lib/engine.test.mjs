@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { acceptCheck, executeJob, readStatus, createMemoryStore, hashIp, DEFAULT_CALL_TIMEOUT_MS } from './engine.mjs';
+import { acceptCheck, executeJob, readStatus, createMemoryStore, hashIp, DEFAULT_CALL_TIMEOUT_MS, planPrune, PRUNE_LIMIT, KEEP_MS } from './engine.mjs';
 import { TEMPLATES } from '../../../src/lib/ai-visibility/questions.mjs';
 
 const bank = [
@@ -105,6 +105,8 @@ describe('check engine', () => {
     });
     assert.equal(second.status, 'complete');
     assert.equal(second.cached, true);
+    assert.equal(second.result.cached, true);
+    assert.equal(JSON.stringify(second).includes('Harbor Plumbing is'), false);
     assert.equal(calls, 24);
     const again = await readStatus(store, second.checkId, now);
     assert.equal(again.result.cached, true);
@@ -206,5 +208,40 @@ describe('check engine', () => {
     assert.equal(report.summary.providers.perplexity.answered, 0);
     assert.equal(report.failures.find((row) => row.provider === 'chatgpt').status, 400);
     assert.equal(DEFAULT_CALL_TIMEOUT_MS >= 90000, true);
+    assert.equal(KEEP_MS, 90 * 86400000);
+  });
+
+  it('returns a cached check without walking an expired-job backlog', async () => {
+    const store = createMemoryStore();
+    const now = new Date('2026-10-27T17:30:00Z');
+    const ask = async () => ({ text: 'Harbor Plumbing is the one to call.', citations: [], model: 'test', error: null });
+    const started = await acceptCheck({ store, env, input, ip: '198.51.100.70', now, bank });
+    await executeJob({ store, env, checkId: started.checkId, ask, now, bank });
+    const backlog = [];
+    for (let i = 0; i < 30; i += 1) backlog.push({ id: `old${i}xxxxxxxxxxxx`.slice(0, 16), expiresAt: '2020-01-01T00:00:00.000Z' });
+    const current = store.snapshot().index || [];
+    await store.set('index', backlog.concat(current));
+    let ops = 0;
+    const counted = {
+      async get(key) { ops += 1; return store.get(key); },
+      async set(key, value) { ops += 1; return store.set(key, value); },
+      async del(key) { ops += 1; return store.del(key); },
+    };
+    const second = await acceptCheck({
+      store: counted,
+      env,
+      input: { ...input, business: 'Other Plumbing' },
+      ip: '198.51.100.71',
+      now,
+      bank,
+    });
+    assert.equal(second.cached, true);
+    assert.equal(second.status, 'complete');
+    assert.ok(ops <= 12 + PRUNE_LIMIT);
+    const index = store.snapshot().index;
+    const expiredIds = new Set(backlog.map((item) => item.id));
+    const expiredLeft = index.filter((item) => expiredIds.has(item.id));
+    assert.equal(expiredLeft.length, 30 - PRUNE_LIMIT);
+    assert.equal(planPrune(backlog, now, PRUNE_LIMIT).deleteIds.length, PRUNE_LIMIT);
   });
 });

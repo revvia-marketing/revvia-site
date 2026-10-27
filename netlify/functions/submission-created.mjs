@@ -23,6 +23,18 @@
 //   META_TEST_EVENT_CODE        - optional; set only while testing in Events Manager
 
 import { createHash } from 'node:crypto';
+import { sendPlain } from './_lib/mail.mjs';
+import { openBlobStore } from './_lib/store.mjs';
+import {
+  checkConfirmationEmail,
+  checkNotifyEmail,
+  consentGiven,
+  intakeConfirmationEmail,
+  intakeNotifyEmail,
+  recordIntake,
+  unsubscribeConfirmationEmail,
+  unsubscribeNotifyEmail,
+} from './_lib/aiv-mail.mjs';
 
 /** Forms that fire a browser Pixel `Lead`; the server sends the same event. */
 const CAPI_LEAD_FORMS = {
@@ -223,6 +235,37 @@ function firstNamePlain(name) {
   return n || 'there';
 }
 
+/** AI Visibility forms: plain text from Tim. Never fail the Netlify submission. */
+async function handleAivForm(formName, data) {
+  const emails = [];
+  if (formName === 'ai-visibility-check') {
+    if (!consentGiven(data)) return;
+    emails.push(checkNotifyEmail(data));
+    if (data.email) emails.push(checkConfirmationEmail(data));
+  } else if (formName === 'aiv-intake') {
+    emails.push(intakeNotifyEmail(data));
+    if (data.email) emails.push(intakeConfirmationEmail(data));
+    const record = recordIntake(data);
+    if (record) {
+      try {
+        const store = await openBlobStore('ai-visibility-intake');
+        if (store) await store.set(record.key, record.value);
+      } catch (err) {
+        console.error('[submission-created] intake record failed', err?.name || 'error');
+      }
+    }
+  } else if (formName === 'unsubscribe') {
+    emails.push(unsubscribeNotifyEmail(data));
+    if (data.email) emails.push(unsubscribeConfirmationEmail(data));
+  } else {
+    return;
+  }
+  for (const email of emails) {
+    if (!email.to) continue;
+    await sendPlain(email);
+  }
+}
+
 async function sendViaSendGrid({ to, subject, html, text }) {
   const key = process.env.SENDGRID_API_KEY;
   if (!key) {
@@ -264,6 +307,12 @@ export const handler = async (event) => {
 
     // Server-side Meta Lead runs for every lead form, independent of email.
     const capi = sendMetaLead(formName, data, payload);
+
+    if (formName === 'ai-visibility-check' || formName === 'aiv-intake' || formName === 'unsubscribe') {
+      await handleAivForm(formName, data);
+      await capi;
+      return { statusCode: 200, body: 'sent' };
+    }
 
     const email = to ? buildEmail(formName, data) : null;
     if (email) await sendViaSendGrid({ to, ...email });
