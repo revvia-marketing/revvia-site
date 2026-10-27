@@ -2,6 +2,7 @@ import { appendCheckoutParams, checkoutParams, clientReferenceId, messageMatchVi
 import { prefillFromQuery } from '../lib/ai-visibility/validate.mjs';
 import { createTurnstileSession, takeTurnstileToken } from '../lib/ai-visibility/turnstile-client.mjs';
 import { assistantLabel, footerAnswerCount, showReusedNote } from '../lib/ai-visibility/result-copy.mjs';
+import { completeEmailSubmit } from '../lib/ai-visibility/submit-email.mjs';
 
 const ASSISTANTS = ['chatgpt', 'perplexity', 'claude'];
 
@@ -56,10 +57,14 @@ function visitId() {
 }
 
 function track(name, params) {
-  const key = `aiv_ev_${name}`;
-  if (sessionStorage.getItem(key)) return;
-  sessionStorage.setItem(key, '1');
-  if (typeof window.gtag === 'function') window.gtag('event', name, params || {});
+  try {
+    const key = `aiv_ev_${name}`;
+    if (sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key, '1');
+    if (typeof window.gtag === 'function') window.gtag('event', name, params || {});
+  } catch {
+    /* analytics must never block the page */
+  }
 }
 
 function namedBucket(n) {
@@ -318,8 +323,18 @@ async function runCheck(form, config) {
   const hidden = form.querySelector('[name="check_id"]');
   if (hidden) hidden.value = start.checkId;
   if (start.status === 'complete') {
-    const status = await fetch(`/api/check/status?id=${encodeURIComponent(start.checkId)}`).then((res) => res.json());
-    reveal(form, config, status, values);
+    if (start.result) {
+      reveal(form, config, { status: 'complete', result: start.result }, values);
+      return;
+    }
+    try {
+      const status = await fetch(`/api/check/status?id=${encodeURIComponent(start.checkId)}`).then((res) => res.json());
+      reveal(form, config, status, values);
+    } catch {
+      showFallback(form, strings, 'failed');
+      live.innerHTML = `<div class="aiv-progress"><p>${esc(strings.failed)}</p></div>`;
+      delete form.dataset.checking;
+    }
     return;
   }
   const started = Date.now();
@@ -393,7 +408,16 @@ function postNetlify(form) {
     if (value) data.set(key, value);
   }
   data.set('form-name', 'ai-visibility-check');
-  return fetch('/ai-visibility/thanks/', { method: 'POST', body: data });
+  const body = new URLSearchParams();
+  for (const [key, value] of data.entries()) {
+    if (typeof value === 'string') body.append(key, value);
+  }
+  return fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: body.toString(),
+    signal: AbortSignal.timeout(20000),
+  }).then((res) => ({ ok: res.ok }));
 }
 
 export function initAiVisibility() {
@@ -444,24 +468,31 @@ export function initAiVisibility() {
     }
     event.preventDefault();
     const email = String(new FormData(form).get('email') || '').trim();
-    if (email) sessionStorage.setItem('aiv_email', email);
+    if (email) {
+      try { sessionStorage.setItem('aiv_email', email); } catch { /* ignore */ }
+    }
     if (!form.querySelector('[name="check_mode"]').value) form.querySelector('[name="check_mode"]').value = 'fallback';
-    try {
-      await postNetlify(form);
-    } catch {
+    const thanks = '/ai-visibility/thanks/';
+    try { window.rvTrack?.fill?.(form); } catch { /* attribution must not block the post */ }
+    const result = await completeEmailSubmit({
+      post: () => postNetlify(form),
+      onAnalytics: () => {
+        const eventId = form.querySelector('[name="event_id"]')?.value || randomId(16);
+        if (window.rvTrack && typeof window.rvTrack.lead === 'function') {
+          window.rvTrack.lead('ai-visibility-audit', eventId, form);
+        }
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'generate_lead', { currency: 'USD', value: 1, form_name: 'ai-visibility-audit' });
+        }
+        track('email_submitted', {});
+      },
+      redirect: () => { window.location.assign(thanks); },
+    });
+    if (!result.ok) {
       setErrors(form, ['Something went wrong sending that. Please try again.']);
       return;
     }
-    const eventId = form.querySelector('[name="event_id"]')?.value || randomId(16);
-    const payload = new FormData(form);
-    if (window.rvTrack && typeof window.rvTrack.lead === 'function') {
-      window.rvTrack.lead('ai-visibility-audit', eventId, payload);
-    }
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'generate_lead', { currency: 'USD', value: 1, form_name: 'ai-visibility-audit' });
-    }
-    track('email_submitted', {});
-    window.location.href = '/ai-visibility/thanks/';
+    window.location.assign(thanks);
   });
 
   wireCheckout(config);

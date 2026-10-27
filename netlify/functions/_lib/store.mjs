@@ -1,10 +1,13 @@
 import { getStore } from '@netlify/blobs';
 
-/** Netlify Blobs when the site can reach them. Null when the store is missing. */
-export async function openCheckStore() {
+/**
+ * Netlify Blobs when the site can reach them. Null when the store is missing.
+ * No health read: that extra strong-consistency round trip sat on every
+ * check-start, including cache hits, before any real work began.
+ */
+export async function openBlobStore(name) {
   try {
-    const store = getStore({ name: 'ai-visibility-checks', consistency: 'strong' });
-    await store.get('__health', { type: 'text' });
+    const store = getStore({ name, consistency: 'strong' });
     return {
       async get(key) {
         return store.get(key, { type: 'json' });
@@ -17,7 +20,11 @@ export async function openCheckStore() {
       },
     };
   } catch (err) {
-    console.error('[check] store unavailable', err?.name || 'error');
+    console.error('[blobs] unavailable', err?.name || 'error');
     return null;
   }
+}
+
+export async function openCheckStore() {
+  return openBlobStore('ai-visibility-checks');
 }

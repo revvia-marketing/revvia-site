@@ -152,7 +152,7 @@ const planHref = (plan) => model.stripe[plan.stripeLinkEnvKey] || '#';
                   <input id="email" name="email" type="email" autocomplete="email" required maxlength="120" />
                 </div>
                 <label class="checkline">
-                  <input type="checkbox" name="consent" required />
+                  <input type="checkbox" name="consent" value="yes" required />
                   <span>{copy.check.consent}</span>
                 </label>
                 <button class="btn btn-lg aiv-email-btn" type="submit">{copy.check.step2Button}</button>

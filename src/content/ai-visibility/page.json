@@ -1,6 +1,6 @@
 {
-  "seoTitle": "AI Visibility for San Diego Home Services",
-  "metaDescription": "When someone asks ChatGPT for the best plumber in your city, does it say your name? Get a free AI Visibility Check for your home-service business.",
+  "seoTitle": "AI Visibility for Home-Service Trades",
+  "metaDescription": "When someone asks ChatGPT for the best plumber in your city, does it say your name? Free AI Visibility Check for home-service trades anywhere in the US.",
   "eyebrow": "For plumbers, HVAC pros, electricians, roofers, and restoration companies",
   "h1": "Your customers stopped typing. They started asking.",
   "subhead": "Find out {instantTurnaround} whether ChatGPT, Perplexity, and Claude name your business when locals ask who to call. Then we fix what they read and re-check every month.",
@@ -175,7 +175,7 @@
     "step2Body": "We'll ask every question a second time on all three assistants and email you all 48 answers: who was named instead of you, the questions where you were missing, and three things to fix first.",
     "consent": "Email me my AI Visibility Check and a few short follow-up emails. I can unsubscribe anytime.",
     "step2Button": "Email me the full report",
-    "step2Under": "Sent from check@revvia.com {checkTurnaround}. A person checks it before it goes out.",
+    "step2Under": "Sent from tim@revvia.com {checkTurnaround}. A person checks it before it goes out.",
     "seePlans": "Ready now? See plans",
     "fallbackSubhead": "Free. We email your results {checkTurnaround}. No call.",
     "fallbackHelper": "We ask ChatGPT, Perplexity, and Claude 8 questions your customers ask, twice each, using each company's official API. AI answers vary from run to run, so treat this as a snapshot, not a verdict. Google's AI answers aren't included (see the FAQ).",
@@ -184,10 +184,10 @@
   },
   "thanks": {
     "freeHeading": "Got it. Your full report is on its way.",
-    "freeBody": "Watch for an email from check@revvia.com {checkTurnaround}. Nothing to schedule. If it doesn't arrive, check your spam folder or just reply to any Revvia email.",
+    "freeBody": "Watch for an email from tim@revvia.com {checkTurnaround}. Nothing to schedule. If it doesn't arrive, check your spam folder or just reply to any Revvia email.",
     "seePlans": "See plans",
     "back": "Back to Revvia AI Visibility",
     "paidHeading": "You're in. Welcome to Revvia AI Visibility {Plan}.",
-    "paidBody": "Your payment went through, and Stripe is emailing your receipt. Within 1 business day you'll get an email from check@revvia.com with a short intake form: your business facts and access to your Google Business Profile. Setup is delivered within {setupDays} days of your completed intake, or your $497 back. Nothing to schedule."
+    "paidBody": "Your payment went through, and Stripe is emailing your receipt. Within 1 business day you'll get an email from tim@revvia.com with a short intake form: your business facts and access to your Google Business Profile. Setup is delivered within {setupDays} days of your completed intake, or your $497 back. Nothing to schedule."
   }
 }

@@ -13,7 +13,14 @@ import { safeProviderFailure } from './provider-log.mjs';
 export const DEFAULT_CALL_TIMEOUT_MS = 90000;
 
 const DAY_MS = 86400000;
-const KEEP_MS = 90 * DAY_MS;
+/** Job records (business name + scored result) are deleted after this. */
+export const KEEP_MS = 90 * DAY_MS;
+/**
+ * Expired index rows deleted per check-start. A full sweep used to run on the
+ * request that returns a cached result, one blob delete at a time, so a
+ * backlog held the first byte for minutes.
+ */
+export const PRUNE_LIMIT = 8;
 
 export function hashIp(ip, salt) {
   return createHash('sha256').update(`${salt}\n${String(ip || '')}`).digest('hex');
@@ -144,10 +151,26 @@ async function count(store, key) {
   return row && typeof row.n === 'number' ? row.n : 0;
 }
 
-async function bump(store, key) {
-  const n = (await count(store, key)) + 1;
-  await store.set(key, { n });
-  return n;
+/**
+ * Split an index into rows to keep, rows to delete now, and rows to leave
+ * for a later request. `limit` caps how many deletes one request will do.
+ */
+export function planPrune(index, now, limit = PRUNE_LIMIT) {
+  const list = Array.isArray(index) ? index : [];
+  const keep = [];
+  const drop = [];
+  const cutoff = now.getTime();
+  for (const item of list) {
+    const at = Date.parse(item?.expiresAt || '');
+    if (!item?.expiresAt || !Number.isFinite(at) || at < cutoff) drop.push(item);
+    else keep.push(item);
+  }
+  const batch = drop.slice(0, Math.max(0, limit));
+  const deferred = drop.slice(Math.max(0, limit));
+  return {
+    next: keep.concat(deferred),
+    deleteIds: batch.map((item) => item?.id).filter(Boolean),
+  };
 }
 
 export function questionsFor(bank, trade) {
@@ -163,29 +186,38 @@ export async function acceptCheck({ store, env, input, ip, now = new Date(), ban
   const hash = hashIp(ip || 'anonymous', env.CHECK_IP_SALT);
   const hour = hourKey(hash, now);
   const day = dayKey(hash, now);
-  if ((await count(store, hour)) >= 3 || (await count(store, day)) >= 10) {
-    return { ok: false, kind: 'rate' };
-  }
+  // One wave for the two counters. A cache hit used to re-read each of them
+  // inside a later increment, then write a running job, rewrite the whole
+  // index, prune every expired row, and write per-assistant progress before
+  // the response. Strong-consistency blob calls are sequential round trips.
+  const [hourN, dayN] = await Promise.all([count(store, hour), count(store, day)]);
+  if (hourN >= 3 || dayN >= 10) return { ok: false, kind: 'rate' };
 
   const entry = questionsFor(bank, input.trade);
   if (!entry) return { ok: false, kind: 'invalid', fields: { trade: 'Choose a trade from the list.' } };
 
   const ttl = num(env.CHECK_CACHE_TTL_HOURS, 24) * 3600000;
-  const reusable = await readReusable(store, input.city, input.trade, now, ttl);
   const rendered = renderSet(entry, input.city);
+  const [reusable, storedIndex] = await Promise.all([
+    readReusable(store, input.city, input.trade, now, ttl),
+    store.get('index'),
+  ]);
   const fullHit = covers(reusable, rendered);
-
-  if (!fullHit && (await count(store, capKey(now))) >= num(env.CHECK_DAILY_CAP, 100)) {
-    await bump(store, hour);
-    await bump(store, day);
-    return { ok: false, kind: 'rate' };
+  const cap = capKey(now);
+  let capN = 0;
+  if (!fullHit) {
+    capN = await count(store, cap);
+    if (capN >= num(env.CHECK_DAILY_CAP, 100)) {
+      await Promise.all([
+        store.set(hour, { n: hourN + 1 }),
+        store.set(day, { n: dayN + 1 }),
+      ]);
+      return { ok: false, kind: 'rate' };
+    }
   }
 
-  await bump(store, hour);
-  await bump(store, day);
-
   const id = randomId(16);
-  const job = {
+  let job = {
     id,
     business: input.business,
     city: input.city,
@@ -196,26 +228,36 @@ export async function acceptCheck({ store, env, input, ip, now = new Date(), ban
     status: 'running',
     cached: false,
   };
-  await store.set(`job:${id}`, job);
-  const index = (await store.get('index')) || [];
-  index.push({ id, expiresAt: job.expiresAt });
-  await store.set('index', index);
-  await prune(store, now);
-
   if (fullHit) {
-    await finishJob({
-      store,
+    job = settleJob({
       job,
       answers: reusable,
       fromCache: { storedAt: oldestIso(reusable, now.toISOString()) },
       now,
       bank,
     });
-    return { ok: true, checkId: id, status: 'complete', cached: true };
   }
 
-  await bump(store, capKey(now));
-  return { ok: true, checkId: id, status: 'running', cached: false };
+  const index = Array.isArray(storedIndex) ? storedIndex.slice() : [];
+  index.push({ id, expiresAt: job.expiresAt });
+  const pruned = planPrune(index, now, PRUNE_LIMIT);
+  const writes = [
+    store.set(hour, { n: hourN + 1 }),
+    store.set(day, { n: dayN + 1 }),
+    store.set(`job:${id}`, job),
+    store.set('index', pruned.next),
+    ...pruned.deleteIds.map((jobId) => store.del(`job:${jobId}`)),
+  ];
+  if (!fullHit) writes.push(store.set(cap, { n: capN + 1 }));
+  await Promise.all(writes);
+
+  return {
+    ok: true,
+    checkId: id,
+    status: job.status,
+    cached: Boolean(job.cached),
+    result: publicResult(job),
+  };
 }
 
 export function runSummary(answers, durationMs) {
@@ -240,10 +282,10 @@ export async function executeJob({ store, env, checkId, ask, now = new Date(), b
   const ttl = num(env.CHECK_CACHE_TTL_HOURS, 24) * 3600000;
   const reusable = await readReusable(store, job.city, job.trade, now, ttl);
   const reused = new Map(reusable.map((row) => [cellKey(row.assistant, row.questionIndex), row]));
-  for (const assistant of ASSISTANTS) {
+  await Promise.all(ASSISTANTS.map((assistant) => {
     const pending = rendered.some((question) => !reused.has(cellKey(assistant, question.index)));
-    await store.set(`prog:${checkId}:${assistant}`, pending ? 'asking' : 'done');
-  }
+    return store.set(`prog:${checkId}:${assistant}`, pending ? 'asking' : 'done');
+  }));
 
   let asked = 0;
   const groups = await Promise.all(
@@ -319,7 +361,7 @@ export async function executeJob({ store, env, checkId, ask, now = new Date(), b
   return { failures, summary: runSummary(answers, Date.now() - startedAt) };
 }
 
-async function finishJob({ store, job, answers, fromCache, now, bank }) {
+function settleJob({ job, answers, fromCache, now, bank }) {
   const entry = questionsFor(bank, job.trade);
   const scored = scoreAnswers({
     business: job.business,
@@ -331,7 +373,7 @@ async function finishJob({ store, job, answers, fromCache, now, bank }) {
   const everySuccess = (answers || []).length > 0 && (answers || []).every((row) => !row.error);
   const reused = Boolean(fromCache) && everySuccess;
   const collectedAt = reused ? (fromCache.storedAt || now.toISOString()) : now.toISOString();
-  const next = {
+  return {
     ...job,
     status: failedAll ? 'failed' : 'complete',
     cached: reused,
@@ -353,14 +395,36 @@ async function finishJob({ store, job, answers, fromCache, now, bank }) {
           cacheAgeHours: reused ? Math.max(0, (now.getTime() - Date.parse(fromCache.storedAt)) / 3600000) : 0,
         },
   };
+}
+
+function publicResult(job) {
+  if (!job?.result) return null;
+  return {
+    business: job.result.business,
+    city: job.result.city,
+    trade: job.result.trade,
+    namedCount: job.result.namedCount,
+    possibleCount: job.result.possibleCount,
+    assistantsOk: job.result.assistantsOk,
+    failedAssistants: job.result.failedAssistants,
+    byAssistant: job.result.byAssistant,
+    collectedAt: job.result.collectedAt,
+    cached: job.result.cached,
+    cacheAgeHours: job.result.cacheAgeHours,
+  };
+}
+
+async function finishJob({ store, job, answers, fromCache, now, bank }) {
+  const next = settleJob({ job, answers, fromCache, now, bank });
   await store.set(`job:${job.id}`, next);
-  if (reused) {
-    for (const assistant of ASSISTANTS) {
+  if (next.cached) {
+    await Promise.all(ASSISTANTS.map((assistant) => {
       const rows = answers.filter((row) => row.assistant === assistant);
       const failed = rows.length === 0 || rows.some((row) => row.error);
-      await store.set(`prog:${job.id}:${assistant}`, failed ? 'error' : 'done');
-    }
+      return store.set(`prog:${job.id}:${assistant}`, failed ? 'error' : 'done');
+    }));
   }
+  return next;
 }
 
 export async function readStatus(store, checkId, now = new Date()) {
@@ -372,40 +436,21 @@ export async function readStatus(store, checkId, now = new Date()) {
     return null;
   }
   const progress = {};
-  for (const assistant of ASSISTANTS) {
-    progress[assistant] = (await store.get(`prog:${checkId}:${assistant}`)) || (job.status === 'running' ? 'asking' : 'done');
+  if (job.status === 'running') {
+    const rows = await Promise.all(ASSISTANTS.map((assistant) => store.get(`prog:${checkId}:${assistant}`)));
+    ASSISTANTS.forEach((assistant, i) => {
+      progress[assistant] = rows[i] || 'asking';
+    });
+  } else {
+    for (const assistant of ASSISTANTS) {
+      const cell = job.result?.byAssistant?.[assistant];
+      progress[assistant] = cell?.status === 'error' ? 'error' : 'done';
+    }
   }
   return {
     ok: true,
     status: job.status,
     progress,
-    result: job.result
-      ? {
-          business: job.result.business,
-          city: job.result.city,
-          trade: job.result.trade,
-          namedCount: job.result.namedCount,
-          possibleCount: job.result.possibleCount,
-          assistantsOk: job.result.assistantsOk,
-          failedAssistants: job.result.failedAssistants,
-          byAssistant: job.result.byAssistant,
-          collectedAt: job.result.collectedAt,
-          cached: job.result.cached,
-          cacheAgeHours: job.result.cacheAgeHours,
-        }
-      : null,
+    result: publicResult(job),
   };
-}
-
-async function prune(store, now) {
-  const index = (await store.get('index')) || [];
-  const keep = [];
-  for (const item of index) {
-    if (!item?.expiresAt || Date.parse(item.expiresAt) < now.getTime()) {
-      if (item?.id) await store.del(`job:${item.id}`);
-    } else {
-      keep.push(item);
-    }
-  }
-  if (keep.length !== index.length) await store.set('index', keep);
 }

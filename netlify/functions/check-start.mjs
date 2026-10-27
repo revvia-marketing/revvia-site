@@ -9,7 +9,18 @@ import { verifyTurnstileToken } from './_lib/turnstile.mjs';
 
 export const config = { path: '/api/check/start' };
 
-export default async (req) => {
+function invokeBackground(req, checkId) {
+  const origin = new URL(req.url).origin;
+  return fetch(`${origin}/.netlify/functions/check-run-background`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ checkId }),
+  }).catch((err) => {
+    console.error('[check] background invoke failed', err?.name || 'error');
+  });
+}
+
+export default async (req, context) => {
   if (req.method !== 'POST') return json({ ok: false, kind: 'disabled' }, 405);
 
   const missing = missingCheckEnv();
@@ -49,20 +60,21 @@ export default async (req) => {
     if (!accepted.ok) return json({ ok: false, kind: accepted.kind, fields: accepted.fields });
 
     if (accepted.status === 'running') {
-      const origin = new URL(req.url).origin;
-      const run = fetch(`${origin}/.netlify/functions/check-run-background`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ checkId: accepted.checkId }),
-      }).catch((err) => {
-        console.error('[check] background invoke failed', err?.name || 'error');
-      });
-      // Don't wait for the 24 calls. The background route returns as soon as
-      // the platform accepts the job. A short race is covered by status polling.
-      await Promise.race([run, new Promise((resolve) => setTimeout(resolve, 1500))]);
+      // Don't await the background run. If the platform doesn't answer 202
+      // until that function finishes, awaiting it holds this response for the
+      // whole check (minutes), including when the run only reads cache.
+      const pending = invokeBackground(req, accepted.checkId);
+      if (context && typeof context.waitUntil === 'function') context.waitUntil(pending);
+      else await Promise.race([pending, new Promise((resolve) => setTimeout(resolve, 1500))]);
     }
 
-    return json({ ok: true, checkId: accepted.checkId, status: accepted.status, cached: Boolean(accepted.cached) });
+    return json({
+      ok: true,
+      checkId: accepted.checkId,
+      status: accepted.status,
+      cached: Boolean(accepted.cached),
+      result: accepted.result || null,
+    });
   } catch (err) {
     console.error('[check] start failed', err?.name || 'error');
     return json({ ok: false, kind: 'failed' });

@@ -66,7 +66,7 @@ function e164(raw: string): string {
 }
 
 function userDataFromForm(form?: HTMLFormElement | null): UserData {
-  if (!form) return {};
+  if (!form || typeof form.querySelector !== 'function') return {};
   const v = (n: string) =>
     (form.querySelector<HTMLInputElement>(`[name="${n}"]`)?.value || '').trim();
   return { email: v('email').toLowerCase(), phone: v('phone') };

@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Unsubscribe"
+  description="Stop follow-up emails from Revvia."
+  path="/unsubscribe"
+>
+  <section class="page-hero">
+    <div class="page-hero-in" style="max-width:720px">
+      <p class="eyebrow">Email</p>
+      <h1>Unsubscribe</h1>
+      <p class="sub">Enter the email you used on a Revvia form. We'll stop follow-up emails to that address. You can also reply "unsubscribe" to any email from Tim.</p>
+      <form
+        class="form-card"
+        name="unsubscribe"
+        method="POST"
+        action="/unsubscribe/thanks/"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+      >
+        <input type="hidden" name="form-name" value="unsubscribe" />
+        <p class="hp"><label>Don't fill this out: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+        <div class="field full">
+          <label for="unsub-email">Email</label>
+          <input id="unsub-email" name="email" type="email" autocomplete="email" required maxlength="120" />
+        </div>
+        <div class="field full">
+          <label for="unsub-message">Anything else <span style="color:var(--muted-2);font-weight:400">(optional)</span></label>
+          <textarea id="unsub-message" name="message" maxlength="1000"></textarea>
+        </div>
+        <button class="btn btn-lg" type="submit">Unsubscribe</button>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .form-card { margin-top: 28px; }
+</style>

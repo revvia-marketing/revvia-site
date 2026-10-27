@@ -1,0 +1,157 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AttributionFields from '../../components/AttributionFields.astro';
+
+const trades = [
+  'Plumbing',
+  'HVAC',
+  'Electrical',
+  'Roofing',
+  'Restoration / water damage',
+  'Other home services',
+];
+---
+
+<BaseLayout
+  title="AI Visibility intake"
+  description="Tell Revvia the facts for your AI Visibility setup."
+  path="/ai-visibility/intake"
+  noindex={true}
+>
+  <section class="page-hero">
+    <div class="page-hero-in intake">
+      <p class="eyebrow">Revvia AI Visibility</p>
+      <h1>One short form to start setup</h1>
+      <p class="sub">About 10 minutes. Setup starts when this form is in and tim@revvia.com is a Manager on your Google Business Profile.</p>
+
+      <form
+        id="aiv-intake"
+        class="form-card"
+        name="aiv-intake"
+        method="POST"
+        action="/ai-visibility/intake/thanks/"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+      >
+        <input type="hidden" name="form-name" value="aiv-intake" />
+        <input type="hidden" name="founding_offer" id="founding_offer" value="" />
+        <p class="hp"><label>Don't fill this out: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+        <AttributionFields />
+
+        <div class="field full">
+          <label for="name">Your name</label>
+          <input id="name" name="name" type="text" autocomplete="name" required maxlength="80" />
+        </div>
+        <div class="field full">
+          <label for="email">Email used at checkout</label>
+          <input id="email" name="email" type="email" autocomplete="email" required maxlength="120" />
+        </div>
+        <div class="field full">
+          <label for="business_name">Business name exactly as it appears on Google</label>
+          <input id="business_name" name="business_name" type="text" autocomplete="organization" required maxlength="160" />
+        </div>
+        <div class="field full">
+          <label for="phone">Main business phone</label>
+          <input id="phone" name="phone" type="tel" autocomplete="tel" required maxlength="40" />
+        </div>
+        <div class="field full">
+          <label for="website">Business website</label>
+          <input id="website" name="website" type="text" inputmode="url" autocomplete="url" required maxlength="200" />
+        </div>
+        <div class="field full">
+          <label for="trade">Primary trade</label>
+          <select id="trade" name="trade" required>
+            <option value="">Choose a trade</option>
+            {trades.map((trade) => <option value={trade}>{trade}</option>)}
+          </select>
+        </div>
+        <div class="field full">
+          <label for="services">Services you want to be found for</label>
+          <textarea id="services" name="services" required maxlength="2000" placeholder="One service per line"></textarea>
+        </div>
+        <div class="field full">
+          <label for="service_area">Cities / service area</label>
+          <textarea id="service_area" name="service_area" required maxlength="2000"></textarea>
+        </div>
+        <div class="field full">
+          <label for="hours">Hours</label>
+          <input id="hours" name="hours" type="text" required maxlength="300" placeholder="Mon–Fri 8–5, emergency after hours" />
+        </div>
+        <div class="field full">
+          <label for="gbp_link">Google Business Profile link</label>
+          <input id="gbp_link" name="gbp_link" type="url" required maxlength="400" placeholder="https://maps.app.goo.gl/…" />
+          <p class="help">The share link from Google Maps.</p>
+        </div>
+        <label class="checkline">
+          <input type="checkbox" name="gbp_manager" value="yes" required />
+          <span>I've added tim@revvia.com as a Manager on my Google Business Profile.</span>
+        </label>
+        <p class="help">Google Business Profile &gt; Menu &gt; Business Profile settings &gt; Managers &gt; Add &gt; enter tim@revvia.com &gt; Manager role. You can remove that access at any time.</p>
+
+        <div class="field full">
+          <label for="competitors">2–3 competitors you see winning jobs <span class="opt">(optional)</span></label>
+          <textarea id="competitors" name="competitors" maxlength="1000"></textarea>
+        </div>
+        <div class="field full">
+          <label for="never_say">Anything we should never say about your business <span class="opt">(optional)</span></label>
+          <textarea id="never_say" name="never_say" maxlength="1000" placeholder="Services you don't offer, names to avoid"></textarea>
+        </div>
+        <div class="field full">
+          <label for="case_study">Case-study permission</label>
+          <select id="case_study" name="case_study" required>
+            <option value="">Choose one</option>
+            <option value="yes">Yes. You may write up my results, and I'll approve the write-up before it's published.</option>
+            <option value="no">No</option>
+          </select>
+          <p class="help" id="case-study-note">Founding offer: Setup ($497) is waived for our first 10 clients who agree to let us write up their results as a case study. If you used that offer (code FOUNDING10), this must be yes. Our first 10 clients get the $497 setup waived if they agree to let us publish their results as a case study, with their approval of the write-up.</p>
+        </div>
+        <div class="field full">
+          <label for="best_time">Best phone or time for a question <span class="opt">(optional)</span></label>
+          <input id="best_time" name="best_time" type="text" maxlength="200" />
+        </div>
+
+        <button class="btn btn-lg" type="submit">Send my intake</button>
+      </form>
+    </div>
+  </section>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const form = document.getElementById('aiv-intake');
+    if (form instanceof HTMLFormElement) {
+      const email = params.get('email') || '';
+      const website = params.get('website') || '';
+      const founding = params.get('founding') === '1' || (params.get('promo') || '').toUpperCase() === 'FOUNDING10';
+      const emailField = form.querySelector('[name="email"]');
+      const websiteField = form.querySelector('[name="website"]');
+      if (email && emailField instanceof HTMLInputElement && !emailField.value) emailField.value = email;
+      if (website && websiteField instanceof HTMLInputElement && !websiteField.value) websiteField.value = website;
+      if (founding) {
+        const flag = form.querySelector('[name="founding_offer"]');
+        if (flag instanceof HTMLInputElement) flag.value = 'yes';
+        const select = form.querySelector('[name="case_study"]');
+        if (select instanceof HTMLSelectElement) {
+          const no = select.querySelector('option[value="no"]');
+          if (no) no.remove();
+          select.value = 'yes';
+          select.required = true;
+        }
+      }
+      form.addEventListener('submit', () => {
+        try {
+          const track = (window as unknown as { rvTrack?: { fill?: (node: HTMLFormElement) => void } }).rvTrack;
+          if (typeof track?.fill === 'function') track.fill(form);
+        } catch {
+          /* attribution must not block the post */
+        }
+      });
+    }
+  </script>
+</BaseLayout>
+
+<style>
+  .intake { max-width: 720px; }
+  .intake .form-card { margin-top: 28px; }
+  .help { color: var(--muted); font-size: 13.5px; line-height: 1.45; margin: 8px 0 16px; }
+  .opt { color: var(--muted-2); font-weight: 400; }
+  .checkline { display: flex; gap: 10px; align-items: flex-start; margin: 4px 0 8px; }
+</style>
