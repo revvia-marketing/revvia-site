@@ -4,10 +4,9 @@ import {
   openAiAnswer,
   openAiBody,
   perplexityAnswer,
-  perplexitySonarBody,
-  perplexityAgentBody,
-  PERPLEXITY_SONAR_URL,
-  PERPLEXITY_AGENT_URL,
+  perplexityResponsesBody,
+  retiredSonarError,
+  PERPLEXITY_RESPONSES_URL,
 } from './assistants.mjs';
 
 describe('assistant request shapes', () => {
@@ -25,21 +24,30 @@ describe('assistant request shapes', () => {
     });
   });
 
-  it('posts Sonar to /v1/sonar and does not send that model id to the Agent API', () => {
-    const sonar = perplexitySonarBody({ model: 'sonar', question: 'Who should I call?', city: 'San Diego' });
-    assert.equal(PERPLEXITY_SONAR_URL, 'https://api.perplexity.ai/v1/sonar');
-    assert.equal(sonar.model, 'sonar');
-    assert.deepEqual(sonar.messages, [{ role: 'user', content: 'Who should I call?' }]);
-    assert.deepEqual(sonar.web_search_options.user_location, { country: 'US', city: 'San Diego' });
-    assert.equal('region' in sonar.web_search_options.user_location, false);
+  it('posts Sonar as an effort preset to /v1/responses and does not send that model id', () => {
+    const body = perplexityResponsesBody({ model: 'sonar', question: 'Who should I call?', city: 'San Diego' });
+    assert.equal(PERPLEXITY_RESPONSES_URL, 'https://api.perplexity.ai/v1/responses');
+    assert.equal(body.effort, 'fast');
+    assert.equal(body.model, undefined);
+    assert.equal(body.input, 'Who should I call?');
+    assert.equal('messages' in body, false);
+    assert.equal(body.tools[0].type, 'web_search');
+    assert.deepEqual(body.tools[0].user_location, { country: 'US', city: 'San Diego' });
+    assert.equal('region' in body.tools[0].user_location, false);
 
-    const agent = perplexityAgentBody({ question: 'Who should I call?', city: 'Mesa, AZ' });
-    assert.equal(PERPLEXITY_AGENT_URL, 'https://api.perplexity.ai/v1/agent');
-    assert.equal(agent.model, undefined);
-    assert.equal(agent.effort, 'fast');
-    assert.equal(agent.input, 'Who should I call?');
-    assert.equal(agent.tools[0].type, 'web_search');
-    assert.equal(agent.tools[0].user_location.region, 'AZ');
+    const located = perplexityResponsesBody({ model: 'sonar', question: 'Who should I call?', city: 'Mesa, AZ' });
+    assert.equal(located.tools[0].user_location.region, 'AZ');
+
+    const direct = perplexityResponsesBody({ model: 'openai/gpt-5.6-sol', question: 'Who?', city: 'San Diego' });
+    assert.equal(direct.model, 'openai/gpt-5.6-sol');
+    assert.equal(direct.effort, undefined);
+    assert.equal(direct.tools[0].type, 'web_search');
+
+    assert.equal(retiredSonarError({
+      status: 403,
+      body: { error: { type: 'chat_completions_not_available', message: 'Sonar is now the Agent API.' } },
+    }), true);
+    assert.equal(retiredSonarError({ status: 404, body: { error: { type: 'not_found' } } }), false);
   });
 });
 
@@ -90,7 +98,32 @@ describe('assistant response parsing', () => {
     const parsed = perplexityAnswer({
       output_text: 'From the agent.',
       output: [{ type: 'message', content: [{ type: 'output_text', text: 'not used' }] }],
-    }, 'sonar');
+    }, 'fast');
     assert.equal(parsed.text, 'From the agent.');
+  });
+
+  it('reads Agent API message text and search_results citations', () => {
+    const parsed = perplexityAnswer({
+      model: 'openai/gpt-5.6-luna',
+      output: [
+        {
+          type: 'search_results',
+          results: [{ id: 1, title: 'Listing', url: 'https://example.com/a' }],
+        },
+        {
+          type: 'message',
+          role: 'assistant',
+          content: [{
+            type: 'output_text',
+            text: 'A local plumber.',
+            annotations: [{ type: 'url_citation', url: 'https://example.com/b' }],
+          }],
+        },
+      ],
+    }, 'fast');
+    assert.equal(parsed.text, 'A local plumber.');
+    assert.deepEqual(parsed.citations, ['https://example.com/a', 'https://example.com/b']);
+    assert.equal(parsed.model, 'openai/gpt-5.6-luna');
+    assert.equal(parsed.error, null);
   });
 });

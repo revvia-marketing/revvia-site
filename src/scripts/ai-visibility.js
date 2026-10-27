@@ -1,7 +1,7 @@
 import { appendCheckoutParams, checkoutParams, clientReferenceId, messageMatchVisible, randomId } from '../lib/ai-visibility/ids.mjs';
 import { prefillFromQuery } from '../lib/ai-visibility/validate.mjs';
 import { createTurnstileSession, takeTurnstileToken } from '../lib/ai-visibility/turnstile-client.mjs';
-import { assistantLabel, footerAnswerCount } from '../lib/ai-visibility/result-copy.mjs';
+import { assistantLabel, footerAnswerCount, showReusedNote } from '../lib/ai-visibility/result-copy.mjs';
 
 const ASSISTANTS = ['chatgpt', 'perplexity', 'claude'];
 
@@ -230,8 +230,9 @@ function resultHtml(strings, result, values) {
   const possible = result.possibleCount
     ? `<p class="aiv-break">${fill(strings.possible, { n: result.possibleCount })}</p>`
     : '';
-  const hours = result.cached ? String(Math.max(0, Math.round(Number(result.cacheAgeHours) || 0))) : '';
-  const cachedNote = result.cached ? fill(strings.cachedNote, { ...values, hours }) : '';
+  const reused = showReusedNote(result);
+  const hours = reused ? String(Math.max(0, Math.round(Number(result.cacheAgeHours) || 0))) : '';
+  const cachedNote = reused ? fill(strings.cachedNote, { ...values, hours }) : '';
   const answers = footerAnswerCount(counts);
   const honesty = fill(strings.honesty, { ...values, cachedNote, answers, 'raw:cachedNote': true });
   const under = named > 0 ? `<p class="aiv-break">${fill(strings.resultUnder, { X: named })}</p>` : '';
