@@ -192,6 +192,11 @@ const planHref = (plan) => model.stripe[plan.stripeLinkEnvKey] || '#';
           </div>
         </aside>
         <ul class="aiv-trust">
+          {model.proof && (
+            <li>
+              {model.proof.url ? <a href={model.proof.url}>{model.proof.line}</a> : model.proof.line}
+            </li>
+          )}
           <li>{copy.trustFounder}</li>
           <li>{copy.trustCancel}</li>
           <li>{copy.stickyNote}</li>
@@ -204,6 +209,13 @@ const planHref = (plan) => model.stripe[plan.stripeLinkEnvKey] || '#';
     <div class="wrap">
       <h2>{copy.reviewsHeading}</h2>
       <p class="aiv-kicker">{copy.reviewsLabel}</p>
+      {model.proof && (
+        model.proof.url ? (
+          <a class="aiv-rating" href={model.proof.url}>{model.proof.line}</a>
+        ) : (
+          <p class="aiv-rating">{model.proof.line}</p>
+        )
+      )}
       {model.reviews.length > 0 && (
         <div class="aiv-reviews">
           {model.reviews.map((review) => (
@@ -219,7 +231,7 @@ const planHref = (plan) => model.stripe[plan.stripeLinkEnvKey] || '#';
           ))}
         </div>
       )}
-      {model.proof && (
+      {model.proof?.url && (
         <a class="aiv-textlink" href={model.proof.url}>{copy.reviewsGoogleLink}</a>
       )}
       <p class="aiv-tiny">{copy.reviewsTiny}</p>

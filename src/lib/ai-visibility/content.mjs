@@ -23,6 +23,15 @@ export function storyMeta(story) {
   return [story.tradeLabel, story.location].filter(Boolean).join(' · ');
 }
 
+/** Public Google line. Count is omitted when Tim has not confirmed one. */
+export function googleProofLine(rating, count) {
+  const stars = String(rating || '').trim();
+  const reviews = String(count || '').trim();
+  if (!stars) return '';
+  if (!reviews) return `${stars} Google rating`;
+  return `${stars} stars from ${reviews} Google reviews`;
+}
+
 export function loadAiVisibility(env = process.env) {
   const page = readJson(join(contentRoot, 'ai-visibility/page.json'));
   const proof = readJson(join(contentRoot, 'ai-visibility/site-proof.json'));
@@ -47,6 +56,7 @@ export function loadAiVisibility(env = process.env) {
   const rating = String(proof.googleRating || '').trim();
   const count = String(proof.googleReviewCount || '').trim();
   const url = String(proof.googleReviewsUrl || '').trim();
+  const line = googleProofLine(rating, count);
   const visibleReviews = reviews
     .filter((review) => review.show && (preview || review.verifiedOn))
     .map((review) => ({ ...review, unverified: Boolean(preview && !review.verifiedOn) }));
@@ -55,7 +65,7 @@ export function loadAiVisibility(env = process.env) {
     instant,
     preview,
     copy,
-    proof: rating && count && url ? { rating, count, url } : null,
+    proof: line ? { rating, count, url, line } : null,
     reviews: visibleReviews,
     pricingReview: visibleReviews.find((review) => review.showNearPricing) || null,
     stories: copy.showAgencyProof
