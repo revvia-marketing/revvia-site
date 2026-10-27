@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { acceptCheck, executeJob, readStatus, createMemoryStore, hashIp } from './engine.mjs';
+import { acceptCheck, executeJob, readStatus, createMemoryStore, hashIp, DEFAULT_CALL_TIMEOUT_MS } from './engine.mjs';
 import { TEMPLATES } from '../../../src/lib/ai-visibility/questions.mjs';
 
 const bank = [
@@ -71,5 +71,44 @@ describe('check engine', () => {
     const again = await readStatus(store, second.checkId, now);
     assert.equal(again.result.cached, true);
     assert.equal(JSON.stringify(again).includes('Harbor Plumbing is'), false);
+  });
+
+  it('returns redacted provider failures and a per-provider summary', async () => {
+    const store = createMemoryStore();
+    const now = new Date('2026-10-27T16:00:00Z');
+    const tiny = [{
+      trade: 'Plumbing',
+      pro: 'plumber',
+      tradeNoun: 'plumbing',
+      job: 'a leak',
+      templates: ['Who fixes drains in {city}? Email pat@shop.test'],
+    }];
+    const started = await acceptCheck({ store, env, input, ip: '198.51.100.30', now, bank: tiny });
+    const report = await executeJob({
+      store,
+      env,
+      checkId: started.checkId,
+      now,
+      bank: tiny,
+      ask: async (call) => {
+        if (call.assistant === 'claude') return { text: 'Claude answered.', citations: [], model: 'claude-test', error: null };
+        const err = new Error('http 400');
+        err.status = 400;
+        err.provider = call.assistant;
+        err.model = call.assistant === 'chatgpt' ? 'gpt-6.1-sol' : 'sonar';
+        err.body = { error: { type: 'invalid_request_error', message: `bad ${call.question} sk-live-ABCDEFGHIJKLMNOP` } };
+        throw err;
+      },
+    });
+    const dumped = JSON.stringify(report.failures);
+    assert.equal(dumped.includes('pat@shop.test'), false);
+    assert.equal(dumped.includes('sk-live-ABCDEFGHIJKLMNOP'), false);
+    assert.equal(dumped.includes('Who fixes drains'), false);
+    assert.equal(report.summary.providers.claude.answered, 1);
+    assert.equal(report.summary.providers.claude.failed, 0);
+    assert.equal(report.summary.providers.chatgpt.failed, 1);
+    assert.equal(report.summary.providers.perplexity.answered, 0);
+    assert.equal(report.failures.find((row) => row.provider === 'chatgpt').status, 400);
+    assert.equal(DEFAULT_CALL_TIMEOUT_MS >= 90000, true);
   });
 });

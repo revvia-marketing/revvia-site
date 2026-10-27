@@ -7,6 +7,10 @@ import { scoreAnswers, ASSISTANTS } from '../../../src/lib/ai-visibility/score.m
 import { normalize } from '../../../src/lib/ai-visibility/match.mjs';
 import { renderSet } from '../../../src/lib/ai-visibility/questions.mjs';
 import { randomId } from '../../../src/lib/ai-visibility/ids.mjs';
+import { safeProviderFailure } from './provider-log.mjs';
+
+/** One web-search call. 24 run in parallel, so this is the wall-clock budget, under the 15-minute background limit. */
+export const DEFAULT_CALL_TIMEOUT_MS = 90000;
 
 const DAY_MS = 86400000;
 const KEEP_MS = 90 * DAY_MS;
@@ -117,9 +121,23 @@ export async function acceptCheck({ store, env, input, ip, now = new Date(), ban
   return { ok: true, checkId: id, status: 'running', cached: false };
 }
 
+export function runSummary(answers, durationMs) {
+  const providers = {};
+  for (const id of ASSISTANTS) {
+    const rows = (answers || []).filter((row) => row.assistant === id);
+    const failed = rows.filter((row) => row.error).length;
+    providers[id] = { answered: rows.length - failed, failed };
+  }
+  return { durationMs, providers };
+}
+
 export async function executeJob({ store, env, checkId, ask, now = new Date(), bank }) {
+  const startedAt = Date.now();
+  const failures = [];
   const job = await store.get(`job:${checkId}`);
-  if (!job || job.status === 'complete' || job.status === 'failed') return;
+  if (!job || job.status === 'complete' || job.status === 'failed') {
+    return { failures, summary: runSummary([], Date.now() - startedAt) };
+  }
   const entry = questionsFor(bank, job.trade);
   const rendered = renderSet(entry, job.city);
   for (const assistant of ASSISTANTS) await store.set(`prog:${checkId}:${assistant}`, 'asking');
@@ -135,8 +153,16 @@ export async function executeJob({ store, env, checkId, ask, now = new Date(), b
               question: question.text,
               questionIndex: question.index,
               city: job.city,
-              timeoutMs: num(env.CHECK_CALL_TIMEOUT_MS, 25000),
+              timeoutMs: num(env.CHECK_CALL_TIMEOUT_MS, DEFAULT_CALL_TIMEOUT_MS),
             });
+            if (result?.error) {
+              failures.push(safeProviderFailure({
+                provider: assistant,
+                model: result.model || '',
+                question: question.text,
+                err: { name: result.error, message: result.error },
+              }));
+            }
             return {
               assistant,
               questionIndex: question.index,
@@ -149,16 +175,23 @@ export async function executeJob({ store, env, checkId, ask, now = new Date(), b
               error: result.error || null,
             };
           } catch (err) {
+            const timedOut = err?.name === 'TimeoutError' || err?.name === 'AbortError';
+            failures.push(safeProviderFailure({
+              provider: err?.provider || assistant,
+              model: err?.model || '',
+              question: question.text,
+              err,
+            }));
             return {
               assistant,
               questionIndex: question.index,
               question: question.text,
               text: '',
               citations: [],
-              model: '',
+              model: err?.model || '',
               timestamp: new Date().toISOString(),
               latencyMs: Date.now() - started,
-              error: err?.name === 'TimeoutError' || err?.name === 'AbortError' ? 'timeout' : 'error',
+              error: timedOut ? 'timeout' : 'error',
             };
           }
         })
@@ -180,6 +213,7 @@ export async function executeJob({ store, env, checkId, ask, now = new Date(), b
     });
   }
   await finishJob({ store, job, answers, fromCache: null, now, bank });
+  return { failures, summary: runSummary(answers, Date.now() - startedAt) };
 }
 
 async function finishJob({ store, job, answers, fromCache, now, bank }) {
