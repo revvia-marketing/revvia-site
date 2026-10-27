@@ -1,0 +1,19 @@
+{
+  "name": "Setup",
+  "price": "497",
+  "interval": "once",
+  "tagline": "Included in both checkouts.",
+  "inclusions": [
+    "Baseline measurement: 15 questions, 3 assistants, 3 runs each",
+    "A business facts sheet you approve",
+    "Google Business Profile tune-up: categories, services, service area, hours, photos, Q&A",
+    "Website structured data (schema) and an FAQ section, or a simple one-page site on your domain if you have none",
+    "Listings cleanup on the major directories",
+    "A review-request kit that follows FTC rules and Google's policies",
+    "A Setup Complete report"
+  ],
+  "ctaLabel": "",
+  "stripeLinkEnvKey": "none",
+  "badge": "",
+  "order": 1
+}

@@ -1,18 +1,49 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadAiVisibility } from '../../lib/ai-visibility/content.mjs';
+import '../../styles/ai-visibility.css';
+
+const model = loadAiVisibility({ ...import.meta.env, ...process.env });
+const thanks = model.copy.thanks;
+const [paidBefore, paidAfter] = thanks.paidHeading.split('{Plan}');
 ---
+
 <BaseLayout
-  title="Request received"
-  description="Your AI visibility audit request is in. We'll email your summary within two business days."
+  title="Your AI Visibility Check"
+  description="Your AI Visibility Check request is in."
   path="/ai-visibility/thanks"
   noindex={true}
+  bodyClass="aiv-page"
 >
   <section class="page-hero">
     <div class="page-hero-in" style="max-width:720px">
-      <div class="eyebrow">AI Visibility</div>
-      <h1>Request received.</h1>
-      <p class="sub">Your audit is in. We'll email your AI visibility summary within two business days - whether the news is good or bad. Keep an eye on your inbox.</p>
-      <a class="btn btn-lg" href="/">Back to the homepage</a>
+      <div id="thanks-free">
+        <h1>{thanks.freeHeading}</h1>
+        <p class="sub">{thanks.freeBody}</p>
+        <p style="margin-top:22px">
+          <a class="btn" href="/ai-visibility/#pricing">{thanks.seePlans}</a>
+        </p>
+        <p><a class="aiv-textlink" href="/ai-visibility/">{thanks.back}</a></p>
+      </div>
+      <div id="thanks-paid" hidden>
+        <h1>{paidBefore}<span id="thanks-plan-name"></span>{paidAfter}</h1>
+        <p class="sub">{thanks.paidBody}</p>
+        <p><a class="aiv-textlink" href="/ai-visibility/">{thanks.back}</a></p>
+      </div>
     </div>
   </section>
+  <script is:inline>
+    (function () {
+      var plan = '';
+      try { plan = new URLSearchParams(location.search).get('plan') || ''; } catch (e) {}
+      if (plan !== 'keep' && plan !== 'grow') return;
+      var paid = document.getElementById('thanks-paid');
+      var free = document.getElementById('thanks-free');
+      var name = document.getElementById('thanks-plan-name');
+      if (!paid || !free || !name) return;
+      name.textContent = plan === 'keep' ? 'Keep' : 'Grow';
+      paid.hidden = false;
+      free.hidden = true;
+    })();
+  </script>
 </BaseLayout>

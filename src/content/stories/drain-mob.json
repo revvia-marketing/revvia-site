@@ -1,0 +1,13 @@
+{
+  "client": "Drain Mob",
+  "tradeLabel": "plumbing",
+  "location": "",
+  "metric": "+33%",
+  "summary": "Revenue up 33% year over year in June, and up 11% in May. After a schema rebuild, Drain Mob surfaces consistently across ChatGPT, Perplexity, and Claude.",
+  "footnote": "",
+  "engagementType": "full-service",
+  "caseStudyUrl": "/work/drain-mob/",
+  "linkLabel": "Read the Drain Mob story",
+  "show": true,
+  "order": 1
+}

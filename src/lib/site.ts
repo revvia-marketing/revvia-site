@@ -86,6 +86,7 @@ export const NAV_LINKS: readonly NavItem[] = [
       { label: 'West Coast DTC', href: '/journal/west-coast-dtc' },
     ],
   },
+  { label: 'AI Visibility', href: '/ai-visibility' },
 ];
 
 /** The Journal publications - for the footer sub-list. */
@@ -138,7 +139,11 @@ export const CTA = { label: 'Get a Growth Audit', href: '/contact' } as const;
 
 /** Footer link set (primary links + Contact). */
 export const FOOTER_LINKS = [
-  ...NAV_LINKS,
+  { label: 'Services', href: '/services' },
+  { label: 'Work', href: '/work' },
+  { label: 'About', href: '/about' },
+  { label: 'Journal', href: '/journal' },
+  { label: 'AI Visibility (free check)', href: '/ai-visibility' },
   { label: 'How We Work', href: '/how-we-work' },
   { label: 'Contact', href: '/contact' },
 ] as const;

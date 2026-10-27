@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { loadAiVisibility } from '../../lib/ai-visibility/content.mjs';
+import { breadcrumbSchema } from '../../lib/schema';
+import { SITE_URL, absoluteUrl } from '../../lib/site';
+import '../../styles/ai-visibility.css';
+
+const model = loadAiVisibility({ ...import.meta.env, ...process.env });
+const page = model.methodology;
+const crumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'AI Visibility', url: '/ai-visibility' },
+  { name: 'How the check works', url: '/ai-visibility/methodology' },
+];
+const webPage = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: page.seoTitle,
+  description: page.metaDescription,
+  url: absoluteUrl('/ai-visibility/methodology'),
+  isPartOf: { '@id': `${SITE_URL}/#website` },
+  about: { '@id': `${SITE_URL}/#organization` },
+};
+---
+
+<BaseLayout
+  title={page.seoTitle}
+  description={page.metaDescription}
+  path="/ai-visibility/methodology"
+  bodyClass="aiv-page"
+  schemas={[webPage, breadcrumbSchema(crumbs)]}
+>
+  <section class="page-hero">
+    <div class="page-hero-in" style="max-width:800px">
+      <Breadcrumbs crumbs={crumbs} />
+      <h1>{page.h1}</h1>
+      <p class="sub">{page.intro}</p>
+    </div>
+  </section>
+  <section class="aiv-sec" style="border-top:0;padding-top:0">
+    <div class="wrap" style="max-width:800px">
+      <div class="aiv-block">
+        <h2>{page.askHeading}</h2>
+        <p>{page.askBody.replace('{trade}', 'every trade we check')}</p>
+        <div class="aiv-method-list">
+          {model.questions.map((entry, index) => (
+            <details open={index === 0}>
+              <summary>{entry.trade}</summary>
+              <ol>
+                {entry.templates.map((template) => (
+                  <li>{model.renderQuestion(template, entry, { literalCity: true })}</li>
+                ))}
+              </ol>
+            </details>
+          ))}
+        </div>
+      </div>
+      <div class="aiv-block"><h2>{page.whoHeading}</h2><p>{page.whoBody}</p></div>
+      <div class="aiv-block"><h2>{page.timesHeading}</h2><p>{page.timesBody}</p></div>
+      <div class="aiv-block"><h2>{page.countHeading}</h2><p>{page.countBody}</p></div>
+      <div class="aiv-block"><h2>{page.varyHeading}</h2><p>{page.varyBody}</p></div>
+      <div class="aiv-block"><h2>{page.sharedHeading}</h2><p>{page.sharedBody}</p></div>
+      <div class="aiv-block"><h2>{page.dontHeading}</h2><p>{page.dontBody}</p></div>
+      <div class="aiv-block">
+        <h2>{page.infoHeading}</h2>
+        <p>{page.infoBody}</p>
+        <a class="aiv-textlink" href="/privacy/">{page.privacyLabel}</a>
+      </div>
+      <p class="aiv-affil">{page.notAffiliated}</p>
+      <p class="aiv-tiny">Updated {page.methodologyUpdated}.</p>
+    </div>
+  </section>
+</BaseLayout>
