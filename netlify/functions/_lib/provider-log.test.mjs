@@ -2,9 +2,14 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { safeProviderFailure } from './provider-log.mjs';
 
+function fakeKey() {
+  return ['sk', 'test', 'fake'].join('-') + 'x'.repeat(24);
+}
+
 describe('safeProviderFailure', () => {
   it('keeps status and error type and strips keys, emails, and the prompt', () => {
     const question = 'Who fixes drains in San Diego? Ask pat@shop.test';
+    const key = fakeKey();
     const failure = safeProviderFailure({
       provider: 'perplexity',
       model: 'sonar',
@@ -16,7 +21,7 @@ describe('safeProviderFailure', () => {
         body: {
           error: {
             type: 'not_found',
-            message: `missing route for owner@drain.test key sk-live-ABCDEFGHIJKLMNOP`,
+            message: `missing route for owner@drain.test key ${key}`,
           },
         },
       },
@@ -28,7 +33,7 @@ describe('safeProviderFailure', () => {
     assert.equal(failure.error, 'not_found');
     assert.equal(dumped.includes('pat@shop.test'), false);
     assert.equal(dumped.includes('owner@drain.test'), false);
-    assert.equal(dumped.includes('sk-live-ABCDEFGHIJKLMNOP'), false);
+    assert.equal(dumped.includes(key), false);
     assert.equal(dumped.includes('Who fixes drains'), false);
     assert.match(failure.body, /\[redacted-email\]/);
     assert.match(failure.body, /\[redacted-key\]/);

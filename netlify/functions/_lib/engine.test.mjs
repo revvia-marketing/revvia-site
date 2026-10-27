@@ -74,6 +74,7 @@ describe('check engine', () => {
   });
 
   it('returns redacted provider failures and a per-provider summary', async () => {
+    const fakeKey = ['sk', 'test', 'fake'].join('-') + 'x'.repeat(24);
     const store = createMemoryStore();
     const now = new Date('2026-10-27T16:00:00Z');
     const tiny = [{
@@ -96,13 +97,13 @@ describe('check engine', () => {
         err.status = 400;
         err.provider = call.assistant;
         err.model = call.assistant === 'chatgpt' ? 'gpt-6.1-sol' : 'sonar';
-        err.body = { error: { type: 'invalid_request_error', message: `bad ${call.question} sk-live-ABCDEFGHIJKLMNOP` } };
+        err.body = { error: { type: 'invalid_request_error', message: `bad ${call.question} ${fakeKey}` } };
         throw err;
       },
     });
     const dumped = JSON.stringify(report.failures);
     assert.equal(dumped.includes('pat@shop.test'), false);
-    assert.equal(dumped.includes('sk-live-ABCDEFGHIJKLMNOP'), false);
+    assert.equal(dumped.includes(fakeKey), false);
     assert.equal(dumped.includes('Who fixes drains'), false);
     assert.equal(report.summary.providers.claude.answered, 1);
     assert.equal(report.summary.providers.claude.failed, 0);
