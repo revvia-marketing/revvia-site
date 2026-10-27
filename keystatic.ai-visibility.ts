@@ -164,6 +164,7 @@ export const aiVisibilitySingletons = {
       googleReviewCount: text('Review count (leave blank until verified)'),
       googleReviewsUrl: text('Google reviews URL'),
       ratingCheckedOn: text('Rating checked on (YYYY-MM-DD, or blank)'),
+      ratingCheckedBy: text('Checked by'),
     },
   }),
   methodology: singleton({
