@@ -11,7 +11,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "gen-assets": "node scripts/gen-assets.mjs",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "node --test src/lib/ai-visibility/*.test.mjs netlify/functions/_lib/*.test.mjs"
   },
   "dependencies": {
     "@astrojs/markdoc": "^0.15.0",
@@ -21,6 +22,7 @@
     "@astrojs/sitemap": "^3.4.0",
     "@keystatic/astro": "^5.0.5",
     "@keystatic/core": "^0.5.47",
+    "@netlify/blobs": "^10.7.13",
     "astro": "^5.13.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

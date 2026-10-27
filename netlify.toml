@@ -10,6 +10,46 @@
 # Catch-all for any other old Wix blog post. Netlify checks _redirects (the
 # specific /post/... rules from astro.config.mjs) before these, so this only
 # catches posts with no specific rule.
+# Retired offers. force = true is Netlify's 301! so an existing file cannot win.
+[[redirects]]
+  from = "/ai-snapshot"
+  to = "/ai-visibility"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/ai-snapshot/"
+  to = "/ai-visibility"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/ai-snapshot/thanks"
+  to = "/ai-visibility"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/ai-snapshot/thanks/"
+  to = "/ai-visibility"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/answer-check"
+  to = "/ai-visibility"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/answer-check/"
+  to = "/ai-visibility"
+  status = 301
+  force = true
+
+# TODO(Tim): decide whether /services/geo-visibility-overhaul should 301 here.
+# Left live on purpose. It still offers a GEO rebuild and overlaps this page.
+
 [[redirects]]
   from = "/post/*"
   to = "/journal/"

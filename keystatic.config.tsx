@@ -1,4 +1,5 @@
 import { config, fields, collection } from '@keystatic/core';
+import { aiVisibilityCollections, aiVisibilitySingletons } from './keystatic.ai-visibility';
 import { block } from '@keystatic/core/content-components';
 
 /**
@@ -27,6 +28,15 @@ export default config({
     brand: { name: 'Revvia' },
     navigation: {
       Content: ['journal', 'caseStudies'],
+      'AI Visibility': [
+        'aiVisibilityPage',
+        'siteProof',
+        'methodology',
+        'aiVisibilityPlans',
+        'reviews',
+        'stories',
+        'checkQuestions',
+      ],
     },
   },
   collections: {
@@ -193,5 +203,7 @@ export default config({
         metaDescription: fields.text({ label: 'Meta description (SEO override)', multiline: true }),
       },
     }),
+    ...aiVisibilityCollections,
   },
+  singletons: aiVisibilitySingletons,
 });

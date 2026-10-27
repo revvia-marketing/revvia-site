@@ -1,0 +1,17 @@
+{
+  "name": "Keep",
+  "price": "297",
+  "interval": "month",
+  "tagline": "Stay findable.",
+  "inclusions": [
+    "Monthly measurement: 15 questions × 3 assistants × 3 runs = 135 answers",
+    "2 Google Business Profile posts",
+    "1 website update",
+    "Listing drift fixes",
+    "A monthly written report"
+  ],
+  "ctaLabel": "Start Keep, $297/mo + setup",
+  "stripeLinkEnvKey": "PUBLIC_STRIPE_LINK_KEEP",
+  "badge": "",
+  "order": 2
+}

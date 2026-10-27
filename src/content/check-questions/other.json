@@ -1,0 +1,17 @@
+{
+  "trade": "Other home services",
+  "pro": "home service company",
+  "tradeNoun": "home service",
+  "job": "a home repair",
+  "templates": [
+    "Who is the best {pro} in {city}?",
+    "I need an emergency {pro} in {city} right now. Who should I call?",
+    "Which {trade} companies in {city} have the best reviews?",
+    "Can you recommend a licensed and insured {pro} near {city}?",
+    "Who should I call for {job} in {city}?",
+    "What's a trustworthy {trade} company in {city} with fair prices?",
+    "Which {trade} companies serve {city} and the nearby areas?",
+    "Who do locals recommend for {trade} in {city}?"
+  ],
+  "order": 6
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Grow",
+  "price": "497",
+  "interval": "month",
+  "tagline": "Get named more often.",
+  "inclusions": [
+    "30 questions measured (270 answers a month)",
+    "4 Google posts",
+    "2 new service or city pages a month",
+    "3 new listings or data fixes",
+    "A monthly competitor gap check",
+    "A quarterly written strategy review (written, not a call)"
+  ],
+  "ctaLabel": "Start Grow, $497/mo + setup",
+  "stripeLinkEnvKey": "PUBLIC_STRIPE_LINK_GROW",
+  "badge": "Recommended",
+  "order": 3
+}

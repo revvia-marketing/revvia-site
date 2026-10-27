@@ -1,86 +1,478 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Hero from '../../components/ai-visibility/Hero.astro';
-import Checks from '../../components/ai-visibility/Checks.astro';
-import Steps from '../../components/ai-visibility/Steps.astro';
-import CaseStudies from '../../components/ai-visibility/CaseStudies.astro';
-import Pricing from '../../components/ai-visibility/Pricing.astro';
-import Promise from '../../components/ai-visibility/Promise.astro';
-import AuditForm from '../../components/ai-visibility/AuditForm.astro';
-import Faq from '../../components/Faq.astro';
-import {
-  serviceSchema,
-  faqPageSchema,
-  breadcrumbSchema,
-  type FaqItem,
-} from '../../lib/schema';
+import AttributionFields from '../../components/AttributionFields.astro';
+import { loadAiVisibility } from '../../lib/ai-visibility/content.mjs';
+import { faqPageSchema, breadcrumbSchema } from '../../lib/schema';
+import { SITE_URL, absoluteUrl } from '../../lib/site';
+import '../../styles/ai-visibility.css';
 
-const path = '/ai-visibility';
-const description =
-  'When someone asks ChatGPT for the best plumber in your city, does it say your name? Free AI visibility audit for San Diego plumbing and HVAC companies.';
-
-// FAQ content is drawn from the visible page (checks, how-it-works, pricing,
-// promise). No statistics - answers stay within the page's own claims.
-const faqs: FaqItem[] = [
-  { question: 'Will this replace my SEO?', answer: 'No. Your Google rankings and reviews still matter. AI visibility is a separate job: making sure the AI engines can read your site and recommend you in the answers homeowners now get. We build it on top of your SEO, not instead of it.' },
-  { question: 'How long does the build take?', answer: 'The Foundation Build is a one-time engagement: full schema and JSON-LD, on-site SEO and GEO cleanup, and service and service-area pages written so a machine can quote them. Most builds wrap within a few weeks, depending on how many pages your site has.' },
-  { question: 'What happens after the build?', answer: 'Nothing is required. The build is what makes you findable and quotable. If you want ongoing tracking and content, the Monitor, Move, and Max plans start at $499, $1,299, and $2,499 per month - but they are only sold after the build, because there is nothing to maintain until then.' },
-  { question: 'What do you check in the free audit?', answer: 'We run the real questions homeowners ask for your trade and city across multiple AI engines, record which competitors get named and why, and check whether your structured data, service and city coverage, and trust signals like licensing, warranty, and response time are readable by a machine.' },
-  { question: 'Do you guarantee more leads or revenue?', answer: 'No. We promise to make you more findable and more frequently recommended by AI engines, and to show you the movement every month in writing. We do not promise a revenue or lead number - that depends on your pricing, your crews, and how your office answers the phone.' },
-];
-
+const env = { ...import.meta.env, ...process.env };
+const model = loadAiVisibility(env);
+const copy = model.copy;
+const offer = (name, price, monthly) => ({
+  '@type': 'Offer',
+  name,
+  price: String(price),
+  priceCurrency: 'USD',
+  url: absoluteUrl('/ai-visibility'),
+  ...(monthly
+    ? {
+        priceSpecification: {
+          '@type': 'UnitPriceSpecification',
+          price: String(price),
+          priceCurrency: 'USD',
+          billingDuration: 'P1M',
+          unitText: 'month',
+        },
+      }
+    : {}),
+});
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Revvia AI Visibility',
+  serviceType: 'AI search visibility for home-service businesses',
+  description: copy.metaDescription,
+  url: absoluteUrl('/ai-visibility'),
+  provider: { '@id': `${SITE_URL}/#organization` },
+  areaServed: { '@type': 'Country', name: 'United States' },
+  offers: [offer('Setup', 497, false), offer('Keep', 297, true), offer('Grow', 497, true)],
+};
 const schemas = [
-  serviceSchema({
-    name: 'AI Visibility',
-    description,
-    url: path,
-    serviceType: 'Generative Engine Optimization',
-    areaServed: ['San Diego County'],
-    offers: [
-      { '@type': 'Offer', name: 'Foundation Build (one-time)', price: '5000', priceCurrency: 'USD', category: 'One-time build' },
-      { '@type': 'Offer', name: 'Monitor (per month)', price: '499', priceCurrency: 'USD', category: 'Subscription' },
-      { '@type': 'Offer', name: 'Move (per month)', price: '1299', priceCurrency: 'USD', category: 'Subscription' },
-      { '@type': 'Offer', name: 'Max (per month)', price: '2499', priceCurrency: 'USD', category: 'Subscription' },
-    ],
-  }),
+  serviceSchema,
+  faqPageSchema(copy.faq.map((item) => ({ question: item.question, answer: item.answer }))),
   breadcrumbSchema([
     { name: 'Home', url: '/' },
-    { name: 'AI Visibility', url: path },
+    { name: 'AI Visibility', url: '/ai-visibility' },
   ]),
-  faqPageSchema(faqs),
 ];
+const clientConfig = {
+  mode: model.instant ? 'instant' : 'fallback',
+  turnstileSiteKey: model.instant ? String(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '') : '',
+  strings: copy.check,
+};
+const configJson = JSON.stringify(clientConfig).replace(/</g, '\\u003c');
+const planHref = (plan) => model.stripe[plan.stripeLinkEnvKey] || '#';
 ---
+
 <BaseLayout
-  title="AI Visibility for San Diego Home Services"
-  description={description}
-  path={path}
+  title={copy.seoTitle}
+  description={copy.metaDescription}
+  path="/ai-visibility"
+  bodyClass="aiv-page"
   schemas={schemas}
 >
-  <Hero />
+  <script is:inline>document.documentElement.classList.add('aiv-js')</script>
+  <script type="application/json" id="aiv-config" set:html={configJson} />
 
-  <!-- What changed -->
-  <section class="psec">
+  <header class="aiv-hero">
+    <div class="aiv-hero-in">
+      <div class="aiv-intro">
+        <p class="eyebrow">{copy.eyebrow}</p>
+        <h1>{copy.h1}</h1>
+        <p class="aiv-sub">{copy.subhead}</p>
+        <p class="aiv-match" id="aiv-match" hidden>{copy.messageMatchLine}</p>
+        <p class="aiv-jumps">
+          <a href="#how">How it works</a>
+          <a href="#pricing">Plans</a>
+          <a href="#reviews">Reviews</a>
+          <a href="#faq">FAQ</a>
+        </p>
+      </div>
+      <div class="aiv-grid">
+        <div class="aiv-check" id="check">
+            <span id="audit" class="aiv-anchor"></span>
+            <form
+              id="aiv-form"
+              class:list={['form-card', { 'is-instant': model.instant }]}
+              name="ai-visibility-check"
+              method="POST"
+              action="/ai-visibility/thanks/"
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              data-mode={model.instant ? 'instant' : 'fallback'}
+            >
+              <input type="hidden" name="form-name" value="ai-visibility-check" />
+              <input type="hidden" name="source_page" value="/ai-visibility" />
+              <input type="hidden" name="check_id" value="" />
+              <input type="hidden" name="named_count" value="" />
+              <input type="hidden" name="chatgpt_count" value="" />
+              <input type="hidden" name="perplexity_count" value="" />
+              <input type="hidden" name="claude_count" value="" />
+              <input type="hidden" name="check_mode" value={model.instant ? 'instant' : 'fallback'} />
+              <p class="hp"><label>Don't fill this out: <input name="bot-field" /></label></p>
+              <AttributionFields />
+
+              <h2 class="aiv-form-head">{copy.formHeading}</h2>
+              <div class="aiv-banner" hidden></div>
+
+              <div class="field full">
+                <label for="business">Business name</label>
+                <input id="business" name="business" type="text" autocomplete="organization" required maxlength="120" />
+              </div>
+              <div class="field full">
+                <label for="city">City</label>
+                <input id="city" name="city" type="text" autocomplete="address-level2" required maxlength="80" placeholder={copy.check.cityPlaceholder} />
+              </div>
+              <div class="field full">
+                <label for="trade">Trade</label>
+                <select id="trade" name="trade" required>
+                  <option value="">Choose a trade</option>
+                  {model.questions.map((entry) => <option value={entry.trade}>{entry.trade}</option>)}
+                </select>
+              </div>
+              <div class="field full">
+                <label for="website">Website</label>
+                <input id="website" name="website" type="text" inputmode="url" autocomplete="url" maxlength="200" placeholder="yoursite.com" />
+              </div>
+              <label class="checkline">
+                <input type="checkbox" name="no_website" />
+                <span>{copy.check.noWebsite}</span>
+              </label>
+
+              <div class="aiv-errors" role="alert" aria-live="assertive"></div>
+              {model.instant && <div class="aiv-turnstile"></div>}
+              <div class="aiv-live" aria-live="polite"></div>
+
+              <button class="btn btn-lg aiv-step1-submit" type="submit">{copy.primaryCtaLabel}</button>
+              <p class="aiv-helper aiv-instant-only">{copy.check.step1Helper}</p>
+              <p class="aiv-helper aiv-fallback-only">{copy.check.fallbackHelper}</p>
+              <p class="aiv-note aiv-instant-only">{copy.underCtaNote}</p>
+              <p class="aiv-note aiv-fallback-only">{copy.underCtaNoteFallback}</p>
+
+              <div class="aiv-step2">
+                <h3 class="aiv-form-head">{copy.check.step2Heading}</h3>
+                <p class="aiv-helper" style="margin-top:0;margin-bottom:12px">{copy.check.step2Body}</p>
+                <div class="field full">
+                  <label for="name">Your name</label>
+                  <input id="name" name="name" type="text" autocomplete="name" required maxlength="80" />
+                </div>
+                <div class="field full">
+                  <label for="email">Email</label>
+                  <input id="email" name="email" type="email" autocomplete="email" required maxlength="120" />
+                </div>
+                <label class="checkline">
+                  <input type="checkbox" name="consent" required />
+                  <span>{copy.check.consent}</span>
+                </label>
+                <button class="btn btn-lg aiv-email-btn" type="submit">{copy.check.step2Button}</button>
+                <p class="aiv-note">{copy.check.step2Under}</p>
+                <a class="aiv-textlink" href="#pricing">{copy.check.seePlans}</a>
+              </div>
+            </form>
+            <script is:inline>
+              (function () {
+                var form = document.getElementById('aiv-form');
+                if (!form || !form.classList.contains('is-instant')) return;
+                form.querySelectorAll('.aiv-step2 input, .aiv-step2 textarea').forEach(function (field) {
+                  field.required = false;
+                  field.disabled = true;
+                });
+              })();
+            </script>
+          </div>
+
+        <aside class="aiv-sample" aria-label="Sample report">
+          <div class="bar"></div>
+          <div class="body">
+            <p class="who">{copy.sample.header}</p>
+            <p class="big">{copy.sample.big}</p>
+            {copy.sample.bars.map((bar) => (
+              <div class="aiv-meter">
+                <span>{bar.name}</span>
+                <span class="track"><span class="fill" style={`width:${bar.width}%`}></span></span>
+                <b>{bar.label}</b>
+              </div>
+            ))}
+            <div class="aiv-instead">
+              <span>{copy.sample.namedInstead}</span>
+              <div class="aiv-pills" aria-hidden="true"><i></i><i></i><i></i></div>
+            </div>
+            <p class="cap">{copy.sample.caption}</p>
+          </div>
+        </aside>
+        <ul class="aiv-trust">
+          <li>{copy.trustFounder}</li>
+          <li>{copy.trustCancel}</li>
+          <li>{copy.stickyNote}</li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <section class="aiv-sec" id="reviews">
     <div class="wrap">
-      <div class="eyebrow blk">What changed</div>
-      <h2 class="sec">You already won the search. You are losing the answer.</h2>
-      <p class="lead mut">You spent years earning the reviews, the map pin, and the page-one ranking. None of that is wasted. But a growing share of homeowners never scroll a results page anymore. They ask a question, they get one answer, and they call the names in it.</p>
-      <p class="lead mut">Ranking well and being recommended well are now two different jobs. Most home services companies in San Diego are doing the first one and have never checked the second.</p>
+      <h2>{copy.reviewsHeading}</h2>
+      <p class="aiv-kicker">{copy.reviewsLabel}</p>
+      {model.reviews.length > 0 && (
+        <div class="aiv-reviews">
+          {model.reviews.map((review) => (
+            <article class="aiv-rcard">
+              {review.unverified && <span class="aiv-preview">PREVIEW: unverified</span>}
+              <p class="aiv-quote">{review.quote}</p>
+              <button class="aiv-more" type="button" aria-expanded="false">Read more</button>
+              <p class="aiv-who"><b>{review.nameLine}</b></p>
+              <p class="aiv-src">
+                {review.sourceUrl ? <a href={review.sourceUrl}>{review.sourceLine}</a> : review.sourceLine}
+              </p>
+            </article>
+          ))}
+        </div>
+      )}
+      {model.proof && (
+        <a class="aiv-textlink" href={model.proof.url}>{copy.reviewsGoogleLink}</a>
+      )}
+      <p class="aiv-tiny">{copy.reviewsTiny}</p>
     </div>
   </section>
 
-  <Checks />
-  <Steps />
-  <CaseStudies />
-  <Pricing />
-  <Promise />
-
-  <section class="psec">
+  <section class="aiv-sec alt">
     <div class="wrap">
-      <div class="eyebrow blk">FAQ</div>
-      <h2 class="sec">Questions contractors ask.</h2>
-      <Faq items={faqs} />
+      <h2>{copy.problemHeading}</h2>
+      {copy.problemBody.map((paragraph) => <p class="aiv-lead">{paragraph}</p>)}
     </div>
   </section>
 
-  <AuditForm />
+  <section class="aiv-sec" id="how">
+    <div class="wrap">
+      <h2>{copy.howHeading}</h2>
+      <div class="aiv-steps">
+        {copy.howSteps.map((step, index) => (
+          <article class="aiv-step">
+            <div class="n">{index + 1}</div>
+            <h3>{step.title}</h3>
+            <p>{step.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="aiv-sec alt">
+    <div class="wrap">
+      <h2>{copy.packageHeading}</h2>
+      <p class="aiv-kicker">{copy.packageIntro}</p>
+      <div class="aiv-pack">
+        {copy.packageItems.map((item) => (
+          <article>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="aiv-sec">
+    <div class="wrap">
+      <h2>{copy.lookHeading}</h2>
+      <div class="aiv-look">
+        {copy.lookAt.map((item, index) => (
+          <article>
+            <div class="ix">0{index + 1}</div>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="aiv-sec alt" id="pricing">
+    <div class="wrap">
+      <h2>{copy.plansHeading}</h2>
+      <div class="aiv-founding" id="aiv-founding">
+        <p>{copy.foundingLine}</p>
+        <p class="count" data-founding-line>{copy.foundingStaticLine}</p>
+      </div>
+      <div class="aiv-plans">
+        {model.monthlyPlans.map((plan) => (
+          <article class:list={['aiv-plan', { 'is-grow': Boolean(plan.badge) }]}>
+            {plan.badge && <span class="aiv-badge">{plan.badge}</span>}
+            <h3>{plan.name}</h3>
+            <p class="aiv-tag">{plan.tagline}</p>
+            <p class="aiv-price">${plan.price}<span>/{plan.interval === 'month' ? 'mo' : 'once'}</span></p>
+            <p class="aiv-plus">+ ${model.setupPlan?.price} setup, once</p>
+            {plan.badge && <p class="aiv-plus" style="margin:12px 0">Everything in Keep, plus:</p>}
+            <ul>
+              {plan.inclusions.map((item) => <li>{item}</li>)}
+            </ul>
+            <ul class="aiv-mcompare">
+              {copy.comparisonRows.map((row) => (
+                <li>
+                  <span>{row.label}</span>
+                  <b>{plan.name === 'Grow' ? row.grow : row.keep}</b>
+                </li>
+              ))}
+            </ul>
+            <a
+              class="btn btn-lg"
+              href={planHref(plan)}
+              data-base={planHref(plan)}
+              data-checkout={plan.name === 'Grow' ? 'grow' : 'keep'}
+            >{plan.ctaLabel}</a>
+          </article>
+        ))}
+      </div>
+      <p class="aiv-fine">{copy.renewalDisclosure}</p>
+      <div class="aiv-setup-badge"><i aria-hidden="true"></i><b>{copy.guaranteeBadge}</b></div>
+      {model.setupPlan && (
+        <div style="margin-top:28px">
+          <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;margin-bottom:10px">{copy.setupHeading}</h3>
+          <ul>
+            {model.setupPlan.inclusions.map((item) => <li style="margin:8px 0 8px 18px;color:var(--muted)">{item}</li>)}
+          </ul>
+        </div>
+      )}
+      <div class="aiv-table-wrap">
+        <table class="aiv-table">
+          <caption>{copy.comparisonCaption}</caption>
+          <thead>
+            <tr>
+              <th scope="col"><span class="sr-only">Feature</span></th>
+              <th scope="col">Keep</th>
+              <th scope="col">Grow (recommended)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {copy.comparisonRows.map((row) => (
+              <tr>
+                <th scope="row">{row.label}</th>
+                <td>{row.keep}</td>
+                <td>{row.grow}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {model.pricingReview && (
+        <article class="aiv-pricereview aiv-rcard">
+          {model.pricingReview.unverified && <span class="aiv-preview">PREVIEW: unverified</span>}
+          <p class="aiv-quote">{model.pricingReview.quote}</p>
+          <p class="aiv-who"><b>{model.pricingReview.nameLine}</b></p>
+          <p class="aiv-src">
+            {model.pricingReview.sourceUrl
+              ? <a href={model.pricingReview.sourceUrl}>{model.pricingReview.sourceLine}</a>
+              : model.pricingReview.sourceLine}
+          </p>
+        </article>
+      )}
+      <a class="aiv-textlink" href="#check">{copy.plansSecondaryCta}</a>
+    </div>
+  </section>
+
+  <section class="aiv-sec">
+    <div class="wrap">
+      <h2>{copy.riskHeading}</h2>
+      <div class="aiv-risk">
+        {copy.riskItems.map((item) => (
+          <article>
+            <h3>{item.title}</h3>
+            {item.body && <p>{item.body}</p>}
+          </article>
+        ))}
+      </div>
+      <p class="aiv-fine">{copy.riskSmall}</p>
+    </div>
+  </section>
+
+  {model.stories.length > 0 && (
+    <section class="aiv-sec alt">
+      <div class="wrap">
+        <h2>{copy.storiesHeading}</h2>
+        <p class="aiv-kicker">{copy.storiesDisclaimer}</p>
+        <div class="aiv-stories">
+          {model.stories.map((story) => (
+            <article class="aiv-story">
+              <h3>{story.client}</h3>
+              {story.meta && <p class="meta">{story.meta}</p>}
+              {story.metric && <p class="aiv-metric">{story.metric}</p>}
+              <p>{story.summary}</p>
+              {story.footnote && <p class="foot">{story.footnote}</p>}
+              <a class="aiv-textlink" href={story.caseStudyUrl}>{story.linkLabel}</a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="aiv-sec">
+    <div class="wrap aiv-founder">
+      <img src="/tim-holt.jpg" width="720" height="900" alt="Tim Holt, founder and CEO of Revvia" loading="lazy" />
+      <div>
+        <h2>{copy.founderHeading}</h2>
+        {copy.founderBody.map((paragraph) => <p>{paragraph}</p>)}
+        <div class="aiv-founder-links">
+          {copy.founderLinks.map((link) => <a class="aiv-textlink" href={link.href}>{link.label}</a>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="aiv-sec alt">
+    <div class="wrap">
+      <h2>{copy.promiseHeading}</h2>
+      <div class="aiv-cols">
+        <article>
+          <h3>What we promise</h3>
+          <ul>
+            {copy.promise.map((item) => <li>{item}</li>)}
+          </ul>
+        </article>
+        <article>
+          <h3>What we will not promise</h3>
+          <ul>
+            {copy.wontPromise.map((item) => <li>{item}</li>)}
+          </ul>
+        </article>
+      </div>
+      <div class="aiv-method">
+        <h3>{copy.methodTitle}</h3>
+        <p>{copy.methodBody}</p>
+        <a class="aiv-textlink" href="/ai-visibility/methodology/">{copy.methodLinkLabel}</a>
+        <p class="aiv-affil">{copy.notAffiliated}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="aiv-sec" id="faq">
+    <div class="wrap">
+      <h2>{copy.faqHeading}</h2>
+      <div class="faq">
+        {copy.faq.map((item) => (
+          <details>
+            <summary>{item.question}</summary>
+            {item.linkPhrase && item.answer.includes(item.linkPhrase) ? (
+              <p>
+                {item.answer.slice(0, item.answer.indexOf(item.linkPhrase))}
+                <a href={item.linkHref}>{item.linkPhrase}</a>
+                {item.answer.slice(item.answer.indexOf(item.linkPhrase) + item.linkPhrase.length)}
+              </p>
+            ) : (
+              <p>{item.answer}</p>
+            )}
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="final-cta">
+    <div class="cta-in">
+      <h2>{copy.finalHeading}</h2>
+      <p class="lead">{copy.finalBody}</p>
+      <a class="btn btn-lg" href="#check">{copy.primaryCtaLabel}</a>
+    </div>
+  </section>
+
+  <div class="aiv-sticky" id="aiv-sticky" hidden>
+    <small>{copy.stickyNote}</small>
+    <a class="btn" href="#check">{copy.primaryCtaShort}</a>
+  </div>
 </BaseLayout>
+
+<script>
+  import { initAiVisibility } from '../../scripts/ai-visibility.js';
+  initAiVisibility();
+</script>

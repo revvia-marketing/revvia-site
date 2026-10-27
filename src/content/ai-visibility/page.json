@@ -1,0 +1,193 @@
+{
+  "seoTitle": "AI Visibility for San Diego Home Services",
+  "metaDescription": "When someone asks ChatGPT for the best plumber in your city, does it say your name? Get a free AI Visibility Check for your home-service business.",
+  "eyebrow": "For plumbers, HVAC pros, electricians, roofers, and restoration companies",
+  "h1": "Your customers stopped typing. They started asking.",
+  "subhead": "Find out {instantTurnaround} whether ChatGPT, Perplexity, and Claude name your business when locals ask who to call. Then we fix what they read and re-check every month.",
+  "messageMatchLine": "Our email showed you one assistant. This check asks all three, live.",
+  "formHeading": "Free AI Visibility Check",
+  "underCtaNote": "Free. No call, no credit card. Your score shows right here; the full report comes by email.",
+  "underCtaNoteFallback": "Free. No call, no credit card. Results by email {checkTurnaround}.",
+  "primaryCtaLabel": "Get my free AI Visibility Check",
+  "primaryCtaShort": "Get my free check",
+  "instantTurnaround": "in about a minute",
+  "checkTurnaround": "within 1 business day",
+  "setupDays": 21,
+  "trustFounder": "Founder-led in Carlsbad, California, since 2020",
+  "trustCancel": "Month to month. Cancel online.",
+  "sample": {
+    "header": "Harbor Plumbing Co. · Plumbing · Sample city",
+    "big": "Named in 3 of 8 questions",
+    "bars": [
+      { "name": "ChatGPT", "label": "2 of 8", "width": 25 },
+      { "name": "Perplexity", "label": "3 of 8", "width": 37.5 },
+      { "name": "Claude", "label": "1 of 8", "width": 12.5 }
+    ],
+    "namedInstead": "Named instead",
+    "caption": "Sample report. Not a real business or real answers."
+  },
+  "reviewsHeading": "What clients say about working with Revvia",
+  "reviewsLabel": "Reviews of Revvia, the marketing firm behind this product, from clients of our agency work. They describe working with us, not Revvia AI Visibility results.",
+  "reviewsGoogleLink": "Read every review on Google",
+  "reviewsTiny": "Selected by Revvia. Quoted exactly as written.",
+  "problemHeading": "You already won the search. You are losing the answer.",
+  "problemBody": [
+    "A homeowner with a leaking water heater used to type \"plumber near me\" and scroll. Now many ask an assistant, and it names one, two, or three companies. In BrightLocal's 2026 consumer survey, 45% of people said they had used AI tools to find local businesses. If the assistant doesn't have clear facts about you, it names someone else, even if you rank well on Google.",
+    "Earlier this year, two of our clients told us new customers said they'd found them through ChatGPT. One had a patient mention Claude by name. As Tim puts it: SEO answers \"where do I rank.\" This answers \"do I exist.\""
+  ],
+  "howHeading": "How it works. Three steps, no meetings.",
+  "howSteps": [
+    {
+      "title": "Check (free, {instantTurnaround}).",
+      "body": "Tell us your business, trade, and city. We ask ChatGPT, Perplexity, and Claude 8 questions your customers really ask, through each company's official API, and show you how many you were named for. Add your email and we send the full 48-answer report."
+    },
+    {
+      "title": "Setup ({setupDays} days, guaranteed).",
+      "body": "Pick a plan and check out online. You fill out a 10-minute form and add us as a manager on your Google Business Profile and your website. We never ask for passwords. We build a facts sheet for you to approve, then fix what AI reads. Delivered within {setupDays} days of your completed intake, or your $497 back."
+    },
+    {
+      "title": "Keep or Grow (monthly).",
+      "body": "Every month we re-run the questions, fix anything that drifted, and add fresh content. You get a short written report: how often you were named, what we did, and what's next. Approvals and questions happen by email."
+    }
+  ],
+  "packageHeading": "Everything in the package.",
+  "packageIntro": "One price covers the measuring, the fixing, and the reporting. Here's what you actually get.",
+  "packageItems": [
+    { "title": "Measure.", "body": "A baseline of 15 questions × 3 assistants × 3 runs (135 answers) before we touch anything, then the same check every month, so you see the trend against where you started." },
+    { "title": "Your facts sheet.", "body": "One page with your services, service area, hours, licensing, warranty, and response times, written once and approved by you. Every fix we make uses it, so every source says the same thing." },
+    { "title": "Google Business Profile tune-up.", "body": "Categories, services, service area, hours, photos, and Q&A, plus regular posts every month." },
+    { "title": "A site AI can read.", "body": "Structured data (schema) and an FAQ section on your site, or a simple one-page site on your own domain if you don't have one." },
+    { "title": "Listings cleanup.", "body": "Your name, address, phone, and services made consistent on the major directories AI assistants pull from, and drift fixed every month." },
+    { "title": "A fair review kit.", "body": "A review-request process that follows FTC rules and Google's policies, so you ask every customer the same way." },
+    { "title": "New content (Grow).", "body": "Two new service or city pages a month and a competitor gap check, aimed at the questions where you're missing." },
+    { "title": "Straight reports.", "body": "A Setup Complete report, then a short written report every month, including the months the numbers dip." }
+  ],
+  "lookHeading": "What we actually look at.",
+  "lookAt": [
+    { "title": "The questions homeowners ask.", "body": "\"Emergency plumber in {city},\" \"AC repair near me tonight,\" and the like." },
+    { "title": "Who is getting named instead.", "body": "The top competitors the assistants name for your questions." },
+    { "title": "Whether your site is readable.", "body": "Structured data, service and city pages, and facts that are clear to a machine." },
+    { "title": "Where the AI is getting its list.", "body": "Your Google profile, directories, and review sites, and whether they agree with each other." },
+    { "title": "Service and city gaps.", "body": "Services or towns you cover that no source mentions." },
+    { "title": "Licensing, warranty, response.", "body": "The trust facts that assistants look for and often can't find." }
+  ],
+  "plansHeading": "Simple plans. Month to month.",
+  "foundingLine": "Founding offer: Setup ($497) is waived for our first 10 clients who agree to let us write up their results as a case study.",
+  "foundingStaticLine": "Open to our first 10 founding clients.",
+  "renewalDisclosure": "Your plan renews every month at the price shown until you cancel. Cancel anytime online from your private billing link, which we email you.",
+  "guaranteeBadge": "Setup delivered in {setupDays} days or your $497 back.",
+  "plansSecondaryCta": "Not sure yet? Start with the free check.",
+  "setupHeading": "Setup, $497 once, included in both checkouts ({setupDays} days, guaranteed):",
+  "comparisonCaption": "Compare Keep and Grow.",
+  "comparisonRows": [
+    { "label": "Monthly price", "keep": "$297", "grow": "$497" },
+    { "label": "Setup, once", "keep": "$497", "grow": "$497" },
+    { "label": "Questions measured each month", "keep": "15", "grow": "30" },
+    { "label": "AI answers checked each month", "keep": "135", "grow": "270" },
+    { "label": "Google Business Profile posts", "keep": "2 a month", "grow": "4 a month" },
+    { "label": "Website updates", "keep": "1 a month", "grow": "1 a month, plus 2 new service or city pages" },
+    { "label": "Listings", "keep": "Drift fixes", "grow": "Drift fixes, plus 3 new listings or data fixes" },
+    { "label": "Competitor gap check", "keep": "No", "grow": "Monthly" },
+    { "label": "Written strategy review", "keep": "No", "grow": "Quarterly" },
+    { "label": "Monthly written report", "keep": "Yes", "grow": "Yes" },
+    { "label": "Cancel online anytime", "keep": "Yes", "grow": "Yes" }
+  ],
+  "riskHeading": "Try it without the risk.",
+  "riskItems": [
+    { "title": "Setup delivered in {setupDays} days, or your $497 back.", "body": "The clock starts when we have your completed intake form and manager access. If everything on the setup list isn't delivered by day {setupDays}, email us and we refund your setup fee in full. This covers our work, not what AI assistants say." },
+    { "title": "Month to month.", "body": "No six-month agreement." },
+    { "title": "Cancel anytime online", "body": "from the private billing link we email you. Service runs through the month you paid for." },
+    { "title": "Setup is refundable in full until we start work.", "body": "" }
+  ],
+  "riskSmall": "If your setup was waived through the founding offer, there's no setup fee to refund. We don't promise calls, leads, revenue, or rankings, because no one can.",
+  "storiesHeading": "Stories from Revvia's agency work.",
+  "storiesDisclaimer": "These are results from Revvia's full-service agency work, verified against each client's own data and published with their approval. They are not results of Revvia AI Visibility, and past results don't predict yours.",
+  "showAgencyProof": true,
+  "founderHeading": "Built by Revvia. Led by Tim Holt.",
+  "founderBody": [
+    "Tim Holt started Revvia in 2020 as First Door Marketing, helping churches and nonprofits get through the pandemic. He was a pastor when he started it, and he still says he answers to a higher power than your checkbook. That's why this page doesn't promise rankings, and why every report shows the months that dip.",
+    "Revvia is a small, founder-led marketing firm at 5927 Priestly Dr. #212 in Carlsbad, California. When our own clients started hearing \"ChatGPT sent me,\" we began measuring and fixing AI visibility by hand. Revvia AI Visibility brings that work to home-service businesses anywhere in the US, at a price that fits a small shop."
+  ],
+  "founderLinks": [
+    { "label": "More about Revvia", "href": "/about/" },
+    { "label": "See Revvia's client work", "href": "/work/" }
+  ],
+  "promiseHeading": "What we promise, and what we will not.",
+  "promise": [
+    "To measure honestly, with the date, the assistants, and the questions shown.",
+    "To work on the information AI relies on: your profile, site, listings, and reviews.",
+    "To send a straight report every month, including the months when the numbers dip.",
+    "To deliver your setup in {setupDays} days, or refund it.",
+    "That you can cancel anytime online."
+  ],
+  "wontPromise": [
+    "Calls, leads, revenue, or a number-one spot. Nobody controls what AI says.",
+    "Fake reviews or gifts for reviews.",
+    "To change what Google's AI says. We can't measure it under Google's terms (see the FAQ)."
+  ],
+  "methodTitle": "How the check works.",
+  "methodBody": "Same 8 questions for everyone in your trade and city, sent to ChatGPT, Perplexity, and Claude through their official APIs with web search on. We count a question as \"named\" only when an answer clearly names your business or links your website.",
+  "methodLinkLabel": "Read the full method",
+  "notAffiliated": "Not affiliated with OpenAI, Anthropic, Perplexity, or Google.",
+  "faqHeading": "Questions contractors ask.",
+  "faq": [
+    { "question": "Can you guarantee ChatGPT will recommend me?", "answer": "No. Nobody can. We improve the information AI assistants rely on and measure the result honestly every month." },
+    { "question": "So what do you guarantee?", "answer": "That your setup is delivered within {setupDays} days of receiving your completed intake form and manager access, or we refund your $497 setup fee in full. It covers our work, not what AI assistants say. If your setup was waived through the founding offer, there's no setup fee to refund." },
+    { "question": "Will this get me more calls?", "answer": "That's the goal, but we don't promise it. What we measure and report is how often you're named, as \"named in X of N answers\"." },
+    { "question": "Which AI assistants do you check?", "answer": "ChatGPT, Perplexity, and Claude, through their official APIs. Google's AI answers (AI Overviews and AI Mode) are not measured. Google doesn't offer an API we can use for this under its terms. We still work on the Google signals you control (your Business Profile, site, and reviews), and every report says plainly that Google's AI answers aren't scored." },
+    { "question": "What's the difference between the instant result and the full report?", "answer": "The instant result asks each assistant each question once, 24 answers in all, and shows how many of the 8 questions you were named for. The full report runs every question a second time (48 answers), lists who was named instead, and gives you three things to fix first. A person checks the name matching before it's sent." },
+    { "question": "How exactly do you run the check?", "answer": "We send the same 8 questions, written the way homeowners ask, to ChatGPT, Perplexity, and Claude through each company's official API with web search on. Then we look for your business name and website in each answer. The full method is on our methodology page.", "linkPhrase": "methodology page", "linkHref": "/ai-visibility/methodology/" },
+    { "question": "Why do my results change from month to month?", "answer": "AI answers vary from run to run and change as the assistants update. That's why we ask each question several times and report the trend against your first check." },
+    { "question": "Will this replace my SEO?", "answer": "No. SEO aims at search rankings. This focuses on whether AI assistants know, describe, and name your business. The two overlap and help each other." },
+    { "question": "Do I have to get on a call?", "answer": "No. Everything happens online and by email: the check, checkout, intake, approvals, and reports." },
+    { "question": "Do you need my passwords?", "answer": "No. You add us as a manager or collaborator, and you can remove us anytime." },
+    { "question": "Do you write fake reviews or give customers gifts for reviews?", "answer": "Never. That breaks FTC rules and Google's policies. We help you ask every customer the same way." },
+    { "question": "How long until I see a change?", "answer": "It varies. Assistants refresh on their own schedules, so some changes show up in weeks and others take months." },
+    { "question": "What if I don't have a website?", "answer": "Setup can include a simple one-page site on a domain you own." },
+    { "question": "Can I cancel?", "answer": "Yes, anytime, online, from the private billing link we email you. There's no six-month agreement. Service runs through the month you paid for." },
+    { "question": "What's the founding offer?", "answer": "Our first 10 clients get the $497 setup waived if they agree to let us publish their results as a case study, with their approval of the write-up." },
+    { "question": "Are the reviews on this page about Revvia AI Visibility?", "answer": "No. They're reviews of Revvia, the marketing firm behind this product, from clients of our agency work. Revvia AI Visibility is new. We'll add its own results as founding clients approve their case studies." },
+    { "question": "I already work with Revvia, or I want more than this. What now?", "answer": "Reply to any of our emails. If you need ads, a full new site, strategy, or more locations, Tim Holt will follow up personally about Revvia's fractional CMO work." },
+    { "question": "Who's behind this?", "answer": "Revvia, a founder-led marketing firm in Carlsbad, California, run by Tim Holt since 2020." }
+  ],
+  "finalHeading": "Find out if the AI says your name.",
+  "finalBody": "Free. {instantTurnaround}. No call, no credit card.",
+  "stickyNote": "Free · {instantTurnaround}",
+  "check": {
+    "cityPlaceholder": "Mesa, AZ",
+    "noWebsite": "I don't have a website",
+    "step1Helper": "We ask ChatGPT, Perplexity, and Claude 8 questions your customers ask, using each company's official API. AI answers vary from run to run, so treat this as a snapshot, not a verdict.",
+    "runningHeading": "Asking 3 assistants 8 questions about {trade} in {city}…",
+    "runningNote": "This usually takes under a minute. Please keep this page open.",
+    "asking": "{assistant}: asking…",
+    "done": "{assistant}: done",
+    "resultHeadline": "{Business} was named for {X} of 8 questions.",
+    "resultUnder": "At least one assistant named you for {X} of the 8 questions we asked.",
+    "resultZero": "{Business} wasn't named for any of the 8 questions. That's common when a business's details online are thin or don't match. It's also the most fixable starting point.",
+    "resultEight": "{Business} was named for all 8 questions. The full report shows how often, and who's close behind.",
+    "possible": "We also saw {n} possible mentions we couldn't confirm, like a similar name. A person checks them before your full report.",
+    "honesty": "Collected {date} at {time} {timezone} through each company's official API, one answer per question per assistant (24 answers). {cachedNote}Google's AI answers aren't included.",
+    "honestyLink": "How we check",
+    "cachedNote": "These answers were collected {hours} hours ago for {trade} in {city} and reused, because they don't depend on who asks. ",
+    "assistantFailed": "{Assistant} didn't answer this time, so this score covers {the others} only.",
+    "notAvailable": "not available",
+    "step2Heading": "Get the full report, free.",
+    "step2Body": "We'll ask every question a second time on all three assistants and email you all 48 answers: who was named instead of you, the questions where you were missing, and three things to fix first.",
+    "consent": "Email me my AI Visibility Check and a few short follow-up emails. I can unsubscribe anytime.",
+    "step2Button": "Email me the full report",
+    "step2Under": "Sent from check@revvia.com {checkTurnaround}. A person checks it before it goes out.",
+    "seePlans": "Ready now? See plans",
+    "fallbackSubhead": "Free. We email your results {checkTurnaround}. No call.",
+    "fallbackHelper": "We ask ChatGPT, Perplexity, and Claude 8 questions your customers ask, twice each, using each company's official API. AI answers vary from run to run, so treat this as a snapshot, not a verdict. Google's AI answers aren't included (see the FAQ).",
+    "failed": "We couldn't finish the live check just now. Leave your email and we'll send your results {checkTurnaround}.",
+    "rateLimited": "You've run a few checks already. Leave your email and we'll send this one {checkTurnaround}."
+  },
+  "thanks": {
+    "freeHeading": "Got it. Your full report is on its way.",
+    "freeBody": "Watch for an email from check@revvia.com {checkTurnaround}. Nothing to schedule. If it doesn't arrive, check your spam folder or just reply to any Revvia email.",
+    "seePlans": "See plans",
+    "back": "Back to Revvia AI Visibility",
+    "paidHeading": "You're in. Welcome to Revvia AI Visibility {Plan}.",
+    "paidBody": "Your payment went through, and Stripe is emailing your receipt. Within 1 business day you'll get an email from check@revvia.com with a short intake form: your business facts and access to your Google Business Profile. Setup is delivered within {setupDays} days of your completed intake, or your $497 back. Nothing to schedule."
+  }
+}
