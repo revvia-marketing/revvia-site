@@ -1,5 +1,6 @@
 import { appendCheckoutParams, checkoutParams, clientReferenceId, messageMatchVisible, randomId } from '../lib/ai-visibility/ids.mjs';
 import { prefillFromQuery } from '../lib/ai-visibility/validate.mjs';
+import { createTurnstileSession, takeTurnstileToken } from '../lib/ai-visibility/turnstile-client.mjs';
 
 const ASSISTANTS = ['chatgpt', 'perplexity', 'claude'];
 
@@ -194,24 +195,6 @@ function wireFounding() {
     .catch(() => {});
 }
 
-function loadTurnstile(siteKey, mount) {
-  if (!siteKey || !mount || mount.dataset.ready) return;
-  mount.dataset.ready = '1';
-  const start = () => {
-    if (!window.turnstile) return;
-    window.turnstile.render(mount, { sitekey: siteKey });
-  };
-  if (window.turnstile) {
-    start();
-    return;
-  }
-  const script = document.createElement('script');
-  script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-  script.async = true;
-  script.onload = start;
-  document.head.appendChild(script);
-}
-
 function plain(template, values) {
   return String(template || '').replace(/\{([^}]+)\}/g, (all, key) => (values[key] == null ? all : String(values[key])));
 }
@@ -254,6 +237,7 @@ function resultHtml(strings, result, values) {
 }
 
 function showFallback(form, strings, kind) {
+  delete form.dataset.checking;
   form.classList.remove('is-instant');
   const banner = form.querySelector('.aiv-banner');
   if (banner) {
@@ -276,9 +260,25 @@ async function runCheck(form, config) {
     setErrors(form, ['Add your business name, city, and trade.']);
     return;
   }
-  setErrors(form, []);
-  const token = form.querySelector('[name="cf-turnstile-response"]')?.value || '';
+  if (form.dataset.checking === '1') return;
+  form.dataset.checking = '1';
   const live = form.querySelector('.aiv-live');
+  let token = '';
+  try {
+    token = await takeTurnstileToken(config.turnstile, {
+      notify: (message) => setErrors(form, [message]),
+    });
+  } catch {
+    delete form.dataset.checking;
+    setErrors(form, ["We couldn't verify you're human. Please try again."]);
+    return;
+  }
+  if (!token) {
+    delete form.dataset.checking;
+    setErrors(form, ["We couldn't verify you're human. Please try again."]);
+    return;
+  }
+  setErrors(form, []);
   const values = { trade, city, Business: business, ...zone() };
   live.classList.add('is-reserved');
   live.innerHTML = progressHtml(strings, values);
@@ -301,12 +301,14 @@ async function runCheck(form, config) {
   } catch {
     showFallback(form, strings, 'failed');
     live.innerHTML = `<div class="aiv-progress"><p>${esc(strings.failed)}</p></div>`;
+    delete form.dataset.checking;
     return;
   }
   if (!start.ok) {
     const kind = start.kind === 'limited' ? 'limited' : 'failed';
     showFallback(form, strings, kind);
     live.innerHTML = `<div class="aiv-progress"><p>${esc(kind === 'limited' ? strings.rateLimited : strings.failed)}</p></div>`;
+    delete form.dataset.checking;
     return;
   }
   sessionStorage.setItem('aiv_check', start.checkId);
@@ -347,6 +349,7 @@ async function runCheck(form, config) {
 }
 
 function reveal(form, config, status, values) {
+  delete form.dataset.checking;
   const live = form.querySelector('.aiv-live');
   if (!status || status.status === 'failed' || !status.result) {
     showFallback(form, config.strings, 'failed');
@@ -416,8 +419,12 @@ export function initAiVisibility() {
       field.required = false;
       field.disabled = true;
     });
-    const arm = () => loadTurnstile(config.turnstileSiteKey, form.querySelector('.aiv-turnstile'));
-    form.addEventListener('focusin', arm, { once: true });
+    config.turnstile = createTurnstileSession({
+      getApi: () => window.turnstile,
+      mount: form.querySelector('.aiv-turnstile'),
+      sitekey: config.turnstileSiteKey,
+    });
+    config.turnstile.ensureScript(document);
   }
 
   form.addEventListener('submit', async (event) => {
