@@ -67,20 +67,20 @@ const planHref = (plan) => model.stripe[plan.stripeLinkEnvKey] || '#';
 
   <header class="aiv-hero">
     <div class="aiv-hero-in">
+      <div class="aiv-intro">
+        <p class="eyebrow">{copy.eyebrow}</p>
+        <h1>{copy.h1}</h1>
+        <p class="aiv-sub">{copy.subhead}</p>
+        <p class="aiv-match" id="aiv-match" hidden>{copy.messageMatchLine}</p>
+        <p class="aiv-jumps">
+          <a href="#how">How it works</a>
+          <a href="#pricing">Plans</a>
+          <a href="#reviews">Reviews</a>
+          <a href="#faq">FAQ</a>
+        </p>
+      </div>
       <div class="aiv-grid">
-        <div>
-          <p class="eyebrow">{copy.eyebrow}</p>
-          <h1>{copy.h1}</h1>
-          <p class="aiv-sub">{copy.subhead}</p>
-          <p class="aiv-match" id="aiv-match" hidden>{copy.messageMatchLine}</p>
-          <p class="aiv-jumps">
-            <a href="#how">How it works</a>
-            <a href="#pricing">Plans</a>
-            <a href="#reviews">Reviews</a>
-            <a href="#faq">FAQ</a>
-          </p>
-
-          <div class="aiv-check" id="check">
+        <div class="aiv-check" id="check">
             <span id="audit" class="aiv-anchor"></span>
             <form
               id="aiv-form"
@@ -170,13 +170,7 @@ const planHref = (plan) => model.stripe[plan.stripeLinkEnvKey] || '#';
                 });
               })();
             </script>
-            <ul class="aiv-trust">
-              <li>{copy.trustFounder}</li>
-              <li>{copy.trustCancel}</li>
-              <li>{copy.stickyNote}</li>
-            </ul>
           </div>
-        </div>
 
         <aside class="aiv-sample" aria-label="Sample report">
           <div class="bar"></div>
@@ -197,6 +191,11 @@ const planHref = (plan) => model.stripe[plan.stripeLinkEnvKey] || '#';
             <p class="cap">{copy.sample.caption}</p>
           </div>
         </aside>
+        <ul class="aiv-trust">
+          <li>{copy.trustFounder}</li>
+          <li>{copy.trustCancel}</li>
+          <li>{copy.stickyNote}</li>
+        </ul>
       </div>
     </div>
   </header>
